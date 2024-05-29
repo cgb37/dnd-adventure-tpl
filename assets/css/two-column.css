@@ -1,0 +1,29 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+
+.container {
+    display: flex;
+    padding: 2rem;
+}
+
+.column {
+    flex: 1;
+    padding: 1rem;
+    margin: 0.5rem;
+    min-width: 300px; /* Ensure the columns don't get too small */
+}
+
+
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    .column {
+        min-width: 100%;
+        margin: 0.5rem 0;
+    }
+}

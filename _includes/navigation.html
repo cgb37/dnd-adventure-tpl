@@ -1,0 +1,163 @@
+<style>
+    .navbar-nav {
+        margin: 0 auto; /* Center the navigation items */
+    }
+</style>
+<nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav app-nav-font">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Home
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/">Home</a></li>
+                        <li><a class="dropdown-item" href="/toc">Table of Contents</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Chapters
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% assign chapters = site.pages | where_exp: "item", "item.relative_path contains 'chapters'" | group_by: "chapter" | sort: "name" %}
+                        {% for chapter in chapters %}
+                            {% assign chapter_index = chapter.items | where_exp: "item", "item.relative_path contains 'chapter-'" | first %}
+                                <li><a class="dropdown-item" href="{{ chapter_index.url }}">{{ chapter_index.title }}</a></li>
+                            {% assign chapter_episodes = chapter.items | where_exp: "item", "item.relative_path contains 'episodes/'" | sort: "episode" %}
+                            {% for episode in chapter_episodes %}
+                                <li><a class="dropdown-item" href="{{ episode.url }}">Episode {{ episode.episode }}: {{ episode.title }}</a></li>
+                            {% endfor %}
+                            {% unless forloop.last %}
+                                <li><hr class="dropdown-divider"></li>
+                            {% endunless %}
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Encounters
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for page in site.pages %}
+                        {% if page.path contains '_pages/encounters/' %}
+                        <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Locations
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for page in site.pages %}
+                        {% if page.path contains '_pages/locations/' %}
+                        <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        NPCs
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for page in site.pages %}
+                        {% if page.path contains '_pages/npcs/' %}
+                        <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Rewards
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for page in site.pages %}
+                        {% if page.path contains '_pages/rewards/' %}
+                        <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Monsters
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for page in site.pages %}
+                        {% if page.path contains '_pages/monsters/' %}
+                        <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Appendices
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for page in site.pages %}
+                        {% if page.path contains '_pages/appendices/' %}
+                        <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Notes
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% assign notes = site.pages | where_exp: "item", "item.relative_path contains 'notes'" | group_by: "relative_path" %}
+                        {% for note_group in notes %}
+                        {% assign note_dir = note_group.name | split: '/' | last %}
+                        {% assign note_index = note_group.items | where_exp: "item", "item.relative_path contains 'index'" | first %}
+                        <li class="dropdown-header">{{ note_dir | replace: '_', ' ' | capitalize }}</li>
+
+                        {% if note_index %}
+                        <li><a class="dropdown-item" href="{{ note_index.url }}">{{ note_index.title }}</a></li>
+                        {% endif %}
+
+                        {% assign note_pages = note_group.items | where_exp: "item", "item.relative_path contains note_dir" | where_exp: "item", "item.relative_path != note_index.relative_path" %}
+                        {% for page in note_pages %}
+                        <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
+                        {% endfor %}
+
+                        {% unless forloop.last %}
+                        <li><hr class="dropdown-divider"></li>
+                        {% endunless %}
+                        {% endfor %}
+                    </ul>
+                </li>
+
+
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Quick Links
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for item in site.data.quicklinks.quicklinks %}
+                        <li><a class="dropdown-item" href="{{ item.url }}" target="_blank">{{ item.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

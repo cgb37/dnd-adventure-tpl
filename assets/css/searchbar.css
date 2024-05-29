@@ -1,0 +1,13 @@
+.search-bar-container {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.search-bar-container form {
+    width: 45%;
+}
+
+.search-bar-container .form-control {
+    width: 100%;
+}

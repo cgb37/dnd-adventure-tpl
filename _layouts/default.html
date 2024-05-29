@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }}</title>
+
+    {% include styles.html %}
+</head>
+<body>
+{% include header.html %}
+{% include navigation.html %}
+{% include searchbar.html %}
+{% include heroimage.html %}
+<div class="">
+    {{ content }}
+</div>
+{% include scripts.html %}
+<script src="/assets/js/search.js"></script>
+</body>
+</html>

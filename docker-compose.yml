@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  jekyll:
+    build: .
+    command: jekyll serve --livereload --incremental --force_polling --drafts --trace --verbose
+    ports:
+      - 4000:4000
+    volumes:
+      - .:/srv/jekyll
+    environment:
+      JEKYLL_ENV: development
+    networks:
+      - jekyll-network
+
+networks:
+  jekyll-network:

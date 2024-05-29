@@ -1,0 +1,14 @@
+- title: Chapters and Episodes
+  path: chapters/episodes
+- title: Encounters
+  path: encounters
+- title: Locations
+  path: locations
+- title: Monsters
+  path: monsters
+- title: Rewards
+  path: rewards
+- title: NPCs
+  path: npcs
+- title: Appendices
+  path: appendices

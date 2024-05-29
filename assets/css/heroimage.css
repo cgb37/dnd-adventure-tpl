@@ -1,0 +1,6 @@
+.hero-image {
+    width: 100%;
+    height: 550px; /* Adjust the height as needed */
+    background-size: cover;
+    background-position: center;
+}

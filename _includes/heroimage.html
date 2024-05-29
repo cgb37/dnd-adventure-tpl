@@ -1,0 +1,4 @@
+{% if page.heroimage %}
+<div class="hero-image" style="background-image: url('{{ "/assets/images/" | append: page.heroimage | relative_url }}');">
+</div>
+{% endif %}

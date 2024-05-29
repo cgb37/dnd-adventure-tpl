@@ -1,0 +1,14 @@
+header {
+    text-align: center;
+    padding: 1rem;
+    color: silver;
+    border-top: 2px solid darkgoldenrod; /* Optional: To separate header from nav */
+    border-bottom: 2px solid darkgoldenrod; /* Optional: To separate header from nav */
+    background-image: url('/assets/images/site/header-bg-repeating-160px.webp');
+    background-repeat: repeat;
+    /*background-size: cover;*/
+}
+
+header h1 {
+    margin: 0;
+}
