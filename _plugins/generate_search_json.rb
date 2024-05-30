@@ -12,6 +12,7 @@ module Jekyll
         if page.data['search'] == true
           search_data << {
             title: page.data['title'],
+            url: page.url,
             content: page.content.gsub(/<[^>]*>/, '').gsub("\n", ' ').strip
           }
         end

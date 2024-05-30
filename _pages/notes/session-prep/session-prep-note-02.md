@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: sessionprep
 title: "Session Prep Note 02"
 search: true
 ---

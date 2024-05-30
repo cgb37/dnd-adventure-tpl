@@ -8,7 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(pages => {
                 var results = pages.filter(page => {
                     return page.title.toLowerCase().includes(query.toLowerCase()) ||
-                        page.content.toLowerCase().includes(query.toLowerCase());
+                        page.content.toLowerCase().includes(query.toLowerCase()) ||
+                        page.url.toLowerCase().includes(query.toLowerCase())
+                        ;
                 });
 
                 displayResults(results);

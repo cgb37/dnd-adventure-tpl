@@ -1,94 +1,117 @@
 [
   {
     "title": "Appendix 01",
+    "url": "/appendices/appendix-01/",
     "content": ""
   },
   {
     "title": "Appendix 02",
+    "url": "/appendices/appendix-02/",
     "content": ""
   },
   {
     "title": "Chapter 01 Index",
+    "url": "/chapters/chapter-01/chapter-01-index/",
     "content": "# Chapter 01 Index Content"
   },
   {
     "title": "Episode 1",
+    "url": "/chapters/chapter-01/episodes/episode-01/",
     "content": "{% start_column1 %}  The Homebrewery  Welcome traveler from an antique land. Please sit and tell us of what you have seen. The unheard of monsters, who slither and bite. Tell us of the wondrous items and and artifacts you have found, their mysteries yet to be unlocked. Of the vexing vocations and surprising skills you have seen.   Homebrew D&D made easy  The Homebrewery makes the creation and sharing of authentic looking Fifth-Edition homebrews easy. It uses [Markdown](https://help.github.com/articles/markdown-basics/) with a little CSS magic to make your brews come to life.    The Homebrewery makes the creation and sharing of authentic looking Fifth-Edition homebrews easy. It uses [Markdown](https://help.github.com/articles/markdown-basics/) with a little CSS magic to make your brews come to life.  {% endstart_column1 %}  {% start_column2 %} Column 2 Heading Column 2 Content {% endstart_column2 %}"
   },
   {
     "title": "Episode 2",
+    "url": "/chapters/chapter-01/episodes/episode-02/",
     "content": "Episode 2 Content   This is the content for episode 2."
   },
   {
     "title": "Encounter 1",
+    "url": "/encounters/encounter-01/",
     "content": ""
   },
   {
     "title": "Encounter 2",
+    "url": "/encounters/encounter-02/",
     "content": ""
   },
   {
     "title": "Location 1",
+    "url": "/locations/location-01/",
     "content": ""
   },
   {
     "title": "Location 02",
+    "url": "/locations/location-02/",
     "content": ""
   },
   {
     "title": "Location 03",
+    "url": "/locations/location-03/",
     "content": ""
   },
   {
     "title": "Monster 1",
+    "url": "/monsters/monster-01/",
     "content": ""
   },
   {
     "title": "Monster 2",
+    "url": "/monsters/monster-02/",
     "content": ""
   },
   {
     "title": "DM Note 01",
-    "content": "# DM Notes 01"
+    "url": "/notes/dm/dm-note-01/",
+    "content": "## DM Notes 01"
   },
   {
     "title": "DM Note 02",
+    "url": "/notes/dm/dm-note-02/",
     "content": "# DM Notes 01"
   },
   {
     "title": "DM Note 01",
+    "url": "/notes/dm/dm-note-03/",
     "content": ""
   },
   {
     "title": "Session Prep Note 01",
+    "url": "/notes/session-prep/session-prep-note-01/",
     "content": "# Sessions Prep Notes 01"
   },
   {
     "title": "Session Prep Note 02",
+    "url": "/notes/session-prep/session-prep-note-02/",
     "content": "# Sessions Prep Notes 01"
   },
   {
     "title": "Session Recap Note 01",
+    "url": "/notes/session-recap/session-recap-note-01/",
     "content": "# DM Notes 01"
   },
   {
     "title": "Session Recap Note 02",
+    "url": "/notes/session-recap/session-recap-note-02/",
     "content": "# DM Notes 01"
   },
   {
     "title": "NPC 1",
+    "url": "/npcs/npc-01/",
     "content": ""
   },
   {
     "title": "NPC 2",
+    "url": "/npcs/npc-02/",
     "content": ""
   },
   {
     "title": "Reward 1",
+    "url": "/rewards/reward-01/",
     "content": ""
   },
   {
     "title": "Reward 2",
+    "url": "/rewards/reward-02/",
     "content": ""
   }
 ]
