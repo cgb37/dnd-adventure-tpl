@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Session Prep Note 01"
+title: "Session Prep Note 02"
 search: true
 ---
 

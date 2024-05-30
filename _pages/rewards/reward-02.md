@@ -1,6 +1,6 @@
 ---
-layout: npc
-title: "NPC 1"
+layout: reward
+title: "Reward 2"
 search: true
 jumbo:
 thumb:

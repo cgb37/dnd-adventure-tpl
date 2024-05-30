@@ -1,6 +1,6 @@
 ---
 layout: npc
-title: "NPC 1"
+title: "NPC 2"
 search: true
 jumbo:
 thumb:

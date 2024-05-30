@@ -123,24 +123,30 @@
                         Notes
                     </a>
                     <ul class="dropdown-menu">
-                        {% assign notes = site.pages | where_exp: "item", "item.relative_path contains 'notes'" | group_by: "relative_path" %}
-                        {% for note_group in notes %}
-                        {% assign note_dir = note_group.name | split: '/' | last %}
-                        {% assign note_index = note_group.items | where_exp: "item", "item.relative_path contains 'index'" | first %}
-                        <li class="dropdown-header">{{ note_dir | replace: '_', ' ' | capitalize }}</li>
-
-                        {% if note_index %}
-                        <li><a class="dropdown-item" href="{{ note_index.url }}">{{ note_index.title }}</a></li>
-                        {% endif %}
-
-                        {% assign note_pages = note_group.items | where_exp: "item", "item.relative_path contains note_dir" | where_exp: "item", "item.relative_path != note_index.relative_path" %}
-                        {% for page in note_pages %}
+                        <li class="dropdown-header">Dm</li>
+                        {% assign dm_notes = site.pages | where_exp: "item", "item.relative_path contains '_pages/notes/dm/'" %}
+                        {% for page in dm_notes %}
                         <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
                         {% endfor %}
 
                         {% unless forloop.last %}
                         <li><hr class="dropdown-divider"></li>
                         {% endunless %}
+
+                        <li class="dropdown-header">Session Prep</li>
+                        {% assign session_prep_notes = site.pages | where_exp: "item", "item.relative_path contains '_pages/notes/session-prep/'" %}
+                        {% for page in session_prep_notes %}
+                        <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
+                        {% endfor %}
+
+                        {% unless forloop.last %}
+                        <li><hr class="dropdown-divider"></li>
+                        {% endunless %}
+
+                        <li class="dropdown-header">Session Recap</li>
+                        {% assign session_recap_notes = site.pages | where_exp: "item", "item.relative_path contains '_pages/notes/session-recap/'" %}
+                        {% for page in session_recap_notes %}
+                        <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
                         {% endfor %}
                     </ul>
                 </li>

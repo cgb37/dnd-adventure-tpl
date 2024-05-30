@@ -1,6 +1,6 @@
 ---
 layout: location
-title: "Location 1"
+title: "Location 02"
 search: true
 jumbo:
 thumb:

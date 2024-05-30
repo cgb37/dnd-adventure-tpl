@@ -1,6 +1,6 @@
 ---
 layout: dmnote
-title: "DM Note 01"
+title: "DM Note 02"
 search: true
 ---
 

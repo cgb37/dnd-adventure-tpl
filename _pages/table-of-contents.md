@@ -4,10 +4,15 @@ title: Table of Contents
 permalink: /toc/
 ---
 
-<div class="container">
-    <div class="phb">
-        <div class="row">
-            <h1>Table of Contents</h1>  
+
+<div class="episode-content phb">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <h2>{{ page.title }}</h2>
+            </div>
+        </div>
+        <div class="row justify-content-center">
         </div>
     </div>
 </div>

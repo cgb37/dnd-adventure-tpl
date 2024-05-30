@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Session Recap Note 01"
+title: "Session Recap Note 02"
 search: true
 ---
 

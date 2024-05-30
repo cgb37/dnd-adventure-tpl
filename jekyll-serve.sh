@@ -1,3 +1,4 @@
 #!/bin/bash
 
-bundle exec jekyll serve --livereload --incremental --trace
+bundle exec jekyll clean &&
+bundle exec jekyll serve --livereload --watch --verbose

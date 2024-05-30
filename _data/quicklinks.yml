@@ -1,5 +1,7 @@
 quicklinks:
   - name: "DnDBeyond"
     url: "https://www.dndbeyond.com/"
+  - name: "5e Tools"
+    url: "https://5e.tools/"
   - name: "D&D 5e API"
     url: "https://www.dnd5eapi.co/"
