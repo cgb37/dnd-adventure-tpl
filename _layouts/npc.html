@@ -2,7 +2,6 @@
 layout: default
 ---
 
-<!-- Additional episode-specific content can go here -->
 <div class="phb">
     <div class="container">
         <div class="row">
@@ -13,6 +12,193 @@ layout: default
         <div class="row">
             <div class="col-12">
                 <div>{{ page.jumbo }}</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <h2>{{ page.name }}</h2>
+                <p><strong>Race:</strong> {{ page.race }}</p>
+                <p><strong>Class:</strong> {{ page.class }}</p>
+                <p><strong>Alignment:</strong> {{ page.alignment }}</p>
+                <p><strong>Background:</strong> {{ page.background }}</p>
+                <p><strong>Level:</strong> {{ page.level }}</p>
+                <p><strong>Hit Points:</strong> {{ page.hit_points }}</p>
+                <p><strong>Armor Class:</strong> {{ page.armor_class }}</p>
+                <p><strong>Speed:</strong> {{ page.speed }}</p>
+                <h3>Attributes</h3>
+                <ul>
+                    <li><strong>Strength:</strong> {{ page.attributes.strength }}</li>
+                    <li><strong>Dexterity:</strong> {{ page.attributes.dexterity }}</li>
+                    <li><strong>Constitution:</strong> {{ page.attributes.constitution }}</li>
+                    <li><strong>Intelligence:</strong> {{ page.attributes.intelligence }}</li>
+                    <li><strong>Wisdom:</strong> {{ page.attributes.wisdom }}</li>
+                    <li><strong>Charisma:</strong> {{ page.attributes.charisma }}</li>
+                </ul>
+                <h3>Skills</h3>
+                <ul>
+                    {% for skill in page.skills %}
+                    <li>{{ skill.skill }}: {{ skill.modifier }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Abilities</h3>
+                <ul>
+                    {% for ability in page.abilities %}
+                    <li><strong>{{ ability.name }}:</strong> {{ ability.description }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Equipment</h3>
+                <ul>
+                    {% for item in page.equipment %}
+                    <li><strong>{{ item.item }}:</strong> {{ item.description }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Personality Traits</h3>
+                <ul>
+                    {% for trait in page.personality_traits %}
+                    <li>{{ trait }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Ideals</h3>
+                <ul>
+                    {% for ideal in page.ideals %}
+                    <li>{{ ideal }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Bonds</h3>
+                <ul>
+                    {% for bond in page.bonds %}
+                    <li>{{ bond }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Flaws</h3>
+                <ul>
+                    {% for flaw in page.flaws %}
+                    <li>{{ flaw }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Appearance</h3>
+                <p>{{ page.appearance }}</p>
+                <h3>Backstory</h3>
+                <p>{{ page.backstory }}</p>
+                <h3>Allies</h3>
+                <ul>
+                    {% for ally in page.allies %}
+                    <li><strong>{{ ally.name }}:</strong> {{ ally.relationship }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Enemies</h3>
+                <ul>
+                    {% for enemy in page.enemies %}
+                    <li><strong>{{ enemy.name }}:</strong> {{ enemy.relationship }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Goals</h3>
+                <ul>
+                    {% for goal in page.goals %}
+                    <li>{{ goal }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Hooks</h3>
+                <ul>
+                    {% for hook in page.hooks %}
+                    <li>{{ hook }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Notes</h3>
+                <p>{{ page.notes }}</p>
+            </div>
+
+            <div class="col-6">
+                <h2>{{ page.name }}</h2>
+                <p><strong>Race:</strong> {{ page.race }}</p>
+                <p><strong>Class:</strong> {{ page.class }}</p>
+                <p><strong>Alignment:</strong> {{ page.alignment }}</p>
+                <p><strong>Background:</strong> {{ page.background }}</p>
+                <p><strong>Level:</strong> {{ page.level }}</p>
+                <p><strong>Hit Points:</strong> {{ page.hit_points }}</p>
+                <p><strong>Armor Class:</strong> {{ page.armor_class }}</p>
+                <p><strong>Speed:</strong> {{ page.speed }}</p>
+                <h3>Attributes</h3>
+                <ul>
+                    <li><strong>Strength:</strong> {{ page.attributes.strength }}</li>
+                    <li><strong>Dexterity:</strong> {{ page.attributes.dexterity }}</li>
+                    <li><strong>Constitution:</strong> {{ page.attributes.constitution }}</li>
+                    <li><strong>Intelligence:</strong> {{ page.attributes.intelligence }}</li>
+                    <li><strong>Wisdom:</strong> {{ page.attributes.wisdom }}</li>
+                    <li><strong>Charisma:</strong> {{ page.attributes.charisma }}</li>
+                </ul>
+                <h3>Skills</h3>
+                <ul>
+                    {% for skill in page.skills %}
+                    <li>{{ skill.skill }}: {{ skill.modifier }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Abilities</h3>
+                <ul>
+                    {% for ability in page.abilities %}
+                    <li><strong>{{ ability.name }}:</strong> {{ ability.description }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Equipment</h3>
+                <ul>
+                    {% for item in page.equipment %}
+                    <li><strong>{{ item.item }}:</strong> {{ item.description }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Personality Traits</h3>
+                <ul>
+                    {% for trait in page.personality_traits %}
+                    <li>{{ trait }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Ideals</h3>
+                <ul>
+                    {% for ideal in page.ideals %}
+                    <li>{{ ideal }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Bonds</h3>
+                <ul>
+                    {% for bond in page.bonds %}
+                    <li>{{ bond }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Flaws</h3>
+                <ul>
+                    {% for flaw in page.flaws %}
+                    <li>{{ flaw }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Appearance</h3>
+                <p>{{ page.appearance }}</p>
+                <h3>Backstory</h3>
+                <p>{{ page.backstory }}</p>
+                <h3>Allies</h3>
+                <ul>
+                    {% for ally in page.allies %}
+                    <li><strong>{{ ally.name }}:</strong> {{ ally.relationship }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Enemies</h3>
+                <ul>
+                    {% for enemy in page.enemies %}
+                    <li><strong>{{ enemy.name }}:</strong> {{ enemy.relationship }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Goals</h3>
+                <ul>
+                    {% for goal in page.goals %}
+                    <li>{{ goal }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Hooks</h3>
+                <ul>
+                    {% for hook in page.hooks %}
+                    <li>{{ hook }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Notes</h3>
+                <p>{{ page.notes }}</p>
             </div>
         </div>
         <div class="row">
