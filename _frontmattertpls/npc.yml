@@ -1,6 +1,12 @@
 ---
 layout: npc
 title: "NPC Name"
+search: true
+jumbo:
+thumb:
+portrait: "elder-morwen-portrait.png"
+tags:
+categories:
 name: "NPC Name"
 race: "Race"
 class: "Class"

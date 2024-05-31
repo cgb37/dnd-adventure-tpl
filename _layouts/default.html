@@ -8,13 +8,24 @@
     {% include styles.html %}
 </head>
 <body>
-{% include header.html %}
-{% include navigation.html %}
-{% include searchbar.html %}
-{% include heroimage.html %}
-<div class="">
-    {{ content }}
+<div id="page-container">
+    <div id="content-wrap">
+
+        {% include header.html %}
+        {% include navigation.html %}
+        {% include searchbar.html %}
+        {% include heroimage.html %}
+        <div class="">
+            {{ content }}
+        </div>
+
+        <footer id="footer" class="app-footer text-center">
+            <p>Role Playing Masters</p>
+        </footer>
+    </div>
 </div>
+
+
 {% include scripts.html %}
 <script src="/assets/js/search.js"></script>
 </body>

@@ -1,13 +1,14 @@
 ---
 layout: npc
-title: "NPC 1"
+title: "Elder Morwen"
 search: true
 jumbo:
 thumb:
-name: "NPC Name"
-race: "Race"
-class: "Class"
-alignment: "Alignment"
+portrait: "elder-morwen-portrait.png"
+name: "Elder Morwen"
+race: "Human"
+class: "Wizard"
+alignment: "Neutral Good"
 background: "Background"
 level: 1
 hit_points: 10
