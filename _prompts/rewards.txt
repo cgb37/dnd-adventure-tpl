@@ -1,0 +1,30 @@
+Each episode must have a Rewards Table for each episode of the campaign. This table will determine the loot and treasures the party discovers based on their current level. Follow these steps:
+
+Determine the Episode Number and corresponding Character Level.
+
+Using the Character Level as a guide, populate the Rewards Table with the following mandatory items:
+One Random Magic Item of appropriate rarity
+One Cursed Item of appropriate rarity
+Two Potions of Healing
+One Potion (non-healing) of appropriate rarity
+One Melee Weapon of appropriate type/quality
+One Suit of Armor of appropriate type/quality
+One Shield of appropriate type/quality
+One Adventuring Gear item
+One Map/Document relevant to the story
+One Spell Scroll of an appropriate level
+One Staff with magical properties
+One Ring with magical properties
+One Holy Symbol relevant to the campaign's faiths
+One Ranged Weapon of appropriate type/quality
+Five Additional Random Items of varying rarities
+
+Ensure each reward is thoughtfully chosen and described, providing details on its history, lore, and potential uses/curses tied to your campaign's narrative.
+The rewards should:
+Bestow meaningful power increases appropriate for the party's level
+Introduce new strategic options and gameplay possibilities
+Contain hidden lore, story hooks, and roleplaying opportunities
+Create interesting decisions for players on what to attune, use, or sell
+
+
+Craft a holistic reward pool that achieves a balance between empowering the party, maintaining gameplay challenges, and fueling your campaign's overarching story and mysteries.

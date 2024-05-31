@@ -10,11 +10,15 @@ layout: default
                 <h1>{{ page.title }}</h1>
             </div>
         </div>
+        {% if page.jumbo %}
         <div class="row">
             <div class="col-12">
-                <div>{{ page.jumbo }}</div>
+                <div>
+                    <img src="/assets/images/locations/{{ page.jumbo }}" class="img-fluid" alt="{{ page.title }} battle map">
+                </div>
             </div>
         </div>
+        {% endif %}
         <div class="row">
             {{ content }}
         </div>

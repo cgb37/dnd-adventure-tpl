@@ -36,6 +36,9 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 plugins:
   - jekyll-feed
 
+
+
+
 incremental: true
 
 
@@ -49,6 +52,7 @@ incremental: true
 #
 exclude:
   - _frontmattertpls
+  - _prompts
   - docker-compose.yml
   - Dockerfile
   - jekyll-serve.sh

@@ -1,8 +1,23 @@
 ---
-layout: default
-title: "Chapter 01 Index"
+layout: chapter
+title: "Chapter 01: Forging Unlikely Alliances"
 search: true
 chapter: 01
+jumbo:
+thumb:
 ---
 
-# Chapter 01 Index Content
+{% start_column1 %}
+
+    <h2>Introduction</h2>
+    <p>In the land of Velden, a realm steeped in magic and mystery, the ambitious warrior-chieftain, Einar, seeks to reclaim the throne that is his by birthright from his usurping cousin, Hrothgar. To challenge Hrothgar’s tyranny and his formidable stronghold at Dunford, Einar must first gain the support of influential backers who wield not only power but also the resources necessary for his campaign.</p>
+
+{% endstart_column1 %}
+
+
+{% start_column2 %}
+
+    <h2>Overview</h2>
+    <p>This chapter guides players through Einar's journey to secure the alliance of three potent figures in Velden: a reclusive wizard, a wealthy merchant prince, and a revered warrior-priestess. Each backer will provide Einar with unique advantages, from magical artifacts and strategic information to financial support and spiritual guidance.</p>
+
+{% endstart_column2 %}
