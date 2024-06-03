@@ -1,0 +1,10 @@
+---
+layout: monster
+title: "Monster Name"
+search: true
+jumbo:
+thumb:
+portrait: "monster-portrait.png"
+tags:
+categories:
+---

@@ -22,5 +22,118 @@ layout: default
         <div class="row">
             {{ content }}
         </div>
+
+        <div class="row">
+
+            <h1>{{ page.name }} - {{ page.type }}</h1>
+            <p>{{ page.description }}</p>
+
+            <h2>Challenges</h2>
+            <ul>
+                <li><b>Traps:</b>
+                    <ul>
+                        {% if page.challenges.traps %}
+                        {% assign traps = page.challenges.traps | split: '\n' %}
+                        {% for trap in traps %}
+                        <li>{{ trap }}</li>
+                        {% endfor %}
+                        {% else %}
+                        <li>No traps listed.</li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li><b>Ambushes:</b>
+                    <ul>
+                        {% if page.challenges.ambushes %}
+                        {% assign ambushes = page.challenges.ambushes | split: '\n' %}
+                        {% for ambush in ambushes %}
+                        <li>{{ ambush }}</li>
+                        {% endfor %}
+                        {% else %}
+                        <li>No ambushes listed.</li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li><b>Puzzles:</b>
+                    <ul>
+                        {% if page.challenges.puzzles %}
+                        {% assign puzzles = page.challenges.puzzles | split: '\n' %}
+                        {% for puzzle in puzzles %}
+                        <li>{{ puzzle }}</li>
+                        {% endfor %}
+                        {% else %}
+                        <li>No puzzles listed.</li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li><b>Hazards:</b>
+                    <ul>
+                        {% if page.challenges.hazards %}
+                        {% assign hazards = page.challenges.hazards | split: '\n' %}
+                        {% for hazard in hazards %}
+                        <li>{{ hazard }}</li>
+                        {% endfor %}
+                        {% else %}
+                        <li>No hazards listed.</li>
+                        {% endif %}
+                    </ul>
+                </li>
+            </ul>
+
+
+            <h2>Secrets</h2>
+            <ul>
+                {% if page.secrets %}
+                {% for secret in page.secrets %}
+                <li>{{ secret }}</li>
+                {% endfor %}
+                {% else %}
+                <li>No known secrets.</li>
+                {% endif %}
+            </ul>
+
+            <h2>Plot Hooks</h2>
+            <ul>
+                {% if page.plot_hooks %}
+                {% for hook in page.plot_hooks %}
+                <li>{{ hook }}</li>
+                {% endfor %}
+                {% else %}
+                <li>No plot hooks provided.</li>
+                {% endif %}
+            </ul>
+
+            <h2>NPCs</h2>
+            <ul>
+                {% if page.npcs %}
+                {% for npc in page.npcs %}
+                <li><b>{{ npc.name }}</b> - {{ npc.description }}</li>
+                {% endfor %}
+                {% else %}
+                <li>No NPCs listed.</li>
+                {% endif %}
+            </ul>
+
+            <h2>Environmental Features</h2>
+            <ul>
+                {% if page.environmental_features %}
+                {% for feature in page.environmental_features %}
+                <li>{{ feature }}</li>
+                {% endfor %}
+                {% else %}
+                <li>No environmental features described.</li>
+                {% endif %}
+            </ul>
+
+            <h2>Additional Notes</h2>
+            <p>{{ page.additional_notes }}</p>
+
+            <h2>Battle Map</h2>
+            <p>A highly detailed, but clearly defined battle map of this location with a 5-foot grid is recommended for tactical encounters.</p>
+
+        </div>
+
+
     </div>
 </div>
+
