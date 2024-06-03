@@ -1,0 +1,92 @@
+Write a YAML document in the format of a D&D NPC statblock. Include the following details:
+
+Basic Info: Name, Race, Class, Alignment, Background, Level
+Stats: Hit Points, Armor Class, Speed, Ability Scores (Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma)
+Skills: List of relevant skills with modifiers
+Abilities: A few unique abilities specific to the NPC
+Equipment: A couple of interesting items the NPC carries
+Personality: Personality Traits, Ideals, Bonds, Flaws
+Description: Detailed description of the NPC's appearance
+Backstory: A rich and interesting backstory for the NPC
+Relationships: A couple of allies and enemies with descriptions
+Goals: Short-term and long-term goals the NPC is working towards
+Plot Hooks: Ways the NPC can be integrated into your campaign
+Additional Details:
+
+Use descriptive language and interesting details throughout.
+Tailor the NPC to a specific campaign setting or theme if desired.
+Feel free to leave some aspects like specific item names or ally details open-ended for further customization.
+Also, when needed please consult the uploaded PDfs including the Players Handbook, Dungeon Master's Guide, and others
+
+Example output
+---
+layout: npc
+title: "Eldrin Moonweaver"
+search: true
+jumbo:
+thumb:
+portrait: "elder-morwen-portrait.png"
+tags:
+categories:
+name: "Eldrin Moonweaver"
+race: "High Elf"
+class: "Wizard (Diviner)"
+alignment: "Neutral Good"
+background: "Sage"
+level: 3
+hit_points: 22
+armor_class: 14
+speed: 30
+attributes:
+  strength: 8 (-1)
+  dexterity: 16 (+3)
+  constitution: 12 (+1)
+  intelligence: 18 (+4)
+  wisdom: 14 (+2)
+  charisma: 10 (+0)
+skills:
+  - skill: "Arcana"
+    modifier: +8
+  - skill: "Investigation"
+    modifier: +4
+  - skill: "Perception"
+    modifier: +4
+abilities:
+  - name: "Stargazer's Foresight"
+    description: "Eldrin can cast Augury once per day without expending a spell slot."
+  - name: "Lunar Blessing"
+    description: "Eldrin can cast Lesser Restoration as a bonus action once per long rest, touching a creature within 5 feet."
+equipment:
+  - item: "Star Chart of the Ancients"
+    description: "A weathered scroll case containing a detailed celestial map passed down through Eldrin's family."
+  - item: "Staff of Moonlight"
+    description: "A quarterstaff carved from a luminous wood, granting Eldrin a +1 bonus to spell attack rolls."
+personality_traits:
+  - "Eldrin speaks in riddles and metaphors, often referencing celestial bodies."
+  - "He is deeply curious about the mysteries of the cosmos and spends countless nights gazing at the stars."
+ideals:
+  - "Knowledge is the key to understanding the universe and our place within it." (Knowledge)
+  - "The flow of fate cannot be controlled, but it can be observed and prepared for." (Fate)
+bonds:
+  - "Eldrin seeks to decipher a prophecy he believes foretells a coming disaster."
+  - "He is fiercely loyal to his elven clan, who guard an ancient observatory."
+flaws:
+  - "Eldrin can be overly trusting of those who share his fascination with the stars."
+  - "He prioritizes his research over immediate threats, leading to moments of absentmindedness."
+appearance:
+  "Eldrin is a tall and slender elf with silver hair that reaches his waist. His eyes are an unusual shade of violet, reflecting the starlight he so often studies. He wears simple robes adorned with constellations and carries a weathered staff topped with a luminous crystal."
+backstory:
+  "Eldrin grew up in a hidden elven enclave dedicated to celestial observation. He spent his youth studying ancient scrolls and learning from the clan's elder astronomers. Driven by a recent prophetic vision, Eldrin has ventured out into the world, hoping to unravel its meaning and prevent the foretold disaster."
+allies:
+  - name: "Anya Nightsong"
+    relationship: "A fellow elf astronomer who shares Eldrin's passion for the stars and helps him decipher celestial omens."
+enemies:
+  - name: "Cult of the Blind Eye"
+    relationship: "A fanatical
+goals:
+  - "Goal 1"
+  - "Goal 2"
+hooks:
+  - "Plot hook or way to involve the NPC in a campaign"
+notes: "Any additional notes about the NPC."
+---

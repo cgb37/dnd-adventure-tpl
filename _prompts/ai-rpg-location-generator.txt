@@ -1,0 +1,36 @@
+Write a YAML document describing a captivating Dungeons & Dragons location. Include the following engaging details:
+
+Name: A unique and evocative name for the location.
+Type: Specify the type of location (e.g., dungeon, ruined temple, abandoned city, etc.)
+Description: A vivid description of the location's environment, atmosphere, and any notable features.
+Challenges: Include a variety of challenges players might encounter, such as:
+Traps: Describe at least one interesting trap with its trigger and effect.
+Ambushes: Briefly explain a potential ambush scenario, including the creatures involved and their tactics.
+Puzzles: Briefly describe a puzzle players need to solve to progress, hinting at the solution type (e.g., logic, physical, or knowledge-based).
+Environmental Hazards: Describe a unique environmental hazard present at the location and its effects on players.
+Secrets: Briefly mention a hidden secret or treasure players can discover within the location.
+Plot Hooks: Offer a couple of ways this location can be integrated into a larger campaign.
+Additional Notes:
+
+Use evocative language and sensory details to bring the location to life.
+Tailor the location to a specific campaign setting or theme if desired.
+Leave some details open-ended for further customization, such as specific trap mechanisms or puzzle solutions.
+
+Example Output
+---
+name: "The Whispering Crypts"
+type: "Ruined Temple"
+description:  "Jagged obsidian pillars pierce the crimson sky above a network of crumbling catacombs. The air hangs heavy with the scent of dust and decay, punctuated by the occasional mournful moan echoing from within."
+challenges:
+  traps:  "Pressure plates hidden beneath carpets of fallen leaves trigger showers of poisoned darts from concealed blowpipes."
+  ambush:  "Skeletal guardians rise from hidden sarcophagi when intruders disturb the sacred silence."
+  puzzles:  "A series of cryptic murals depicting constellations guide the way through a maze of collapsing corridors."
+  hazards:  "Loose floorboards creak ominously above bottomless pits choked with venomous fumes."
+secrets:  "A hidden chamber within the deepest tomb houses a cursed artifact radiating a faint, sickly green light."
+plot_hooks:
+  - The players are hired by a desperate family to retrieve an heirloom lost within the crypts.
+  - Whispers of an undead cult using the crypts as a base for dark rituals draw the players' attention.
+---
+
+Image Creation:
+Battle Map:  Using the details you provided, create a highly detailed but clearly defined battle map of this location.  Include a grid with 5-foot squares to facilitate tactical combat encounters.

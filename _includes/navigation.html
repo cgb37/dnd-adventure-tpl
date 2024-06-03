@@ -25,20 +25,36 @@
                         Chapters
                     </a>
                     <ul class="dropdown-menu">
-                        {% assign chapters = site.pages | where_exp: "item", "item.relative_path contains 'chapters'" | group_by: "chapter" | sort: "name" %}
-                        {% for chapter in chapters %}
-                            {% assign chapter_index = chapter.items | where_exp: "item", "item.relative_path contains 'chapter-'" | first %}
-                                <li><a class="dropdown-item" href="{{ chapter_index.url }}">{{ chapter_index.title }}</a></li>
-                            {% assign chapter_episodes = chapter.items | where_exp: "item", "item.relative_path contains 'episodes/'" | sort: "episode" %}
-                            {% for episode in chapter_episodes %}
-                                <li><a class="dropdown-item" href="{{ episode.url }}">Episode {{ episode.episode }}: {{ episode.title }}</a></li>
-                            {% endfor %}
-                            {% unless forloop.last %}
-                                <li><hr class="dropdown-divider"></li>
-                            {% endunless %}
+                        {% assign pages = site.pages | sort: "name" %}
+                        {% for page in pages %}
+                        {% if page.url contains "/index.html" and page.url != "index.html" %}  <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
+                        {% else %}
+                        {% if page.children.size > 0 %}
+                        <li class="dropdown-item dropdown">
+                            <a class="dropdown-toggle nav-link" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ page.title }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% assign subpages = page.children | sort: "name" %}
+                                {% for subpage in subpages %}
+                                {% if subpage.url contains "/index.html" %}
+                                <li><a class="dropdown-item" href="{{ subpage.url }}">{{ subpage.title }}</a></li>
+                                {% else %}
+                                <li><a class="dropdown-item" href="{{ subpage.url }}">{{ subpage.title }}</a></li>
+                                {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+                        {% unless forloop.last %}
+                        <li><hr class="dropdown-divider"></li>
+                        {% endunless %}
                         {% endfor %}
                     </ul>
                 </li>
+
+
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

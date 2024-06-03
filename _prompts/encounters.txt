@@ -4,8 +4,10 @@ Using the Encounter CR as a guideline, select appropriate monsters from the Mons
 
 CR = (Proficiency + AC + Hit Points)/3 + (Damage + Attack Bonus + Spell DC)/2 or 3
 
-Create an interesting encounter setup and narrative description tailored to your campaign's story, locations, and themes. The encounters should:
+Create an interesting encounter setup and narrative description tailored to your campaign's story,
+locations, and themes.
 
+The encounters should:
 Challenge the party's abilities and resources
 Force tactical decisions and innovative problem-solving
 Highlight the monsters' unique abilities and environmental factors
@@ -19,4 +21,7 @@ Monsters/Enemies
 Potential Rewards
 Plot Hooks/Story Relevance
 
-Craft each encounter to be a memorable, multi-faceted challenge that blends combat with environmental puzzles, social encounters, and narrative intrigue. The goal is to create a collection of dynamic, high-stakes encounters that elevate your campaign and keep players engaged through clever gameplay and storytelling.
+Craft each encounter to be a memorable, multi-faceted challenge that blends combat with
+environmental puzzles, social encounters, and narrative intrigue.
+The goal is to create a collection of dynamic, high-stakes encounters that elevate your campaign
+and keep players engaged through clever gameplay and storytelling.

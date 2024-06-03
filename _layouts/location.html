@@ -13,9 +13,9 @@ layout: default
         {% if page.jumbo %}
         <div class="row">
             <div class="col-12">
-                <div>
+
                     <img src="/assets/images/locations/{{ page.jumbo }}" class="img-fluid" alt="{{ page.title }} battle map">
-                </div>
+
             </div>
         </div>
         {% endif %}
@@ -25,7 +25,7 @@ layout: default
 
         <div class="row">
 
-            <h1>{{ page.name }} - {{ page.type }}</h1>
+            <h1 class="text-center">{{ page.name }} - {{ page.type }}</h1>
             <p>{{ page.description }}</p>
 
             <h2>Challenges</h2>
@@ -127,9 +127,6 @@ layout: default
 
             <h2>Additional Notes</h2>
             <p>{{ page.additional_notes }}</p>
-
-            <h2>Battle Map</h2>
-            <p>A highly detailed, but clearly defined battle map of this location with a 5-foot grid is recommended for tactical encounters.</p>
 
         </div>
 
