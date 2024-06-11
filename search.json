@@ -1,8 +1,8 @@
 [
   {
-    "title": "Appendix 01",
-    "url": "/appendices/appendix-01/",
-    "content": ""
+    "title": "Ch 01 Ep 01 Sc 02 Appendix Encounter Table 01",
+    "url": "/appendices/01-01-02-appendix-encounter-table-01/",
+    "content": "Whispering Woods Encounters (Level 1)                                    Roll             Encounter                                                 2             Green Dragon Wyrmling (CR 2)                               3             Will-o'-Wisp (CR 2)                               4             Awakened Tree (CR 2)                               5             Pixies (2) (CR 1/4 each)                               6             Giant Wolf Spiders (3) (CR 1/4 each)                               7             Lost Druid offering cryptic advice                               8             Spectral Deer (use \"Specter\" template) (CR 1)                               9             Giant Centipede (CR 1/4)                               10             Shambling Mound Sapling (CR 2)                               11             Enchanted Bear (use \"Brown Bear\" template with added magical abilities) (CR 1)                               12             Hermit Mage (Neutral) offering cryptic advice                               Encounter Descriptions:      Green Dragon Wyrmling (CR 2)     Description: A young green dragon emerges from the mist, its scales shimmering with an eerie green light. It watches the party with cunning eyes, ready to defend its territory.     Mechanics: The dragon uses its breath weapon and cunning tactics to challenge the party. The dense forest provides it with ample cover for ambushes.      Will-o'-Wisp (CR 2)     Description: Floating lights dance through the trees, leading the party deeper into the forest. These malevolent spirits lure travelers to their doom.     Mechanics: The Will-o'-Wisps use their Invisibility and Shock attacks to surprise and disorient the party.      Awakened Tree (CR 2)     Description: An ancient tree groans and creaks as it uproots itself, revealing its sentient nature. It moves to protect the forest from intruders.     Mechanics: The tree uses its powerful branches to bludgeon the party, and its roots to entangle them.      Pixies (2) (CR 1/4 each)     Description: Mischievous pixies flit through the air, giggling and casting illusions to confuse the party.     Mechanics: The pixies use their spells to create distractions and illusions, making it difficult for the party to discern reality.      Giant Wolf Spiders (3) (CR 1/4 each)     Description: Large spiders skitter out from the underbrush, their eyes gleaming in the dim light. They surround the party, looking for an opportunity to strike.     Mechanics: The spiders use their Web and Poison Bite abilities to immobilize and poison the party.      Lost Druid offering cryptic advice     Description: A weathered druid, seemingly lost in the woods, approaches the party. He offers cryptic advice and warnings about the dangers ahead.     Mechanics: The druid provides information and potentially a minor magical boon if the party helps him with a small task.      Spectral Deer (use \"Specter\" template) (CR 1)     Description: A ghostly deer materializes from the mist, its eyes glowing with an unnatural light. It seems both a guide and a guardian of the forest.     Mechanics: The spectral deer uses its Incorporeal Movement and Life Drain abilities to challenge the party.      Giant Centipede (CR 1/4)     Description: A massive centipede emerges from beneath the fallen leaves, its many legs skittering rapidly. It moves with unsettling speed and aggression.     Mechanics: The centipede uses its Bite and Poison abilities to attack the party.      Shambling Mound Sapling (CR 2)     Description: A smaller, but no less dangerous, version of a shambling mound stirs from the forest floor. It moves with a slow, relentless determination.     Mechanics: The sapling uses its Slam attacks and Engulf ability to overwhelm the party.      Enchanted Bear (use \"Brown Bear\" template with added magical abilities) (CR 1)     Description: A large bear with a faint magical aura lumbers into view. It seems both protective of the forest and wary of the party.     Mechanics: The bear has additional abilities like a magical roar that causes fear (DC 12 Wisdom save).      Hermit Mage (Neutral) offering cryptic advice     Description: An eccentric mage, living in isolation, appears and offers the party advice. His words are cryptic and filled with warnings about the forest's magic.     Mechanics: The mage can provide a clue or a minor magical item if the party helps him with a task or answers a riddle."
   },
   {
     "title": "Appendix 02",
@@ -90,13 +90,13 @@
     "content": ""
   },
   {
-    "title": "Monster 1",
-    "url": "/monsters/monster-01/",
+    "title": "Green Dragon Wyrmling",
+    "url": "/monsters/green-dragon-wyrmling/",
     "content": ""
   },
   {
-    "title": "Monster 2",
-    "url": "/monsters/monster-02/",
+    "title": "Monster 1",
+    "url": "/monsters/monster-01/",
     "content": ""
   },
   {

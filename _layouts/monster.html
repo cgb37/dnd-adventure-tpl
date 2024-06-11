@@ -15,6 +15,119 @@ layout: default
                 <div>{{ page.jumbo }}</div>
             </div>
         </div>
+
+
+        <div class="col-md-6">
+            <h2>{{ page.name }}</h2>
+
+            {% if page.portrait %}
+            <div class="portrait-image">
+                <img class="img-fluid" src="/assets/images/monsters/{{ page.portrait }}" alt="{{ page.title }} portrait">
+            </div>
+            {% endif %}
+
+            {% if page.description %}
+            <p>{{ page.description }}</p>
+            {% endif %}
+
+            <table class="monster-stats">
+                <tbody>
+                <tr>
+                    <th>Type</th>
+                    <td>{{ page.type }}</td>
+                </tr>
+                <tr>
+                    <th>Size</th>
+                    <td>{{ page.size }}</td>
+                </tr>
+                <tr>
+                    <th>AC</th>
+                    <td>
+                        {{ page.ac }}
+                        {% if page.ac.split(' ').length > 1 %}({{ page.ac.split(' ')[1] }}){% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>HP</th>
+                    <td>
+                        {{ page.hp }} ({{ page.hp_dice }})
+                    </td>
+                </tr>
+                <tr>
+                    <th>Speed</th>
+                    <td>{{ page.speed }}</td>
+                </tr>
+
+                <tr>
+                    <th>Senses</th>
+                    <td>{{ page.senses }}</td>
+                </tr>
+                <tr>
+                    <th>Languages</th>
+                    <td>
+                        {% if page.languages %}
+                        {{ page.languages }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Challenge</th>
+                    <td>CR {{ page.challenge }} ({{ page.challenge_xp }} XP)</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <h3>Special Abilities</h3>
+            <ul>
+                {% for ability in page.special_abilities %}
+                <li>{{ ability.name }}</li>
+                <p>{{ ability.description }}</p>
+                {% endfor %}
+            </ul>
+
+            <h3>Actions</h3>
+            <ul>
+                {% for action in page.actions %}
+                <li>{{ action }}</li>
+                {% endfor %}
+            </ul>
+
+            <h3>Reactions</h3>
+            <ul>
+                {% if page.reactions %}
+                {% for reaction in page.reactions %}
+                <li>{{ reaction }}</li>
+                {% endfor %}
+                {% else %}
+                <li>None</li>
+                {% endif %}
+            </ul>
+
+            <h3>Treasure</h3>
+            <p>
+                {% if page.treasure %}
+                {{ treasure }}
+                {% else %}
+                No treasure specified.
+                {% endif %}
+            </p>
+
+            <h3>Notes</h3>
+            <p>
+                {% if page.notes %}
+                {{ notes }}
+                {% endif %}
+            </p>
+
+
+        </div>
+
+        <div class="col-md-6">
+            
+        </div>
+
         <div class="row">
             {{ content }}
         </div>

@@ -1,0 +1,79 @@
+ChatGPT Responsibility: Create a 2d6 Random Encounter Table that is output in HTML
+
+The user should input:
+- Location: Briefly describe the area where the encounters will occur (e.g., enchanted forest, bustling marketplace, crumbling dungeon).
+- Party Level: What is the average level of the player characters?
+
+Using the Encounter CR as a guideline
+CR = (Proficiency + AC + Hit Points)/3 + (Damage + Attack Bonus + Spell DC)/2 or 3
+
+It will follow specific rules:
+- Dragon (Always 2): A dragon encounter is guaranteed on a roll of 2. The specific type of dragon will be chosen based on the location.
+- Wizard (Always 12): A wizard encounter is guaranteed on a roll of 12. The wizard's alignment and motivations will depend on the setting.
+- NPC (Roll 7): On a roll of 7, the characters encounter a non-combat NPC who could be a friendly merchant, a helpful guide, or a potential quest giver.
+- Universal Threats (8, 9, 10, 11): These rolls represent encounters with creatures or dangers that can occur in any location, such as giant spiders, swarms of insects, or magical traps.
+- Location-Specific Threats (3, 4, 5, 6): These rolls determine encounters with creatures or hazards specific to the chosen location. For example, an enchanted forest might have encounters with treants, pixies, or corrupted fey creatures.
+- Challenge Rating (CR): All encounters will have a CR that is 1-2 levels higher than the average party level to offer a challenging but fair fight.
+
+Example of user input:
+please create a 2d6 random encounter table for an enchanted forest for 4 level 2 characters.
+
+Please use your knowledge base and any uploaded documents such as the Monster Manual, Dungeon Master's Guide, Mordenkainen's Tome of Foes, Volo's Guide to Monsters
+
+The encounter table result should be output in HTML
+
+<h2>Enchanted Forest Encounters (Level 5)</h2>
+<table class="encounter-table">
+  <thead>
+    <tr>
+      <th>Roll</th>
+      <th>Encounter</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2</td>
+      <td>Green Dragon Wyrmling (CR 2)</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Sprites (2) and a Blight (CR 2)</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Giant Spider (CR 1/2) and a Dryad (CR 2)</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Will-o'-Wisps (2) (CR 2)</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Treant Sapling (CR 2)</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Lost Ranger offering a cryptic riddle</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Giant Centipede (CR 2)</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Fey Wanderer (CR 2)</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Hallucinatory Terrain (creates difficult terrain for 1d4 rounds)</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Shambling Mound (CR 2)</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Hermit Mage (Neutral) offering cryptic advice</td>
+    </tr>
+  </tbody>
+</table>

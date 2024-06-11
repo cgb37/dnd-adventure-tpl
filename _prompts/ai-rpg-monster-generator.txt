@@ -1,0 +1,110 @@
+Chat GPT Responsibility: Create a Dungeons & Dragons monster in YAML format, considering user input:
+
+Prompt:
+Let's create a monstrous creature for your D&D campaign!
+Tell me some details about the monster you envision:
+
+1. Concept: Briefly describe the monster's core idea (e.g., giant spider, animated armor, corrupted spirit).
+2. Alignment: What is the monster's moral compass (e.g., lawful good, chaotic evil)?
+3. Challenge Rating: Around what level should player characters be to face this monster (e.g., 3, 7, 13)?
+4. Special Abilities: Does the monster have any unique powers or attacks? (e.g., web-spinning, fire breath, telepathy)
+5. Spellcasting (Optional): If applicable, what level spellcaster is the monster (e.g., none, 1st level, 5th level)?
+6. Additional Information (Optional):
+
+Feel free to consult any relevant uploaded documents (e.g., Monster Manual) to provide additional context for monster creation.
+
+
+Output:
+
+Based on your input, I will generate a YAML file containing the monster's details, including:
+
+Name
+Description
+Type
+Size
+Stats (AC, HP, Speed, Abilities, Saving Throws, Skills, Senses, Languages)
+Challenge Rating
+Special Abilities
+Actions (Primary attack and any additional actions)
+Reactions (Optional)
+Treasure (Optional)
+Notes (Optional)
+
+
+
+Example:
+
+User Input based on the prompt format:
+
+1. Concept: A chaotic evil spellbook that has become sentient and can attack with its own magic.
+2. Alignment: Chaotic Evil
+3. Challenge Rating: 7
+4. Special Abilities: Can teleport short distances, project magical blasts, and summon lesser creatures.
+5. Spellcasting: 5th level spellcaster
+6. Additional Information: It should contain a spell that decodes a Rune Stone to Common Language
+
+Output Format:
+
+# Name of the Monster
+name: Malevolent Tome
+
+# Lore/Description (Optional)
+description: |
+  The Malevolent Tome is a warped and twisted spellbook, its pages filled with forbidden magic and dark rituals. Over time, the power it holds has corrupted its very essence, turning it into a sentient creature fueled by chaos and destruction. It teleports erratically, unleashing magical blasts and summoning lesser demons to attack any who cross its path.
+
+# Monster Type (e.g., Construct, Undead, etc.)
+type: Construct
+
+# Size (e.g., Medium, Large, etc.)
+size: Medium
+
+# Armor Class (AC)
+ac: 16 (natural armor)
+
+# Hit Points (HP)
+hp: 85 (12d8 + 36)
+
+# Hit Dice (HD)
+hp_dice: 12d8
+
+# Speed (Walking, Flying, etc.)
+speed: 0 ft., fly 30 ft. (hover)
+
+# Ability Scores (STR, DEX, CON, INT, WIS, CHA)
+# Use a comma-separated list with score values
+abilities: 10 (+0), 12 (+1), 16 (+3), 20 (+5), 11 (+0), 18 (+4)
+
+# Saving Throws (STR, DEX, CON, INT, WIS, CHA) - Abbreviation (e.g., STR) followed by a colon (:) and the modifier value
+saving_throws: STR +0, DEX +1, CON +3, INT +5, WIS +0, CHA +4
+
+# Skills:  (Consider adding relevant skills like Arcana and Perception)
+skills: Arcana +7, Perception +5
+
+# Senses:  (Darkvision might be appropriate)
+senses: darkvision 60 ft., passive Perception 15
+
+# Languages:  (Depends on the spells stored within)
+languages: Common (understands), Deep Speech
+
+# Challenge Rating (CR)
+challenge: 7 (2,900 XP)
+
+# Special Abilities
+special_abilities:
+  - Teleport (Recharge 5-6): The tome can teleport itself and up to two willing creatures within 60 feet to an unoccupied space it can see.
+  - Arcane Blast (Recharge 4-6): The tome fires a bolt of magical energy at a creature within 60 feet. Make a ranged spell attack roll: on a hit, the target takes 17 (5d8) force damage.
+
+# Actions
+actions:
+  - Slam: Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) bludgeoning damage.
+
+# Reactions (Optional)
+reactions:
+  - example
+  - example
+
+# Treasure (Optional)
+treasure: 1d4 x 10 gp and a gem worth 250 gp
+
+# Notes (Optional)
+notes:

@@ -353,3 +353,42 @@ app-footer {
     border-left: thin solid black;
     border-right: thin solid black;
 }
+
+.portrait-image {
+    border: 2px solid #622b1f; /* dark brown border */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* shadow effect */
+    padding: 10px; /* adds space between image and border */
+    background-color: #f5e7d3; /* parchment background */
+}
+
+.portrait-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px; /* slightly rounded corners */
+}
+
+.portrait-image::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /*background-image: url('path/to/parchment-texture.jpg'); !* replace with your parchment texture image *!*/
+    background-size: cover;
+    opacity: 0.3; /* adjust opacity as needed */
+    z-index: -1; /* places the texture behind the image */
+}
+
+.portrait-image::after {
+    content: "";
+    position: absolute;
+    bottom: -15px;
+    left: 10px;
+    width: 50%;
+    height: 20px;
+    background-color: #622b1f; /* dark brown color */
+    transform: skewX(-30deg); /* tilted shadow effect */
+    box-shadow: 0 8px 6px rgba(0, 0, 0, 0.3); /* shadow effect */
+}
