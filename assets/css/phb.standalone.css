@@ -170,7 +170,7 @@ body {
     padding-left: 1.4em;
     line-height: 1.3em;
     list-style-position: outside;
-    list-style-type: disc
+    list-style-type: none;
 }
 
 .phb ol {
@@ -181,9 +181,7 @@ body {
     list-style-type: decimal
 }
 
-.phb p + p, .phb ul + p, .phb ol + p {
-    text-indent: 1em
-}
+
 
 .phb img {
     z-index: -1
@@ -258,7 +256,7 @@ body {
     font-family: ScalySans;
     width: 100%;
     margin-bottom: 1em;
-    font-size: 10pt
+    font-size: 1em;
 }
 
 .phb table em {

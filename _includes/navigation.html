@@ -21,52 +21,20 @@
                 </li>
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Chapters
                     </a>
-                    <ul class="dropdown-menu">
-                        {% for page in site.pages %}
-                        {% if page.path contains '_pages/chapters/' %}
-
-
-                        <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
-
-
-                        {% endif %}
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        {% for chapter in site.data.chapters.chapters %}
+                        <li class="dropdown-header">{{ chapter.name }}</li>
+                        <li><a class="dropdown-item" href="{{ chapter.path }}">{{ chapter.name }} Index</a></li>
+                        <li class="dropdown-header">Episodes</li>
+                        {% for episode in chapter.episodes %}
+                        <li><a class="dropdown-item" href="{{ episode.path }}">{{ episode.name }}</a></li>
+                        <li class="dropdown-header">Scenes</li>
+                        {% for scene in episode.scenes %}
+                        <li><a class="dropdown-item" href="{{ scene.path }}">{{ scene.name }}</a></li>
                         {% endfor %}
-
-
-                        {% assign chapters = site.pages | where: "dir", "_pages/chapters/" | group_by: "chapter" | sort: "name" %}
-                        {% for chapter in chapters %}
-                        {{ chapter }}
-                        {% assign chapter_pages = chapter.items | sort: "name" %}
-                        {% for page in chapter_pages %}
-{{ page.title }}
-                        {% if page.title %}
-                        <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a>
-                            {% if page.dir contains "/episode-" %}
-                            <ul class="dropdown-menu">
-                                {% assign episode_pages = page.items | sort: "name" %}
-                                {% for episode_page in episode_pages %}
-                                {% if episode_page.title %}
-                                <li><a class="dropdown-item" href="{{ episode_page.url }}">{{ episode_page.title }}</a>
-                                    {% if episode_page.dir contains "/scenes/" %}
-                                    <ul class="dropdown-menu">
-                                        {% assign scene_pages = episode_page.items | sort: "name" %}
-                                        {% for scene_page in scene_pages %}
-                                        {% if scene_page.title %}
-                                        <li><a class="dropdown-item" href="{{ scene_page.url }}">{{ scene_page.title }}</a></li>
-                                        {% endif %}
-                                        {% endfor %}
-                                    </ul>
-                                    {% endif %}
-                                </li>
-                                {% endif %}
-                                {% endfor %}
-                            </ul>
-                            {% endif %}
-                        </li>
-                        {% endif %}
                         {% endfor %}
                         {% unless forloop.last %}
                         <li><hr class="dropdown-divider"></li>

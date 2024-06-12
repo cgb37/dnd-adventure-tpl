@@ -16,117 +16,181 @@ layout: default
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-md-6">
+                <h2>{{ page.name }}</h2>
 
-        <div class="col-md-6">
-            <h2>{{ page.name }}</h2>
+                {% if page.portrait %}
+                <div class="portrait-image">
+                    <img class="img-fluid" src="/assets/images/monsters/{{ page.portrait }}" alt="{{ page.title }} portrait">
+                </div>
+                {% endif %}
 
-            {% if page.portrait %}
-            <div class="portrait-image">
-                <img class="img-fluid" src="/assets/images/monsters/{{ page.portrait }}" alt="{{ page.title }} portrait">
+                {% if page.description %}
+                <p>{{ page.description }}</p>
+                {% endif %}
+
             </div>
-            {% endif %}
 
-            {% if page.description %}
-            <p>{{ page.description }}</p>
-            {% endif %}
+            <div class="col-md-6">
+                <h3>Stat Block</h3>
+                <table class="monster-stats">
+                    <tbody>
+                    <tr>
+                        <th>Type</th>
+                        <td>{{ page.type }}</td>
+                    </tr>
+                    <tr>
+                        <th>Size</th>
+                        <td>{{ page.size }}</td>
+                    </tr>
+                    <tr>
+                        <th>AC</th>
+                        <td>
+                            {{ page.ac.value }}{% if page.ac.type %} ({{ page.ac.type }}){% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>HP</th>
+                        <td>
+                            {{ page.hp }} ({{ page.hp_dice }})
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Abilities</th>
+                        <td>
+                            <ul>
+                                {% assign abilities = page.abilities %}
+                                {% for ability in abilities %}
+                                <li>{{ ability[0] | capitalize }}: {{ ability[1].score }} ({{ ability[1].modifier }})</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
 
-            <table class="monster-stats">
-                <tbody>
-                <tr>
-                    <th>Type</th>
-                    <td>{{ page.type }}</td>
-                </tr>
-                <tr>
-                    <th>Size</th>
-                    <td>{{ page.size }}</td>
-                </tr>
-                <tr>
-                    <th>AC</th>
-                    <td>
-                        {{ page.ac }}
-                        {% if page.ac.split(' ').length > 1 %}({{ page.ac.split(' ')[1] }}){% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>HP</th>
-                    <td>
-                        {{ page.hp }} ({{ page.hp_dice }})
-                    </td>
-                </tr>
-                <tr>
-                    <th>Speed</th>
-                    <td>{{ page.speed }}</td>
-                </tr>
+                    <tr>
+                        <th>Saving Throws</th>
+                        <td>
+                            <ul>
+                                {% for throw in page.saving_throws %}
+                                <li>{{ throw.name | capitalize }}: ({{ throw.modifier }})</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Speed</th>
+                        <td>{{ page.speed }}</td>
+                    </tr>
 
-                <tr>
-                    <th>Senses</th>
-                    <td>{{ page.senses }}</td>
-                </tr>
-                <tr>
-                    <th>Languages</th>
-                    <td>
-                        {% if page.languages %}
-                        {{ page.languages }}
-                        {% else %}
-                        -
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Challenge</th>
-                    <td>CR {{ page.challenge }} ({{ page.challenge_xp }} XP)</td>
-                </tr>
-                </tbody>
-            </table>
+                    <tr>
+                        <th>Senses</th>
+                        <td>{{ page.senses }}</td>
+                    </tr>
+                    <tr>
+                        <th>Languages</th>
+                        <td>
+                            {% if page.languages %}
+                            {{ page.languages | join: ", " }}
+                            {% else %}
+                            No languages listed.
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Challenge</th>
+                        <td>CR {{ page.challenge }} ({{ page.challenge_xp }} XP)</td>
+                    </tr>
+                    </tbody>
+                </table>
 
-            <h3>Special Abilities</h3>
-            <ul>
-                {% for ability in page.special_abilities %}
-                <li>{{ ability.name }}</li>
-                <p>{{ ability.description }}</p>
+                <h3>Special Abilities</h3>
+                {% if page.special_abilities %}
+                    {% for ability in page.special_abilities %}
+                    <p>
+                        <strong>{{ ability.name }}</strong>: {{ ability.description }}
+                    </p>
+                    {% endfor %}
+                {% else %}
+                <p>No Special Abilities.</p>
+                {% endif %}
+
+                <h3>Actions</h3>
+                {% if page.actions %}
+                    {% for action in page.actions %}
+
+                        <p><strong>{{ action.name }}:</strong> {{ action.type }}: +{{ action.hit_bonus }} to hit, reach {{ action.reach }}, {{ action.target }}.</p>
+                        <p><strong>Hit:</strong>
+                        {% for dmg in action.damage %}
+                            {{ dmg.avg }} ({{ dmg.dice }}) {{ dmg.type }} damage{% if forloop.last == false %} plus {% endif %}
+                        {% endfor %}</p>
+
+                    {% endfor %}
+                {% else %}
+                <p>No Actions.</p>
+                {% endif %}
+
+                <h3>Spellcasting</h3>
+
+                <p><strong>Ability:</strong> {{ page.spellcasting.ability }}</p>
+                <p><strong>Spell Save DC:</strong> {{ page.spellcasting.dc }}</p>
+
+                <h4>Spell Slots</h4>
+                <ul>
+                    {% assign slots = page.spellcasting.slots %}
+                    {% for level in slots %}
+                    <li>Level {{ level[0] | replace: 'level_', '' }}: {{ level[1] }} slots</li>
+                    {% endfor %}
+                </ul>
+                <h4>Spells</h4>
+                <h5>Cantrips</h5>
+                <ul>
+                    {% for spell in page.spellcasting.spells.cantrips %}
+                    <li>{{ spell }}</li>
+                    {% endfor %}
+                </ul>
+
+                {% for level in page.spellcasting.spells %}
+                {% if level[0] contains 'level_' %}
+                <h4>Level {{ level[0] | replace: 'level_', '' }}</h4>
+                <ul>
+                    {% for spell in level[1] %}
+                    <li>{{ spell }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
                 {% endfor %}
-            </ul>
 
-            <h3>Actions</h3>
-            <ul>
-                {% for action in page.actions %}
-                <li>{{ action }}</li>
-                {% endfor %}
-            </ul>
-
-            <h3>Reactions</h3>
-            <ul>
+                <h3>Reactions</h3>
                 {% if page.reactions %}
-                {% for reaction in page.reactions %}
-                <li>{{ reaction }}</li>
-                {% endfor %}
+                    {% for reaction in page.reactions %}
+                    <p>
+                        <strong>{{ reaction.name }}:</strong> {{ reaction.description }}
+                    </p>
+                    {% endfor %}
                 {% else %}
-                <li>None</li>
+                <p>No reactions listed.</p>
                 {% endif %}
-            </ul>
 
-            <h3>Treasure</h3>
-            <p>
-                {% if page.treasure %}
-                {{ treasure }}
-                {% else %}
-                No treasure specified.
-                {% endif %}
-            </p>
+                <h3>Treasure</h3>
+                <p>
+                    {% if page.treasure %}
+                    {{ page.treasure }}
+                    {% else %}
+                    No treasure specified.
+                    {% endif %}
+                </p>
 
-            <h3>Notes</h3>
-            <p>
-                {% if page.notes %}
-                {{ notes }}
-                {% endif %}
-            </p>
-
+                <h3>Notes</h3>
+                <p>
+                    {% if page.notes %}
+                    {{ page.notes }}
+                    {% endif %}
+                </p>
+            </div>
 
         </div>
 
-        <div class="col-md-6">
-            
-        </div>
 
         <div class="row">
             {{ content }}

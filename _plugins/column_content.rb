@@ -1,5 +1,3 @@
-puts "Loading custom column tags plugin..."
-
 module Jekyll
   class ColumnBlock < Liquid::Block
     def initialize(tag_name, markup, tokens)
