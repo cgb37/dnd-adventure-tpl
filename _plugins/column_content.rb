@@ -7,7 +7,7 @@ module Jekyll
 
     def render(context)
       content = super
-      "<div class='col-6'>#{content}</div>"
+      "<div class='col-md-6'>#{content}</div>"
     end
   end
 end

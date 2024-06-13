@@ -25,16 +25,11 @@
                         Chapters
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        {% for chapter in site.data.chapters.chapters %}
+                        {% for chapter in site.data.chapters %}
+                        {{ dump(chapter) }}
                         <li class="dropdown-header">{{ chapter.name }}</li>
-                        <li><a class="dropdown-item" href="{{ chapter.path }}">{{ chapter.name }} Index</a></li>
-                        <li class="dropdown-header">Episodes</li>
-                        {% for episode in chapter.episodes %}
-                        <li><a class="dropdown-item" href="{{ episode.path }}">{{ episode.name }}</a></li>
-                        <li class="dropdown-header">Scenes</li>
-                        {% for scene in episode.scenes %}
-                        <li><a class="dropdown-item" href="{{ scene.path }}">{{ scene.name }}</a></li>
-                        {% endfor %}
+                        {% for file in chapter.files %}
+                        <li><a class="dropdown-item" href="{{ file.path }}">{{ file.name }}</a></li>
                         {% endfor %}
                         {% unless forloop.last %}
                         <li><hr class="dropdown-divider"></li>

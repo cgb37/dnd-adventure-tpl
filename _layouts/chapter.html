@@ -18,7 +18,17 @@ layout: default
         </div>
         {% endif %}
         <div class="row">
-            {{ content }}
+            <div class="col-md-3">
+                <!-- Include the chapter TOC -->
+                {% include chapter_toc.html %}
+            </div>
+            <div class="col-md-9">
+                <div class="row">
+                    {{ content }}
+                </div>
+
+            </div>
+
         </div>
     </div>
 </div>

@@ -1,35 +1,9 @@
-chapters:
-  - name: "Chapter 01"
-    path: "/chapter-01/"
-    episodes:
-      - name: "Episode 01: Whispering Shadows"
-        path: "/chapter-01/episode-01/"
-        scenes:
-          - name: "Gathering Information in Bramblewood"
-            path: "/chapter-01/episode-01/scenes/01-01-01-scene-gathering-information-in-bramblewood.html"
-          - name: "Navigating the Enchanted Forest"
-            path: "/chapter-01/episode-01/scenes/01-01-02-scene-navigating-the-enchanted-forest.html"
-      - name: "Episode 02: Merchant's Gambit"
-        path: "/chapter-01/episode-02/"
-        scenes:
-          - name: "Scene 1"
-            path: "/chapter-01/episode-02/scenes/01-02-01-scene-01.html"
-          - name: "Scene 2"
-            path: "/chapter-01/episode-02/scenes/01-02-02-scene-02.html"
-  - name: "Chapter 02"
-    path: "/chapter-02/"
-    episodes:
-      - name: "Episode 01"
-        path: "/chapter-02/episode-01/"
-        scenes:
-          - name: "Scene 1"
-            path: "/chapter-02/episode-01/scenes/02-01-01-scene-01.html"
-          - name: "Scene 2"
-            path: "/chapter-02/episode-01/scenes/02-01-02-scene-02.html"
-      - name: "Episode 02"
-        path: "/chapter-02/episode-02/"
-        scenes:
-          - name: "Scene 1"
-            path: "/chapter-02/episode-02/scenes/02-02-01-scene-01.html"
-          - name: "Scene 2"
-            path: "/chapter-02/episode-02/scenes/02-02-02-scene-02.html"
+---
+- name: Chapter 01
+  files:
+  - name: 'Chapter 01: Forging Unlikely Alliances'
+    path: "/chapters/chapter-01/index/index.html"
+- name: Chapter 02
+  files:
+  - name: 'Chapter 02: Get Approval from a God'
+    path: "/chapters/chapter-02/index/index.html"

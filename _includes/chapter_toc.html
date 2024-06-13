@@ -1,0 +1,24 @@
+{% assign chapter_num = page.chapter | plus: 0 %}
+{% if chapter_num < 10 %}
+{% assign chapter_dir = "chapter-0" | append: chapter_num %}
+{% else %}
+{% assign chapter_dir = "chapter-" | append: chapter_num %}
+{% endif %}
+{% assign chapter_path = "_pages/chapters/" | append: chapter_dir %}
+{% assign chapter_url = "/chapters/" | append: chapter_dir %}
+{% assign all_pages = site.pages | where_exp: "page", "page.path contains chapter_path" %}
+<div class="toc">
+    <h2>Table of Contents</h2>
+    {% assign episodes = all_pages | where_exp: "page", "page.layout == 'episode'" %}
+    {% for episode in episodes %}
+    <h3><a href="{{ episode.url }}">{{ episode.title }}</a></h3>
+    {% assign episode_scenes = all_pages | where_exp: "page", "page.episode == episode.episode and page.layout == 'scene'" %}
+    {% if episode_scenes.size > 0 %}
+    <ul>
+        {% for scene in episode_scenes %}
+        <li><a href="{{ scene.url }}">{{ scene.title }}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endfor %}
+</div>
