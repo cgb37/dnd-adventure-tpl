@@ -12,16 +12,11 @@ layout: default
         </div>
         {% if page.jumbo %}
         <div class="row">
-            <div class="col-12">
-
-                    <img src="/assets/images/locations/{{ page.jumbo }}" class="img-fluid" alt="{{ page.title }} battle map">
-
+            <div class="col-md-12">
+                <img src="/assets/images/locations/{{ page.jumbo }}" class="img-fluid" alt="{{ page.title }} battle map">
             </div>
         </div>
         {% endif %}
-        <div class="row">
-            {{ content }}
-        </div>
 
         <div class="row">
 
@@ -130,7 +125,9 @@ layout: default
 
         </div>
 
-
+        <div class="row">
+            {{ content }}
+        </div>
     </div>
 </div>
 
