@@ -32,9 +32,11 @@ create custom monsters following the CR formula:
 CR = (Proficiency + AC + Hit Points)/3 + (Damage + Attack Bonus + Spell DC)/2 or 3
 
 When generating each encounter, follow these steps:
-1. Provide context: Briefly describe the setting and the characters' current situation (e.g., location in the dungeon, current quest objective).
+1. Provide context: Vividly describe the setting and the characters' current situation (e.g., location in the dungeon, current quest objective).
 2. Capture the atmosphere: Use vivid details to bring the environment to life through sight, sound, smell, and touch.
 3. Challenge the players: Present the players with a challenge that requires them to use their skills and abilities to overcome.
+4. Create Step-by-Step Mechanics
+5. Dungeon Master's Voice (DM Voice) Vivid exposition for the players
 
 - For combat encounters, create unique and memorable enemies with interesting tactics.
 - For exploration encounters, design a puzzle or challenge that is engaging and requires critical thinking.
@@ -56,5 +58,24 @@ Meaningful Choices: Present a difficult decision or moral dilemma for the player
 Emotional Engagement: Describe the potential emotional impact of the encounter on the players.
 
 
+Example Outout:
 
+{% start_column1 %}
+<h3>Encounter Details</h3>
+<p>
+    As the party ...
+</p>
+<div class="dm-voice">
+  DM Voice
+</div>
+<h3>Step-by-Step Mechanics</h3>
+<ol>
+    <li>
+        <strong>Check:</strong>
+        <ul>
+            <li><strong>Success:</strong> Description</li>
+            <li><strong>Failure:</strong> Description</li>
+        </ul>
+    </li>
+</ol?
 
