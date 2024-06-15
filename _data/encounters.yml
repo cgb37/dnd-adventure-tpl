@@ -1,15 +1,15 @@
 ---
-- title: The Unveiling of the Betrayal
-  permalink: "/encounters/the-unveiling-of-the-betrayal"
-  chapter: 1
-  episode: 1
-  scene: 1
-  category: encounter
-  thumb: ''
 - title: Shifting Paths
   permalink: "/encounters/shifting-paths"
   chapter: 1
   episode: 1
   scene: 2
+  category: encounter
+  thumb: ''
+- title: The Unveiling of the Betrayal
+  permalink: "/encounters/the-unveiling-of-the-betrayal"
+  chapter: 1
+  episode: 1
+  scene: 1
   category: encounter
   thumb: ''
