@@ -1,1 +1,1 @@
-Chapter: {{ page.chapter }} Episode: {{ page.episode }} Scene: {{ page.scene }}
+{% if page.chapter %}Chapter: {{ page.chapter }} {% endif %} {% if page.episode %}Episode: {{ page.episode }} {% endif %} {% if page.scene %}Scene: {{ page.scene }} {% endif %} {% if page.category %}Category: {{ page.category }} {% endif %}

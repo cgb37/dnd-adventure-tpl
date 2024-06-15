@@ -1,7 +1,7 @@
 {% assign chapter_locations = site.data.locations | where: "chapter", include.chapter %}
 <h3>Locations</h3>
-<ul class="list-group list-group-flush">
+<ul>
     {% for location in chapter_locations %}
-    <li class="list-group-item"><a href="{{ location.permalink }}">{{ location.title }}</a></li>
+    <li><a href="{{ location.permalink }}">{{ location.title }}</a></li>
     {% endfor %}
 </ul>

@@ -1,8 +1,15 @@
 ---
 layout: episode
 title: "Episode 1"
-chapter: 01
-episode: 01
+category: episode
+chapter: 1
+episode: 1
+scene: 1
 jumbo:
 thumb:
+portrait:
+tags:
+search: true
+excerpt_separator: ""
+
 ---
