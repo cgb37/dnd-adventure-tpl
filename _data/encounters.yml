@@ -1,9 +1,15 @@
 ---
-- title: "My Title"
+- title: The Unveiling of the Betrayal
+  permalink: "/encounters/the-unveiling-of-the-betrayal"
+  chapter: 1
+  episode: 1
+  scene: 1
+  category: encounter
+  thumb: ''
+- title: Shifting Paths
   permalink: "/encounters/shifting-paths"
-  chapter: "01"
-  category: "encounter"
-- title: "My Title 2"
-  permalink: "/encounters/another-link"
-  chapter: "01"
-  category: "encounter"
+  chapter: 1
+  episode: 1
+  scene: 2
+  category: encounter
+  thumb: ''

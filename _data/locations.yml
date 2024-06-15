@@ -1,13 +1,15 @@
 ---
 - title: Village of Bramblewood
-  permalink: "/locations/:slug"
+  permalink: "/locations/village-of-bramblewood"
   chapter: 1
   episode: 1
   scene: 1
   category: location
+  thumb: ''
 - title: Whispering Woods
-  permalink: "/locations/:slug"
+  permalink: "/locations/whispering-woods"
   chapter: 1
   episode: 1
   scene: 2
   category: location
+  thumb: ''
