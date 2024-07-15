@@ -1,0 +1,7 @@
+Create a highly detailed top-down 2D battle map for a Dungeons & Dragons game inspired by Mont-Saint-Michel.
+The map should be in a 16:9 aspect ratio, with a top-down view and no grid overlay.
+The central structure should be a large abbey or fortress with multiple detailed rooms and areas, surrounded by thick
+defensive walls with towers at the corners. The entire complex should be encircled by water, with bridges and entry
+points connecting it to the mainland. The internal rooms should include detailed interiors like throne rooms, bedrooms,
+storage areas, and gardens. The surrounding environment should feature lush greenery, rocks, and pathways, capturing
+the shape and construction of Mont-Saint-Michel.

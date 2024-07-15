@@ -6,6 +6,13 @@
   scene: 1
   category: location
   thumb: ''
+- title: Sanctuary of the Tidal Archon
+  permalink: "/locations/sanctuary-of-the-tidal-archon"
+  chapter: 2
+  episode: 2
+  scene: 2
+  category: location
+  thumb: sanctuary-of-the-tidal-archon_160x90.webp
 - title: Village of Bramblewood
   permalink: "/locations/village-of-bramblewood"
   chapter: 1
@@ -19,4 +26,4 @@
   episode: 1
   scene: 2
   category: location
-  thumb: ''
+  thumb: whispering-woods-battle-map_160x90.webp

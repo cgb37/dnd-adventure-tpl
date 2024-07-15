@@ -38,9 +38,6 @@
                     </ul>
                 </li>
 
-
-
-
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Encounters
@@ -100,6 +97,19 @@
                     <ul class="dropdown-menu">
                         {% for page in site.pages %}
                         {% if page.path contains '_pages/monsters/' %}
+                        <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Galleries
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for page in site.pages %}
+                        {% if page.path contains '_pages/galleries/' %}
                         <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
                         {% endif %}
                         {% endfor %}

@@ -357,7 +357,7 @@ app-footer {
 .portrait-image {
     border: 7px solid #622b1f; /* dark brown border */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* shadow effect */
-    padding: 20px; /* adds space between image and border */
+    padding: 10px; /* adds space between image and border */
     background-color: #f5e7d3; /* parchment background */
     margin-bottom: 20px;
 }

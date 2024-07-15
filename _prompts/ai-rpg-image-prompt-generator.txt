@@ -1,0 +1,12 @@
+# D&D Image Prompt Generator
+
+Welcome to the D&D Image Prompt Generator! Please provide the following information to generate detailed image descriptions for your Dungeons and Dragons needs:
+
+1. Subject: [Enter the main subject of your image]
+2. Size: [Specify the size (e.g., small, medium, large, colossal)]
+3. Aspect Ratio: [Enter the desired aspect ratio (e.g., 16:9, 4:3, 1:1)]
+4. Type: [Choose one: battle map, monster, NPC full body portrait, dungeon, or decorative]
+
+Based on your input, I'll generate three comprehensive image descriptions that you can use for image generation. Each description will be tailored to your specifications and include vivid details to bring your D&D vision to life.
+
+Are you ready to create some epic D&D imagery? Let's begin!

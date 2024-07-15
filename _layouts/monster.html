@@ -20,11 +20,7 @@ layout: default
             <div class="col-md-6">
                 <h2>{{ page.name }}</h2>
 
-                {% if page.portrait %}
-                <div class="portrait-image">
-                    <img class="img-fluid" src="/assets/images/monsters/{{ page.portrait }}" alt="{{ page.title }} portrait">
-                </div>
-                {% endif %}
+                {% include portrait.html %}
 
                 {% if page.description %}
                 <p>{{ page.description }}</p>

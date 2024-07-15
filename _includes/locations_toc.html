@@ -1,5 +1,5 @@
 {% assign chapter_locations = site.data.locations | where: "chapter", include.chapter %}
-<h3>Locations</h3>
+<h3>Chapter {{ include.chapter }} Locations</h3>
 <ul>
     {% for location in chapter_locations %}
     <li><a href="{{ location.permalink }}">{{ location.title }}</a></li>
