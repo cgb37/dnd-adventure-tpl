@@ -3,21 +3,4 @@ layout: default
 permalink: /gallery/:slug
 ---
 
-<!--<div class="container">-->
-<!--    <div class="row">-->
-<!--        {% assign locations = site.data.locations | sort: "chapter" %}-->
-<!--        {% for location in locations %}-->
-<!--        {% assign rowCount = forloop.index | modulo:4 %}-->
-<!--        {% if rowCount == 1 %}-->
-<!--        <div class="row">-->
-<!--            {% endif %}-->
-<!--            <div class="col-md-3">-->
-<!--                {% assign page = location %}-->
-<!--                {% include gallery_card.html %}-->
-<!--            </div>-->
-<!--            {% if rowCount == 0 or forloop.last %}-->
-<!--        </div>-->
-<!--        {% endif %}-->
-<!--        {% endfor %}-->
-<!--    </div>-->
-<!--</div>-->
+{% include gallery.html gallery="locations" %}

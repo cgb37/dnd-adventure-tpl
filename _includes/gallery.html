@@ -1,0 +1,28 @@
+{% assign items = site.data[include.gallery] | sort: "chapter" %}
+<div class="container">
+    <div class="row">
+        {% for item in items %}
+        {% assign rowCount = forloop.index | modulo: 4 %}
+        {% if rowCount == 1 %}
+        <div class="row">
+        {% endif %}
+            <div class="col-md-3">
+                <div class="card" data-bs-theme="dark">
+                    <img src="/assets/images/{{ item.thumb }}" class="card-img-top" alt="{{ item.title }}">
+                    <div class="card-body">
+                        <a href="{{ item.permalink }}" class="btn btn-primary">
+                            {% if item.name %}
+                                {{ item.name }}
+                            {% else %}
+                                {{ item.title }}
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% if rowCount == 0 or forloop.last %}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
