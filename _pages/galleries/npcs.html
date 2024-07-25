@@ -3,17 +3,17 @@ layout: default
 permalink: /gallery/:slug
 ---
 
+
 <div class="container">
     <div class="row">
         {% assign npcs = site.data.npcs | sort: "chapter" %}
         {% for npc in npcs %}
-        {% assign rowCount = forloop.index | modulo:4 %}
+        {% assign rowCount = forloop.index | modulo: 4 %}
         {% if rowCount == 1 %}
         <div class="row">
             {% endif %}
             <div class="col-md-3">
-                {% assign page = npc %}
-                {% include card.html %}
+                {% include gallery_card.html npc=npc %}
             </div>
             {% if rowCount == 0 or forloop.last %}
         </div>

@@ -1,90 +1,326 @@
 ---
 layout: npc
-title: "Einar the Bold"
+title: Einar the Bold
 permalink: /npcs/:slug
 category: npc
 chapter: 01
 episode: 01
 scene: 01
 jumbo:
-thumb:
-portrait: "einar-the-bold-portrait.webp"
+thumb: einar-the-bold-180x320.webp
+portrait: "einar-the-bold-720x1280.webp"
 tags:
 search: true
 excerpt_separator: ""
-
-name: "Einar the Bold"
+name: "Einar Stormborn: The Lost Prince"
 race: "Human"
-class: "Fighter"
+class: "Fighter (Battle Master) 9 / Cleric (Life Domain) 4"
 alignment: "Neutral Good"
 background: "Noble"
-level: 3
-hit_points: 28
-armor_class: 16 (Chain Mail)
+level: 13
+hit_points: 115
+armor_class: 18 (Plate Armor)
 speed: 30
 attributes:
-  strength: 16 (+3)
+  strength: "18 (+4)"
   dexterity: 12 (+1)
-  constitution: 14 (+2)
+  constitution: 16 (+3)
   intelligence: 10 (+0)
-  wisdom: 13 (+1)
+  wisdom: 14 (+2)
   charisma: 15 (+2)
 skills:
   - skill: "Athletics"
-    modifier: +5
-  - skill: "Intimidation"
-    modifier: +4
+    modifier: +8
+  - skill: "Insight"
+    modifier: +6
   - skill: "Persuasion"
+    modifier: +6
+  - skill: "History"
     modifier: +4
-  - skill: "Survival"
-    modifier: +3
 abilities:
-  - name: "Second Wind"
-    description: "Einar can use a bonus action to regain 1d10 + 3 HP once per short or long rest."
   - name: "Action Surge"
-    description: "On his turn, Einar can take one additional action on top of his regular action and a possible bonus action once per short or long rest."
-  - name: "Fighting Style: Defense"
-    description: "Einar gains a +1 bonus to AC while wearing armor."
+    description: "On your turn, you can take one additional action on top of your regular action and a possible bonus action. Once you use this feature, you must finish a short or long rest before you can use it again."
+  - name: "Second Wind"
+    description: "You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level. Once you use this feature, you must finish a short or long rest before you can use it again."
+  - name: "Combat Superiority"
+    description: "You have four superiority dice, which are d10s. You regain all of your expended superiority dice when you finish a short or long rest. You can use them to fuel various maneuvers."
+  - name: "Channel Divinity: Preserve Life"
+    description: "As an action, you can use your Channel Divinity to heal the badly injured. Choose any creatures within 30 feet of you, and divide hit points equal to five times your cleric level among them."
+  - name: "Blessed Healer"
+    description: "When you cast a spell of 1st level or higher that restores hit points to a creature other than you, you regain hit points equal to 2 + the spell's level."
 equipment:
-  - item: "Greatsword"
-    description: "A finely crafted greatsword with an ornate hilt, passed down through Einar's family."
-  - item: "Chain Mail"
-    description: "Standard issue chain mail armor, providing substantial protection in battle."
-  - item: "Noble Signet Ring"
-    description: "A ring bearing the crest of Einar’s noble house, symbolizing his claim to leadership."
-  - item: "Adventurer's Pack"
-    description: "Contains various supplies for survival and exploration, including rope, rations, and a bedroll."
+  - item: "Stormborn's Blade"
+    description: "A longsword that crackles with lightning, dealing an extra 1d6 lightning damage on a hit."
+  - item: "Shield of the Guardian"
+    description: "A shield emblazoned with the symbol of his unknown royal lineage, granting a +2 bonus to AC and advantage on saving throws against being frightened."
+  - item: "Ring of Einar"
+    description: "A ring given to him by his adoptive merchant family, a symbol of their bond."
 personality_traits:
-  - "Einar is driven by a strong sense of justice and duty."
-  - "He is fiercely protective of his allies and those who cannot defend themselves."
+  - "Einar speaks with confidence and commands respect, always carrying himself with the bearing of a leader."
+  - "He is fiercely protective of those he considers family and friends, often putting their needs before his own."
 ideals:
-  - "Honor above all else." 
-  - "A leader must be willing to sacrifice for the greater good." 
+  - "Justice: Einar believes in fighting for what is right and just, helping those in need. (Good)"
+  - "Destiny: Einar believes that his life has a purpose and seeks to fulfill his role in the prophecy. (Lawful)"
 bonds:
-  - "Einar seeks to reclaim his birthright and restore his family’s honor."
-  - "He is devoted to his comrades, viewing them as his new family."
+  - "Einar seeks to reunite with his twin brother Hrothgar and prevent the prophecy of a divided kingdom."
+  - "He is determined to honor his adoptive family, the merchants who raised him, by using his royal influence to better their lives."
 flaws:
-  - "Einar can be overly stubborn, refusing to back down even when it is strategically wise."
-  - "His desire for vengeance can cloud his judgment."
-appearance:
-  "Einar is a tall and muscular man with broad shoulders and a commanding presence. His long brown hair is often tied back, and his piercing blue eyes reflect his determination. He wears chain mail and carries a greatsword, with a noble signet ring on his finger."
-backstory:
-  "Born into a noble family, Einar was raised with the values of honor, duty, and leadership. His family ruled a small but prosperous region until his cousin Hrothgar betrayed them, usurping the throne and driving Einar into exile. Now, Einar seeks to gather allies and resources to reclaim his rightful place and bring justice to his people."
+  - "Einar sometimes struggles with the burden of his destiny, feeling the weight of expectations on his shoulders."
+  - "He can be overly trusting, especially towards those who show him kindness, sometimes leading to betrayal."
+appearance: "Einar is a tall and broad-shouldered man in his late twenties, with striking blue eyes and sandy blonde hair that falls to his shoulders. He wears finely crafted plate armor and carries a shield adorned with a mysterious crest. His presence is commanding, and he moves with the grace and confidence of a seasoned warrior."
+backstory: "Einar the Bold, known in the southern lands as Einar Stormborn, grew up unaware of his royal heritage. Raised by a merchant family, he excelled in trade, diplomacy, and warfare. On Einar's 25th birthday, Thorvald approached him with the truth of his heritage. He revealed not only Einar's royal lineage but also the existence of his twin brother, Hrothgar, and the prophecy that had led to their separation. Thorvald explained that King Bjorn, fearing the prophecy of a divided kingdom, had chosen to send Einar away to prevent conflict. Einar now embarks on a journey to find his brother and fulfill his destiny."
 allies:
-  - name: "Maelis the Arcane"
-    relationship: "A powerful wizard who becomes an ally after Einar proves his worth by completing a quest."
-  - name: "Serethiel"
-    relationship: "A warrior-priestess who supports Einar's cause after he demonstrates his commitment to justice."
+  - name: "Thorvald"
+    relationship: "A wise and loyal advisor who revealed Einar's true heritage and the prophecy."
+  - name: "Freya"
+    relationship: "A childhood friend and skilled healer who accompanies Einar on his journey, providing support and counsel."
 enemies:
-  - name: "Hrothgar the Usurper"
-    relationship: "Einar’s cousin who betrayed and overthrew his family, seizing control of their land."
-  - name: "Duncan the Merciless"
-    relationship: "A ruthless mercenary captain loyal to Hrothgar, who frequently clashes with Einar and his allies."
+  - name: "Lord Valthor"
+    relationship: "A power-hungry noble who seeks to use the prophecy to his advantage, seeing Einar as a threat to his ambitions."
+  - name: "The Shadow Cult"
+    relationship: "A secretive organization that wishes to prevent Einar from fulfilling his destiny, believing it will bring about their downfall."
 goals:
-  - "Reclaim his family's throne and restore honor to his name."
-  - "Unite the fractured regions under a just and noble rule."
+  - "Short-term: Find and reunite with his twin brother Hrothgar."
+  - "Long-term: Fulfill the prophecy and bring peace and unity to the kingdom."
 hooks:
-  - "Einar’s quest for allies brings him into contact with the party, who must decide whether to support his cause."
-  - "Hrothgar’s spies are everywhere, and the party may be approached with offers to betray Einar."
-notes: "Einar's story is one of redemption, justice, and the struggle to reclaim what was lost. His journey will test the party's loyalty, strategy, and sense of honor."
+  - "The party discovers a clue about Hrothgar's whereabouts and seeks out Einar to help them on their quest."
+  - "Einar needs assistance in defending a village from the Shadow Cult, promising to aid the party in return."
+notes: "Einar's destiny is tied to the prophecy, and his actions will have significant repercussions for the kingdom. He is a pivotal character in any campaign involving royal intrigue or ancient prophecies."
 ---
+
+{% start_column1 %}
+<h1>Einar Stormborn: The Lost Prince's Quest for the Crown</h1>
+<div class="section">
+  <h2>A Prince in Exile</h2>
+  <p>Einar, known in the southern lands as Einar Stormborn, grew up unaware of his royal heritage. Raised by a merchant family, he excelled in trade, diplomacy, and warfare. His adoptive parents, sworn to secrecy by Thorvald One-Eye, never revealed the truth of his birth. Yet, they couldn't help but notice the boy's innate leadership abilities and his uncanny resemblance to the royal family of Veldan.</p>
+</div>
+
+<div class="section">
+  <h2>The Whispers of Destiny</h2>
+  <p>As Einar entered adulthood, he began experiencing vivid dreams of a snow-covered land and a golden-haired warrior who seemed eerily familiar. These dreams coincided with the appearance of a birthmark on his shoulder - a perfect replica of the Ironheart family crest.</p>
+  <p>Rumors of these dreams and the birthmark spread, reaching the ears of those who remembered the old prophecy. Among them was an aging Thorvald One-Eye, wracked with guilt over his role in separating the twins.</p>
+</div>
+
+<div class="section">
+  <h2>The Revelation</h2>
+  <p>On Einar's 25th birthday, Thorvald approached him with the truth of his heritage. He revealed not only Einar's royal lineage but also the existence of his twin brother, Hrothgar, and the prophecy that had led to their separation. Thorvald explained that King Bjorn, fearing the prophecy of a divided kingdom, had chosen to send Einar away to prevent conflict.</p>
+  <p>However, Thorvald also shared his growing concerns about Veldan under Hrothgar's rule. He spoke of increasing militarization, paranoid crackdowns on dissenters, and a kingdom living in fear of both internal and external threats. In Thorvald's eyes, the very act of separating the twins had set the prophecy in motion.</p>
+</div>
+
+<div class="section">
+  <h2>A Destined Reunion</h2>
+  <p>Einar, grappling with this newfound knowledge, came to believe that the prophecy spoke not of division, but of reunification. He became convinced that only by claiming his rightful place alongside his brother could the kingdom of Veldan truly prosper.</p>
+  <p>With this conviction, Einar began to gather supporters - those who believed in the prophecy, those who sought change in Veldan, and those who saw in Einar the qualities of a just and capable ruler. His charisma, combined with his proven skills in trade and diplomacy, made him a compelling figure for many.</p>
+</div>
+
+<div class="section">
+  <h2>The March to Reclaim</h2>
+  <p>Einar's journey to Veldan was not one of conquest, but of homecoming. He sought not to usurp Hrothgar, but to reunite with his brother and fulfill what he saw as their shared destiny. His followers spread word of the lost prince's return, speaking of reunion, reconciliation, and a new era of prosperity for Veldan.</p>
+  <p>However, years of separation and misunderstanding had sown seeds of conflict. Hrothgar, plagued by paranoia and the weight of his solitary rule, saw Einar's approach not as a homecoming, but as the fulfillment of his worst fears - the arrival of the usurper from across the sea.</p>
+</div>
+
+<div class="section">
+  <h2>A Kingdom Divided</h2>
+  <p>As Einar's forces drew closer to the heart of Veldan, the kingdom found itself divided. Some saw Einar as a savior, come to balance Hrothgar's harsh rule. Others remained loyal to Hrothgar, viewing Einar as a foreign invader with a fraudulent claim.</p>
+  <p>The stage was set for a confrontation between the twin princes - one raised in the harsh realities of kingship, the other bringing fresh perspectives from lands afar. The fate of Veldan hung in the balance, with the true meaning of the prophecy yet to be revealed.</p>
+</div>
+
+<div class="section">
+  <h2>Revised Plot Hook</h2>
+  <p>In light of this revised backstory, we can update the plot hook as follows:</p>
+  
+</div>
+
+{% endstart_column1 %}
+
+
+{% start_column2 %}
+
+
+<h2>Character Sheet: Human Fighter (Battle Master) 9 / Cleric (Life Domain) 4</h2>
+
+<h3>Character Name:</h3>
+<p>Sir Alexander Brightshield</p>
+
+<h3>Race:</h3>
+<p>Human</p>
+
+<h3>Class:</h3>
+<p>Fighter (Battle Master) 9 / Cleric (Life Domain) 4</p>
+
+<h3>Level:</h3>
+<p>13</p>
+
+<h3>Background:</h3>
+<p>Noble</p>
+
+<h3>Alignment:</h3>
+<p>Neutral Good</p>
+
+<h3>Experience Points:</h3>
+<p>78,000</p>
+
+<h3>Proficiency Bonus:</h3>
+<p>+5</p>
+
+<h3>Languages:</h3>
+<p>Common, Celestial</p>
+
+<h3>Ability Scores</h3>
+<ul>
+  <li><strong>Strength:</strong> 18 (+4)</li>
+  <li><strong>Dexterity:</strong> 14 (+2)</li>
+  <li><strong>Constitution:</strong> 16 (+3)</li>
+  <li><strong>Intelligence:</strong> 10 (+0)</li>
+  <li><strong>Wisdom:</strong> 16 (+3)</li>
+  <li><strong>Charisma:</strong> 12 (+1)</li>
+</ul>
+
+<h3>Skills</h3>
+<ul>
+  <li><strong>Acrobatics (Dex):</strong> +7</li>
+  <li><strong>Animal Handling (Wis):</strong> +3</li>
+  <li><strong>Arcana (Int):</strong> +0</li>
+  <li><strong>Athletics (Str):</strong> +9</li>
+  <li><strong>Deception (Cha):</strong> +1</li>
+  <li><strong>History (Int):</strong> +5</li>
+  <li><strong>Insight (Wis):</strong> +8</li>
+  <li><strong>Intimidation (Cha):</strong> +6</li>
+  <li><strong>Investigation (Int):</strong> +0</li>
+  <li><strong>Medicine (Wis):</strong> +8</li>
+  <li><strong>Nature (Int):</strong> +0</li>
+  <li><strong>Perception (Wis):</strong> +3</li>
+  <li><strong>Performance (Cha):</strong> +1</li>
+  <li><strong>Persuasion (Cha):</strong> +6</li>
+  <li><strong>Religion (Int):</strong> +5</li>
+  <li><strong>Sleight of Hand (Dex):</strong> +2</li>
+  <li><strong>Stealth (Dex):</strong> +2</li>
+  <li><strong>Survival (Wis):</strong> +3</li>
+</ul>
+
+<h3>Saving Throws</h3>
+<ul>
+  <li><strong>Strength:</strong> +9</li>
+  <li><strong>Dexterity:</strong> +7</li>
+  <li><strong>Constitution:</strong> +8</li>
+  <li><strong>Intelligence:</strong> +0</li>
+  <li><strong>Wisdom:</strong> +8</li>
+  <li><strong>Charisma:</strong> +1</li>
+</ul>
+
+<h3>Combat</h3>
+<ul>
+  <li><strong>Armor Class (AC):</strong> 20 (Plate Armor + Shield)</li>
+  <li><strong>Initiative:</strong> +2</li>
+  <li><strong>Speed:</strong> 30 ft.</li>
+  <li><strong>Hit Points:</strong> 117 (9d10+4d8+39)</li>
+</ul>
+
+<h3>Attacks:</h3>
+<ul>
+  <li><strong>Longsword:</strong> +9 to hit, 1d8+4 slashing</li>
+  <li><strong>Handaxe:</strong> +9 to hit, 1d6+4 slashing</li>
+  <li><strong>Light Crossbow:</strong> +7 to hit, 1d8+2 piercing</li>
+</ul>
+
+<h3>Features & Traits</h3>
+
+<h3>Human Traits:</h3>
+<ul>
+  <li>Extra Language: Celestial</li>
+  <li>Skill Proficiency: Persuasion, History</li>
+</ul>
+
+<h3>Fighter Features:</h3>
+<ul>
+  <li><strong>Fighting Style:</strong> Defense (+1 AC)</li>
+  <li><strong>Second Wind:</strong> 1d10+9 HP (1/rest)</li>
+  <li><strong>Action Surge:</strong> 1/Short or Long Rest</li>
+  <li><strong>Martial Archetype:</strong> Battle Master
+    <ul>
+      <li><strong>Combat Superiority:</strong> 5d10 Superiority Dice</li>
+      <li><strong>Maneuvers:</strong> Precision Attack, Riposte, Disarming Attack, Goading Attack</li>
+    </ul>
+  </li>
+  <li><strong>Extra Attack:</strong> 2 additional attacks per Attack action</li>
+  <li><strong>Indomitable:</strong> Reroll a saving throw, 1/Long Rest (2 uses)</li>
+</ul>
+
+<h3>Cleric Features:</h3>
+<ul>
+  <li><strong>Divine Domain:</strong> Life Domain</li>
+  <li><strong>Blessed Healer:</strong> When healing others with a spell, heal self for 2 + spell level</li>
+  <li><strong>Disciple of Life:</strong> Add 2 + spell level to healing spells</li>
+  <li><strong>Channel Divinity: Preserve Life:</strong> Heal up to 5 x cleric level HP, divide among creatures</li>
+  <li><strong>Channel Divinity: Turn Undead:</strong> Turn undead creatures</li>
+</ul>
+
+<h3>Spells</h3>
+
+<h3>Cantrips:</h3>
+<ul>
+  <li>Sacred Flame</li>
+  <li>Guidance</li>
+  <li>Light</li>
+</ul>
+
+<h3>1st Level Spells (4 slots):</h3>
+<ul>
+  <li>Bless</li>
+  <li>Cure Wounds</li>
+  <li>Shield of Faith</li>
+  <li>Detect Magic</li>
+</ul>
+
+<h3>2nd Level Spells (3 slots):</h3>
+<ul>
+  <li>Lesser Restoration</li>
+  <li>Spiritual Weapon</li>
+  <li>Prayer of Healing</li>
+</ul>
+
+<h3>3rd Level Spells (3 slots):</h3>
+<ul>
+  <li>Revivify</li>
+  <li>Mass Healing Word</li>
+  <li>Beacon of Hope</li>
+</ul>
+
+<h3>4th Level Spells (1 slot):</h3>
+<ul>
+  <li>Guardian of Faith</li>
+</ul>
+
+<h3>Equipment</h3>
+<ul>
+  <li><strong>Weapons:</strong> Longsword, Handaxe, Light Crossbow</li>
+  <li><strong>Armor:</strong> Plate Armor, Shield</li>
+  <li><strong>Other:</strong> Holy Symbol, Explorer's Pack, Noble's Clothes, 100 GP</li>
+</ul>
+
+<h3>Background: Noble</h3>
+<h4>Feature: Position of Privilege</h4>
+<p>Due to noble birth, people are inclined to think the best of you. You're welcome in high society, and people assume you have the right to be wherever you are. The common folk make every effort to accommodate you and avoid your displeasure.</p>
+
+<h3>Personality Traits:</h3>
+<ul>
+  <li>If you do me an injury, I will crush you, ruin your name, and salt your fields.</li>
+  <li>Despite my noble birth, I do not place myself above other folk. We all have the same blood.</li>
+</ul>
+
+<h3>Ideals:</h3>
+<ul>
+  <li>Responsibility. It is my duty to respect the authority of those above me, just as those below me must respect mine. (Lawful)</li>
+</ul>
+
+<h3>Bonds:</h3>
+<ul>
+  <li>I will face any challenge to win the approval of my family.</li>
+</ul>
+
+<h3>Flaws:</h3>
+<ul>
+  <li>I too often hear veiled insults and threats in every word addressed to me, and I'm quick to anger.</li>
+</ul>
+
+{% endstart_column2 %}

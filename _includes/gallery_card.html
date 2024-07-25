@@ -1,0 +1,10 @@
+<div class="card" data-bs-theme="dark">
+    <img src="/assets/images/{{ include.npc.thumb }}" class="card-img-top" alt="{{ include.npc.title }}">
+    <div class="card-body">
+        {% if include.npc.name %}
+        <a href="{{ include.npc.permalink }}" class="btn btn-primary">{{ include.npc.name }}</a>
+        {% else %}
+        <a href="{{ include.npc.permalink }}" class="btn btn-primary">{{ include.npc.title }}</a>
+        {% endif %}
+    </div>
+</div>

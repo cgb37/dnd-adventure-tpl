@@ -158,7 +158,8 @@ body {
 
 .phb p {
     padding-bottom: .8em;
-    line-height: 1.3em
+    line-height: 1.3em;
+    color: #000000;
 }
 
 .phb p + p {
@@ -171,6 +172,7 @@ body {
     line-height: 1.3em;
     list-style-position: outside;
     list-style-type: none;
+    color: #000000;
 }
 
 .phb ol {
@@ -178,7 +180,8 @@ body {
     padding-left: 1.4em;
     line-height: 1.3em;
     list-style-position: outside;
-    list-style-type: decimal
+    list-style-type: decimal;
+    color: #000000;
 }
 
 

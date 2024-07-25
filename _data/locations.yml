@@ -6,6 +6,13 @@
   scene: 1
   category: location
   thumb: ''
+- title: Bramblewood Village Square
+  permalink: "/locations/bramblewood-village-square"
+  chapter: 1
+  episode: 1
+  scene: 1
+  category: location
+  thumb: bramblewood-village-square-160x90.webp
 - title: Sanctuary of the Tidal Archon
   permalink: "/locations/sanctuary-of-the-tidal-archon"
   chapter: 2

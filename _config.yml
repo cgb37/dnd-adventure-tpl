@@ -52,6 +52,7 @@ exclude:
   - Dockerfile
   - jekyll-serve.sh
   - assets/main.scss
+  - .DS_Store
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/

@@ -9,7 +9,7 @@ module Jekyll
     def generate(site)
       @site = site
       generate_data_for_dir('monsters', %w[title permalink chapter episode scene category thumb])
-      generate_data_for_dir('npcs', %w[title permalink chapter episode scene category thumb])
+      generate_data_for_dir('npcs', %w[title permalink chapter episode scene category thumb name])
       generate_data_for_dir('encounters', %w[title permalink chapter episode scene category thumb])
       generate_data_for_dir('locations', %w[title permalink chapter episode scene category thumb])
     end
@@ -44,9 +44,12 @@ module Jekyll
     end
 
     def read_front_matter(file_path)
-      content = File.read(file_path)
+      content = File.read(file_path, encoding: 'UTF-8')
       front_matter = content.match(/---\s*\n(.*?)\n---\s*\n/m)
       front_matter ? YAML.safe_load(front_matter[1]) : {}
+    rescue ArgumentError => e
+      Jekyll.logger.error "Error reading front matter from #{file_path}: #{e.message}"
+      {}
     end
 
     def missing_required_keys?(front_matter, required_keys)
@@ -65,12 +68,12 @@ module Jekyll
       current_hash = ''
       data_file_path = File.join(@site.source, '_data', "#{dir_name}.yml")
       if File.exist?(data_file_path)
-        current_hash = Digest::SHA256.hexdigest(File.read(data_file_path))
+        current_hash = Digest::SHA256.hexdigest(File.read(data_file_path, encoding: 'UTF-8'))
       end
 
       if current_hash != data_hash
         Dir.mkdir(File.dirname(data_file_path)) unless Dir.exist?(File.dirname(data_file_path))
-        File.open(data_file_path, 'w') do |file|
+        File.open(data_file_path, 'w:UTF-8') do |file|
           file.write(data_yaml)
         end
         Jekyll.logger.info "Regenerated _data/#{dir_name}.yml"
