@@ -20,6 +20,13 @@
   scene: 2
   category: location
   thumb: sanctuary-of-the-tidal-archon_160x90.webp
+- title: Silverleaf Quarter
+  permalink: "/locations/silverleaf-quarter"
+  chapter: 1
+  episode: 1
+  scene: 1
+  category: location
+  thumb: silverleaf-quarter-160x90.webp
 - title: Village of Bramblewood
   permalink: "/locations/village-of-bramblewood"
   chapter: 1
