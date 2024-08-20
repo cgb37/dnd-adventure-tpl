@@ -1,36 +1,197 @@
-Write a YAML document describing a captivating Dungeons & Dragons location. Include the following engaging details:
+# D&D Location Generator
 
-Name: A unique and evocative name for the location.
-Type: Specify the type of location (e.g., dungeon, ruined temple, abandoned city, etc.)
-Description: A vivid description of the location's environment, atmosphere, and any notable features.
-Challenges: Include a variety of challenges players might encounter, such as:
-Traps: Describe at least one interesting trap with its trigger and effect.
-Ambushes: Briefly explain a potential ambush scenario, including the creatures involved and their tactics.
-Puzzles: Briefly describe a puzzle players need to solve to progress, hinting at the solution type (e.g., logic, physical, or knowledge-based).
-Environmental Hazards: Describe a unique environmental hazard present at the location and its effects on players.
-Secrets: Briefly mention a hidden secret or treasure players can discover within the location.
-Plot Hooks: Offer a couple of ways this location can be integrated into a larger campaign.
-Additional Notes:
+Create a detailed Dungeons & Dragons location, outputting the result in HTML format. Include the following elements:
 
-Use evocative language and sensory details to bring the location to life.
-Tailor the location to a specific campaign setting or theme if desired.
-Leave some details open-ended for further customization, such as specific trap mechanisms or puzzle solutions.
+## Basic Information
+- **Name**: A unique and evocative name for the location. [User input optional]
+- **Type**: Specify the type of location (e.g., dungeon, ruined temple, abandoned city, planar nexus, etc.) [User input optional]
 
-Example Output
----
-name: "The Whispering Crypts"
-type: "Ruined Temple"
-description:  "Jagged obsidian pillars pierce the crimson sky above a network of crumbling catacombs. The air hangs heavy with the scent of dust and decay, punctuated by the occasional mournful moan echoing from within."
-challenges:
-  traps:  "Pressure plates hidden beneath carpets of fallen leaves trigger showers of poisoned darts from concealed blowpipes."
-  ambush:  "Skeletal guardians rise from hidden sarcophagi when intruders disturb the sacred silence."
-  puzzles:  "A series of cryptic murals depicting constellations guide the way through a maze of collapsing corridors."
-  hazards:  "Loose floorboards creak ominously above bottomless pits choked with venomous fumes."
-secrets:  "A hidden chamber within the deepest tomb houses a cursed artifact radiating a faint, sickly green light."
-plot_hooks:
-  - The players are hired by a desperate family to retrieve an heirloom lost within the crypts.
-  - Whispers of an undead cult using the crypts as a base for dark rituals draw the players' attention.
----
+## Description
+Provide a vivid description of the location, engaging all five senses:
+- Visual: Describe the overall appearance, architecture, and notable features.
+- Auditory: Detail the sounds that permeate the area.
+- Olfactory: Describe any distinct smells or odors.
+- Tactile: Mention textures, temperatures, or other tactile sensations.
+- Taste: If relevant, describe any tastes in the air or environment.
 
-Image Creation:
-Battle Map:  Using the details you provided, create a highly detailed but clearly defined battle map of this location.  Include a grid with 5-foot squares to facilitate tactical combat encounters.
+Include details on:
+- Atmosphere and mood
+- Lighting conditions
+- State of preservation/decay
+- Any magical or supernatural elements
+
+## Challenges
+Detail a variety of challenges players might encounter:
+
+### Traps
+Describe at least two interesting traps, including:
+- Trigger mechanism
+- Effects and damage
+- DC for detection and disarming
+- Potential ways to bypass or overcome
+
+### Encounters
+Provide two potential combat encounters:
+- Types and numbers of creatures (use official D&D 5e monsters)
+- Tactics and positioning
+- Environmental factors that could affect the battle
+
+### Puzzles
+Describe a complex puzzle or riddle, including:
+- The puzzle's appearance and mechanics
+- Clues for solving it
+- The solution and its effects when solved
+- Possible consequences for incorrect attempts
+
+### Environmental Hazards
+Detail two unique environmental hazards, such as:
+- Magical effects
+- Treacherous terrain
+- Extreme weather conditions
+- Planar influences
+
+For each hazard, describe:
+- Its appearance and manifestation
+- Effects on players and the environment
+- Ways to mitigate or overcome the hazard
+
+## Secrets and Treasures
+Include at least three hidden elements:
+- A valuable treasure or magical item (reference official D&D 5e items)
+- A piece of lore or information crucial to the larger plot
+- A hidden area or passage leading to an optional encounter or reward
+
+## Lore and History
+Provide rich background information:
+- The location's origins and original purpose
+- Major historical events tied to the place
+- Legends or myths associated with it
+- Current inhabitants or frequent visitors
+
+## Plot Hooks
+Offer three ways to integrate this location into a larger campaign:
+- A quest or mission directly tied to the location
+- A recurring antagonist or ally associated with the place
+- A long-term consequence of the party's actions here
+
+## DM Notes
+Include a section specifically for the Dungeon Master with:
+- Scaling advice for different party levels
+- Potential modifications for various campaign themes
+- Tips for roleplaying NPCs or monsters encountered here
+- Suggestions for foreshadowing this location earlier in the campaign
+
+## Descriptive Dialogue
+Provide three paragraphs of evocative narration that a DM can read or adapt to introduce the location to players. Each paragraph should focus on different aspects:
+1. The initial approach and first impression
+2. A deeper exploration of the main area
+3. A tense or climactic moment within the location
+
+## Additional Notes
+- Use language and terminology consistent with D&D 5e rules and mechanics.
+- Reference specific spells, abilities, or effects from the official sourcebooks when appropriate.
+- Ensure all DCs, damage values, and other numerical elements align with D&D 5e standards.
+- Include at least one reference or connection to the broader D&D multiverse (e.g., a mention of a famous location, deity, or historical event).
+
+## Sources
+Draw information from official D&D 5e sources, including but not limited to:
+- Player's Handbook
+- Dungeon Master's Guide
+- Monster Manual
+- Xanathar's Guide to Everything
+- Tasha's Cauldron of Everything
+- Volo's Guide to Monsters
+- Mordenkainen's Tome of Foes
+
+Ensure all elements are compatible with the core D&D 5e ruleset and lore.
+
+<h2>[Location Name]</h2>
+<h3>Type: [Location Type]</h3>
+
+<h3>Description</h3>
+<p>[Vivid description engaging all five senses, including atmosphere, mood, and notable features]</p>
+
+<h3>Challenges</h3>
+
+<h4>Traps</h4>
+<ul>
+    <li>
+        <h5>Trap 1: [Trap Name]</h5>
+        <p>[Description of trap, including trigger, effects, DC, and potential solutions]</p>
+    </li>
+    <li>
+        <h5>Trap 2: [Trap Name]</h5>
+        <p>[Description of trap, including trigger, effects, DC, and potential solutions]</p>
+    </li>
+</ul>
+
+<h4>Encounters</h4>
+<ul>
+    <li>
+        <h5>Encounter 1: [Encounter Name]</h5>
+        <p>[Description of creatures, tactics, and environmental factors]</p>
+    </li>
+    <li>
+        <h5>Encounter 2: [Encounter Name]</h5>
+        <p>[Description of creatures, tactics, and environmental factors]</p>
+    </li>
+</ul>
+
+<h4>Puzzles</h4>
+<p>[Description of puzzle, including appearance, mechanics, clues, solution, and consequences]</p>
+
+<h4>Environmental Hazards</h4>
+<ul>
+    <li>
+        <h5>Hazard 1: [Hazard Name]</h5>
+        <p>[Description of hazard, its effects, and ways to mitigate it]</p>
+    </li>
+    <li>
+        <h5>Hazard 2: [Hazard Name]</h5>
+        <p>[Description of hazard, its effects, and ways to mitigate it]</p>
+    </li>
+</ul>
+
+<h3>Secrets and Treasures</h3>
+<ul>
+    <li>
+        <h5>Treasure: [Treasure Name]</h5>
+        <p>[Description of valuable item or magical artifact]</p>
+    </li>
+    <li>
+        <h5>Lore: [Lore Name]</h5>
+        <p>[Description of crucial information or plot-relevant lore]</p>
+    </li>
+    <li>
+        <h5>Hidden Area: [Area Name]</h5>
+        <p>[Description of secret area and what it contains]</p>
+    </li>
+</ul>
+
+<h3>Lore and History</h3>
+<p>[Rich background information about the location's origins, history, and legends]</p>
+
+<h3>Plot Hooks</h3>
+<ul>
+    <li>[Description of quest or mission related to the location]</li>
+    <li>[Description of recurring character associated with the location]</li>
+    <li>[Description of long-term consequence of party's actions]</li>
+</ul>
+
+<h3>DM Notes</h3>
+<ul>
+    <li>[Scaling advice for different party levels]</li>
+    <li>[Suggestions for modifying the location for various campaign themes]</li>
+    <li>[Tips for roleplaying NPCs or monsters]</li>
+    <li>[Ideas for foreshadowing this location]</li>
+</ul>
+
+<h3>Descriptive Dialogue</h3>
+<h4>Initial Approach</h4>
+<p>[Evocative paragraph describing the first impression of the location]</p>
+
+<h4>Main Area Exploration</h4>
+<p>[Detailed paragraph exploring the main features of the location]</p>
+
+<h4>Climactic Moment</h4>
+<p>[Tense paragraph describing a pivotal or dramatic scene within the location]</p>

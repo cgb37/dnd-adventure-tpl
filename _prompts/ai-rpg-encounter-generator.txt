@@ -79,3 +79,156 @@ Example Outout:
     </li>
 </ol?
 
+
+==============
+
+
+# D&D Encounter Generator
+
+Create a detailed Dungeons & Dragons encounter, outputting the result in HTML format (excluding html, head, and body tags). Include the following elements:
+
+## Basic Information
+- **Name**: A unique and evocative name for the encounter. [User input optional]
+- **Type**: Specify the type of encounter (Combat, Exploration, or Roleplaying). [User input optional]
+- **Challenge Rating (CR)**: The overall difficulty of the encounter. [User input optional]
+
+## Description
+Provide a vivid description of the encounter setting, engaging all five senses:
+- Visual: Describe the overall appearance and notable features.
+- Auditory: Detail the sounds that permeate the area.
+- Olfactory: Describe any distinct smells or odors.
+- Tactile: Mention textures, temperatures, or other tactile sensations.
+- Taste: If relevant, describe any tastes in the air or environment.
+
+Include details on:
+- Atmosphere and mood
+- Time of day and lighting conditions
+- Weather (if applicable)
+- Any magical or supernatural elements
+
+## Encounter-Specific Elements
+
+### For Combat Encounters
+- **Enemies**: Describe types and numbers of creatures (use official D&D 5e monsters)
+- **Terrain and Environment**: Detail the battlefield, including cover, hazards, and strategic elements
+- **Tactics**: Explain enemy strategies, positioning, and special abilities
+- **Objectives**: Clearly state goals for both the players and enemies
+- **Potential Twists**: Describe unexpected events or reinforcements that could change the tide of battle
+
+### For Exploration Encounters
+- **Challenges**: Detail puzzles, traps, or obstacles, including:
+  - Appearance and mechanics
+  - Clues for solving or overcoming
+  - DCs for relevant skill checks
+  - Consequences for failure and rewards for success
+- **Hidden Elements**: Describe secret areas, concealed items, or unexpected features
+- **Information Discovery**: Outline lore or plot-relevant information players might uncover
+
+### For Roleplaying Encounters
+- **NPCs**: Provide detailed descriptions of key non-player characters, including:
+  - Physical appearance
+  - Personality traits and mannerisms
+  - Goals and motivations
+  - Relationship to the party or overall plot
+- **Dialogue Prompts**: Suggest potential conversation starters or key information NPCs might share
+- **Conflict and Stakes**: Explain the central issue or tension driving the interaction
+- **Player Options**: Outline different approaches players might take and their potential consequences
+
+## Common Elements
+- **Rewards**: Detail potential treasures, information, or other benefits for succeeding in the encounter
+- **Consequences**: Describe possible outcomes based on player actions or failure
+- **Scaling Options**: Provide suggestions for adjusting the encounter difficulty for different party levels
+- **Connection to Larger Plot**: Explain how this encounter ties into the overall campaign or story arc
+
+## DM Notes
+Include a section specifically for the Dungeon Master with:
+- Tips for running the encounter effectively
+- Suggestions for roleplaying NPCs or monsters
+- Potential player actions to anticipate
+- Ideas for maintaining tension or pacing
+
+## Descriptive Narrative
+Provide three paragraphs of evocative narration that a DM can read or adapt:
+1. An introduction to set the scene
+2. A description of a key or pivotal moment within the encounter
+3. A brief outline of potential ways the encounter might conclude
+
+## Mechanics
+- For combat encounters, include a suggested initiative order
+- Provide quick reference stat blocks for enemies or important NPCs
+- Highlight any specific D&D 5e rules that are particularly relevant to this encounter
+
+## Adaptability
+- Offer ideas for modifying the encounter based on party composition, previous events, or DM preference
+- Suggest potential story threads or future encounters that could stem from this one
+
+## Additional Notes
+- Use language and terminology consistent with D&D 5e rules and mechanics
+- Reference specific spells, abilities, or effects from the official sourcebooks when appropriate
+- Ensure all DCs, damage values, and other numerical elements align with D&D 5e standards
+- Include at least one reference or connection to the broader D&D multiverse (e.g., a mention of a famous location, deity, or historical event)
+
+## Challenge Rating Consideration
+When determining the Challenge Rating (CR) of the encounter, use the following guideline:
+CR = (Proficiency + AC + Hit Points)/3 + (Damage + Attack Bonus + Spell DC)/2
+
+Select appropriate monsters from the Monster Manual or create custom monsters following this CR formula.
+
+## Sources
+Draw information from official D&D 5e sources, including but not limited to:
+- Player's Handbook
+- Dungeon Master's Guide
+- Monster Manual
+- Xanathar's Guide to Everything
+- Tasha's Cauldron of Everything
+- Volo's Guide to Monsters
+- Mordenkainen's Tome of Foes
+
+Ensure all elements are compatible with the core D&D 5e ruleset and lore.
+
+## Output Format
+Use the following HTML structure for the output, using only h2, h3, h4, h5, h6, ul, and p tags:
+
+<h2>[Encounter Name]</h2>
+<h3>Type: [Encounter Type]</h3>
+<h3>Challenge Rating: [CR]</h3>
+
+<h3>Description</h3>
+<p>[Vivid description engaging all five senses, including atmosphere, mood, and notable features]</p>
+
+<h3>Encounter Details</h3>
+[Include relevant sections based on encounter type]
+
+<h3>Rewards and Consequences</h3>
+<ul>
+    <li>[Reward or consequence description]</li>
+    ...
+</ul>
+
+<h3>Connection to Larger Plot</h3>
+<p>[Explanation of how this encounter ties into the overall campaign]</p>
+
+<h3>DM Notes</h3>
+<ul>
+    <li>[DM tip or suggestion]</li>
+    ...
+</ul>
+
+<h3>Descriptive Narrative</h3>
+<h4>Introduction</h4>
+<p>[Evocative paragraph setting the scene]</p>
+
+<h4>Key Moment</h4>
+<p>[Description of a pivotal moment in the encounter]</p>
+
+<h4>Potential Conclusion</h4>
+<p>[Brief outline of how the encounter might resolve]</p>
+
+<h3>Mechanics</h3>
+[Include relevant mechanics based on encounter type]
+
+<h3>Adaptability</h3>
+<ul>
+    <li>[Modification suggestion]</li>
+    <li>[Potential follow-up encounter or story thread]</li>
+</ul>

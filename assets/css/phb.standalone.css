@@ -211,7 +211,7 @@ body {
     line-height: 0
 }
 
-.phb h1, .phb h2, .phb h3, .phb h4 {
+.phb h1, .phb h2, .phb h3, .phb h4, .phb h5, .phb h6 {
     margin-top: .2em;
     margin-bottom: .2em;
     font-family: MrJeeves;
