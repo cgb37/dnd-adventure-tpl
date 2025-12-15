@@ -1,0 +1,7 @@
+[submodule "campaigns/rpg-icewindDaleRedux"]
+	path = campaigns/rpg-icewindDaleRedux
+	url = git@github.com:cgb37/rpg-icewindDaleRedux.git
+
+[submodule "campaigns/rpg-theForsakenCrown"]
+	path = campaigns/rpg-theForsakenCrown
+	url = git@github.com:cgb37/rpg-theForsakenCrown.git
