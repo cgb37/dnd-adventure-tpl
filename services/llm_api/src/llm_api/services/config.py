@@ -10,6 +10,10 @@ class Settings(BaseSettings):
     llm_api_key: str = Field(alias="LLM_API_KEY")
     llm_provider: str = Field(default="ollama", alias="LLM_PROVIDER")
 
+    # Dev convenience: allow localhost callers (the Jekyll UI) without an API key.
+    relax_auth_on_localhost: bool = Field(default=True, alias="RELAX_AUTH_ON_LOCALHOST")
+    ui_origin: str = Field(default="http://localhost:4000", alias="UI_ORIGIN")
+
     # CORS allowlist. Keep this as a plain string so env vars can be set as
     # comma-separated values (e.g. "http://localhost:4000,http://127.0.0.1:4000").
     # Using list[str] here causes pydantic-settings to attempt JSON parsing.
