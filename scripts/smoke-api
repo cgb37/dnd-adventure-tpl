@@ -1,0 +1,174 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage:
+  scripts/smoke-api [--compose] [--keep-running] [--kind <kind>] [--title <title>] [--prompt <prompt>]
+
+What it does:
+  - GET /healthz
+  - POST /v1/generate/<kind>
+  - Verifies the returned draft file exists
+  - Deletes the draft file afterwards (repo stays clean)
+
+Defaults:
+  - Base URL: http://localhost:8000 (override via SMOKE_API_BASE_URL)
+  - API key: SMOKE_API_KEY or LLM_API_KEY or "dev-key"
+  - Kind: npc
+
+Docker compose mode:
+  --compose        Starts/recreates the `api` service via docker compose using:
+                  OLLAMA_BASE_URL=http://host.docker.internal:11434 (override via OLLAMA_BASE_URL)
+                  LLM_API_KEY=<api key>
+                  Then runs the checks.
+
+  --keep-running   Do not stop the compose `api` service after the smoke test.
+
+Examples:
+  scripts/smoke-api
+  SMOKE_API_KEY=devkey scripts/smoke-api
+  scripts/smoke-api --compose
+  SMOKE_API_BASE_URL=http://localhost:8000 SMOKE_API_KEY=dev-key scripts/smoke-api --kind npc
+EOF
+}
+
+compose_mode="false"
+keep_running="false"
+kind="npc"
+title="Compose Smoke NPC"
+prompt="Create a short friendly D&D NPC for a smoke test. Keep it concise."
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    --compose)
+      compose_mode="true"
+      shift
+      ;;
+    --keep-running)
+      keep_running="true"
+      shift
+      ;;
+    --kind)
+      kind="${2:-}"
+      shift 2
+      ;;
+    --title)
+      title="${2:-}"
+      shift 2
+      ;;
+    --prompt)
+      prompt="${2:-}"
+      shift 2
+      ;;
+    *)
+      echo "Unknown argument: $1" >&2
+      usage >&2
+      exit 2
+      ;;
+  esac
+done
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "python3 is required." >&2
+  exit 2
+fi
+
+base_url="${SMOKE_API_BASE_URL:-http://localhost:8000}"
+api_key="${SMOKE_API_KEY:-${LLM_API_KEY:-dev-key}}"
+http_code=""
+
+stop_compose_api() {
+  if [[ "$compose_mode" == "true" && "$keep_running" != "true" ]]; then
+    docker compose stop api >/dev/null || true
+  fi
+}
+
+cleanup_draft() {
+  local draft_path="$1"
+
+  # Safety: only delete inside campaigns/**/_drafts/**
+  if [[ "$draft_path" != campaigns/*/_drafts/*/*.md ]]; then
+    echo "Refusing to delete unexpected draft_path: $draft_path" >&2
+    return 3
+  fi
+
+  if [[ -f "$draft_path" ]]; then
+    rm -f "$draft_path"
+  fi
+
+  # Best effort: remove empty kind folder
+  local kind_dir
+  kind_dir="$(dirname "$draft_path")"
+  rmdir "$kind_dir" 2>/dev/null || true
+}
+
+if [[ "$compose_mode" == "true" ]]; then
+  # Intentionally do NOT inherit OLLAMA_BASE_URL from the host shell.
+  # Inside Docker, Ollama must be reached via host.docker.internal.
+  ollama_base_url="${SMOKE_OLLAMA_BASE_URL:-http://host.docker.internal:11434}"
+
+  # Keep this environment override explicit so host env vars don't accidentally
+  # force localhost inside Docker.
+  OLLAMA_BASE_URL="$ollama_base_url" LLM_API_KEY="$api_key" docker compose up -d --force-recreate api >/dev/null
+fi
+
+trap stop_compose_api EXIT
+
+# Wait for /healthz
+for _ in {1..90}; do
+  http_code="$(curl -s -o /dev/null -w "%{http_code}" "$base_url/healthz" || true)"
+  if [[ "$http_code" == "200" ]]; then
+    break
+  fi
+  sleep 1
+done
+
+if [[ "$http_code" != "200" ]]; then
+  echo "API not ready: GET $base_url/healthz returned $http_code" >&2
+  exit 2
+fi
+
+health_json="$(curl -sS --max-time 5 "$base_url/healthz")"
+python3 -c 'import json,sys; print(json.dumps(json.loads(sys.argv[1]), indent=2))' "$health_json"
+
+# Generate
+payload_json="$(SMOKE_PROMPT="$prompt" SMOKE_TITLE="$title" python3 -c 'import json,os; print(json.dumps({"prompt": os.environ["SMOKE_PROMPT"], "title": os.environ["SMOKE_TITLE"]}))')"
+
+resp_json=""
+set +e
+resp_json="$(curl -sS --max-time 180 -X POST "$base_url/v1/generate/$kind" \
+  -H 'Content-Type: application/json' \
+  -H "X-API-Key: $api_key" \
+  -d "$payload_json")"
+curl_exit=$?
+set -e
+
+if [[ $curl_exit -ne 0 || -z "$resp_json" ]]; then
+  echo "Generation request failed (curl exit=$curl_exit)." >&2
+  exit 3
+fi
+
+python3 -c 'import json,sys; print(json.dumps(json.loads(sys.argv[1]), indent=2))' "$resp_json"
+
+draft_path="$(python3 -c 'import json,sys; obj=json.loads(sys.argv[1]); print((obj.get("data") or {}).get("draft_path") or "")' "$resp_json")"
+
+if [[ -z "$draft_path" ]]; then
+  echo "No draft_path returned; generation likely failed." >&2
+  exit 3
+fi
+
+echo "draft_path=$draft_path"
+
+if [[ ! -f "$draft_path" ]]; then
+  echo "Draft file not found on disk: $draft_path" >&2
+  exit 4
+fi
+
+cleanup_draft "$draft_path"
+
+echo "OK (draft created + cleaned up)"
