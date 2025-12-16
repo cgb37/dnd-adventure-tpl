@@ -51,6 +51,7 @@ llm_api_base_url: "http://localhost:8000"
 exclude:
   - _frontmattertpls
   - _prompts
+  - docs
   - docker-compose.yml
   - Dockerfile
   - jekyll-serve.sh
