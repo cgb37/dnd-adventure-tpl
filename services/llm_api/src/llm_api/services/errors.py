@@ -22,6 +22,19 @@ def _request_id() -> str | None:
 
 
 def install_exception_handlers(app: FastAPI) -> None:
+    def _json_sanitize(value):
+        if isinstance(value, (bytes, bytearray)):
+            return value.decode("utf-8", errors="replace")
+        if isinstance(value, dict):
+            return {k: _json_sanitize(v) for k, v in value.items()}
+        if isinstance(value, list):
+            return [_json_sanitize(v) for v in value]
+        if isinstance(value, tuple):
+            return [_json_sanitize(v) for v in value]
+        if isinstance(value, set):
+            return [_json_sanitize(v) for v in value]
+        return value
+
     @app.exception_handler(ApiError)
     async def api_error_handler(_: Request, exc: ApiError):
         return JSONResponse(
@@ -38,6 +51,7 @@ def install_exception_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(RequestValidationError)
     async def validation_error_handler(_: Request, exc: RequestValidationError):
+        errors = _json_sanitize(exc.errors())
         return JSONResponse(
             status_code=422,
             content={
@@ -45,7 +59,7 @@ def install_exception_handlers(app: FastAPI) -> None:
                 "error": {
                     "code": "validation_error",
                     "message": "Request validation failed",
-                    "details": {"errors": exc.errors()},
+                    "details": {"errors": errors},
                 },
             },
         )
