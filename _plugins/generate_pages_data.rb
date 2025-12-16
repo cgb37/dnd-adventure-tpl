@@ -20,6 +20,12 @@ module Jekyll
       data = []
       dir_path = File.join(@site.source, '_pages', dir_name)
 
+      unless File.directory?(dir_path)
+        Jekyll.logger.info "Skipping _pages/#{dir_name} (directory not found); generating empty _data/#{dir_name}.yml"
+        generate_data_file(dir_name, data)
+        return
+      end
+
       Dir.foreach(dir_path) do |file|
         next if file == '.' || file == '..'
 
