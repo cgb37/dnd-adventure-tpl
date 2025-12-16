@@ -106,8 +106,8 @@ assets/images/.DS_Store
 /assets/images.bak-*
 
 # Ignore _pages and _posts directories
-/_pages/
-/_posts/
+_pages
+_posts
 
 # Ignore search.json file
 /search.json
