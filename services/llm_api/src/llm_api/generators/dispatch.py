@@ -11,18 +11,29 @@ from llm_api.generators.chapter import generate_chapter
 from llm_api.generators.location import generate_location
 
 
-async def generate_for_kind(*, kind: str, request: GenerateRequest, campaign: str) -> GeneratedDraft:
+SUPPORTED_KINDS: tuple[str, ...] = (
+    "npc",
+    "monster",
+    "encounter",
+    "chapter",
+    "location",
+)
+
+
+async def generate_for_kind(
+    *, kind: str, request: GenerateRequest, campaign: str, provider_override: str | None = None
+) -> GeneratedDraft:
     match kind:
         case "npc":
-            return await generate_npc(request=request, campaign=campaign)
+            return await generate_npc(request=request, campaign=campaign, provider_override=provider_override)
         case "monster":
-            return await generate_monster(request=request, campaign=campaign)
+            return await generate_monster(request=request, campaign=campaign, provider_override=provider_override)
         case "encounter":
-            return await generate_encounter(request=request, campaign=campaign)
+            return await generate_encounter(request=request, campaign=campaign, provider_override=provider_override)
         case "chapter":
-            return await generate_chapter(request=request, campaign=campaign)
+            return await generate_chapter(request=request, campaign=campaign, provider_override=provider_override)
         case "location":
-            return await generate_location(request=request, campaign=campaign)
+            return await generate_location(request=request, campaign=campaign, provider_override=provider_override)
         case _:
             raise ApiError(
                 code="unsupported_kind",
