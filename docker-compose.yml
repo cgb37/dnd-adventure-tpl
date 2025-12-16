@@ -4,13 +4,22 @@ services:
   jekyll:
     platform: linux/amd64
     build: .
-    command: ["sh", "-c", "bundle install && jekyll serve --watch --livereload --force_polling --trace --verbose"]
+    command:
+      - sh
+      - -c
+      - |
+        ./scripts/setup
+        ./scripts/use-campaign "${CAMPAIGN:-rpg-theForsakenCrown}" --bootstrap
+        bundle install
+        bundle exec jekyll serve --host 0.0.0.0 --watch --livereload --force_polling --trace --verbose
     ports:
       - 4000:4000
+      - 35729:35729
     volumes:
       - .:/srv/jekyll
     environment:
       JEKYLL_ENV: development
+      CAMPAIGN: ${CAMPAIGN:-rpg-theForsakenCrown}
     networks:
       - jekyll-network
 
