@@ -87,9 +87,15 @@ module Jekyll
     end
 
     def read_front_matter(file_path)
-      content = File.read(file_path)
+      content = File.binread(file_path)
+      content = content.force_encoding('UTF-8')
+      content = content.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
+
       front_matter = content.match(/---\s*\n(.*?)\n---\s*\n/m)
       front_matter ? YAML.safe_load(front_matter[1]) : {}
+    rescue StandardError => e
+      Jekyll.logger.error "Error reading front matter from #{file_path}: #{e.message}"
+      {}
     end
 
     def generate_jekyll_path(chapter, file)
