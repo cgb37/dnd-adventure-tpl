@@ -73,14 +73,18 @@ SYSTEM_PROMPT = (
 )
 
 
-async def generate_npc(*, request: GenerateRequest, campaign: str) -> GeneratedDraft:
-    settings = Settings()
+async def generate_npc(
+    *, request: GenerateRequest, campaign: str, provider_override: str | None = None
+) -> GeneratedDraft:
+    settings = Settings()  # pyright: ignore[reportCallIssue]
     title, slug = resolve_title_and_slug(request=request, fallback_title="New NPC")
 
-    if settings.llm_provider == "mock":
+    provider = (provider_override or settings.llm_provider or "").strip().lower()
+
+    if provider == "mock":
         return NpcDraft(title=title, slug=slug, name=title, summary="TBD", tags=[])
 
-    agent = build_agent(output_type=NpcOutput, system_prompt=SYSTEM_PROMPT)
+    agent = build_agent(output_type=NpcOutput, system_prompt=SYSTEM_PROMPT, provider_override=provider)
     try:
         result = await agent.run(
             f"Campaign: {campaign}\n\nUser prompt: {request.prompt}\n\n"
