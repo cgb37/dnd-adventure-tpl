@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage:
+  scripts/promote-draft <kind> <slug>
+
+Examples:
+  scripts/promote-draft npc elara-moonwhisper
+  scripts/promote-draft "encounter table" forest-random-encounters
+
+Notes:
+  - Requires an active campaign (`.active-campaign`).
+  - Moves: campaigns/<active>/_drafts/<kind>/<slug>.md
+        -> campaigns/<active>/_pages/.../<slug>.md (based on mapping)
+EOF
+}
+
+if [[ ${1:-} == "" || ${2:-} == "" || ${1:-} == "--help" || ${1:-} == "-h" ]]; then
+  usage
+  exit 2
+fi
+
+python3 -m llm_api.scripts.promote_draft "$@"
