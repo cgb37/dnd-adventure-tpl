@@ -53,6 +53,7 @@ exclude:
   - jekyll-serve.sh
   - assets/main.scss
   - .DS_Store
+  - services
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/
