@@ -9,12 +9,13 @@ from pydantic_ai.providers.google import GoogleProvider
 from pydantic_ai.providers.openai import OpenAIProvider
 
 from llm_api.services.config import Settings
+from llm_api.services.errors import ApiError
 
 
-def build_agent(*, output_type, system_prompt: str) -> Agent:
-    settings = Settings()
+def build_agent(*, output_type, system_prompt: str, provider_override: str | None = None) -> Agent:
+    settings = Settings()  # pyright: ignore[reportCallIssue]
 
-    provider = settings.llm_provider
+    provider = (provider_override or settings.llm_provider or "").strip().lower()
 
     if provider == "ollama":
         model = OpenAIChatModel(
@@ -28,7 +29,11 @@ def build_agent(*, output_type, system_prompt: str) -> Agent:
 
     if provider == "openai":
         if not settings.openai_api_key:
-            raise ValueError("OPENAI_API_KEY is required when LLM_PROVIDER=openai")
+            raise ApiError(
+                code="provider_not_configured",
+                message="OPENAI_API_KEY is required when provider=openai",
+                status_code=400,
+            )
         model = OpenAIChatModel(
             settings.openai_model,
             provider=OpenAIProvider(api_key=settings.openai_api_key),
@@ -37,7 +42,11 @@ def build_agent(*, output_type, system_prompt: str) -> Agent:
 
     if provider == "anthropic":
         if not settings.anthropic_api_key:
-            raise ValueError("ANTHROPIC_API_KEY is required when LLM_PROVIDER=anthropic")
+            raise ApiError(
+                code="provider_not_configured",
+                message="ANTHROPIC_API_KEY is required when provider=anthropic",
+                status_code=400,
+            )
         model = AnthropicModel(
             settings.anthropic_model,
             provider=AnthropicProvider(api_key=settings.anthropic_api_key),
@@ -46,7 +55,11 @@ def build_agent(*, output_type, system_prompt: str) -> Agent:
 
     if provider == "gemini":
         if not settings.gemini_api_key:
-            raise ValueError("GEMINI_API_KEY is required when LLM_PROVIDER=gemini")
+            raise ApiError(
+                code="provider_not_configured",
+                message="GEMINI_API_KEY is required when provider=gemini",
+                status_code=400,
+            )
         model = GoogleModel(
             settings.gemini_model,
             provider=GoogleProvider(api_key=settings.gemini_api_key),
@@ -57,4 +70,8 @@ def build_agent(*, output_type, system_prompt: str) -> Agent:
         # Generators handle mock provider without PydanticAI.
         raise RuntimeError("mock provider must be handled by generator")
 
-    raise ValueError(f"Unknown LLM_PROVIDER: {provider}")
+    raise ApiError(
+        code="unknown_provider",
+        message=f"Unknown provider: {provider}",
+        status_code=400,
+    )
