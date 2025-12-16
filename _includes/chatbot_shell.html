@@ -1,0 +1,69 @@
+{%- comment -%}
+Global chatbot shell (Iteration 4)
+- Rendered only on allowlisted DM content pages (see _config.yml -> chatbot)
+- Excluded on /tools/* and other denylisted pages
+{%- endcomment -%}
+
+<script>
+  // Apply persisted open/closed state before the widget renders to reduce flicker.
+  (function () {
+    try {
+      var key = 'dnd_global_chatbot_open';
+      var open = localStorage.getItem(key);
+      if (open === 'false') {
+        document.documentElement.classList.add('chatbot-collapsed');
+      }
+    } catch (_) {
+      // ignore
+    }
+  })();
+</script>
+
+<aside id="global-chatbot" class="chatbot" aria-label="AI Assistant">
+  <div class="chatbot__panel">
+    <div class="chatbot__header">
+      <div class="chatbot__title">
+        <span class="chatbot__badge" aria-hidden="true">AI</span>
+        <div>
+          <div class="chatbot__heading">AI Assistant</div>
+          <div class="chatbot__subheading">DM tools</div>
+        </div>
+      </div>
+
+      <button id="chatbotToggle" class="btn btn-sm btn-outline-secondary chatbot__toggle" type="button" aria-label="Toggle chatbot">
+        <span class="chatbot__toggleIcon" aria-hidden="true">›</span>
+      </button>
+    </div>
+
+    <div class="chatbot__toolbar">
+      <div class="chatbot__toolbarRow">
+        <select id="chatbotProvider" class="form-select form-select-sm chatbot__select" aria-label="LLM provider"></select>
+        <select id="chatbotKind" class="form-select form-select-sm chatbot__select" aria-label="Generate type"></select>
+      </div>
+      <div class="chatbot__toolbarRow chatbot__toolbarRow--icons" aria-hidden="true">
+        <button class="btn btn-sm btn-outline-secondary" type="button" disabled>Attach</button>
+        <button class="btn btn-sm btn-outline-secondary" type="button" disabled>Model</button>
+        <button class="btn btn-sm btn-outline-secondary" type="button" disabled>Tools</button>
+      </div>
+    </div>
+
+    <div id="chatbotMessages" class="chatbot__messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+
+    <div class="chatbot__input">
+      <textarea id="chatbotInput" class="form-control chatbot__textarea" rows="1" placeholder="Ask me anything..." aria-label="Chat input"></textarea>
+      <div class="chatbot__inputRow">
+        <div class="chatbot__hint">Sends your prompt to the selected generator.</div>
+        <button id="chatbotSend" class="btn btn-primary chatbot__send" type="button">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <button id="chatbotFloatingToggle" class="btn btn-primary chatbot__floatingToggle" type="button" aria-label="Show chatbot">
+    <span aria-hidden="true">‹</span>
+  </button>
+</aside>
+
+<script>
+  window.LLM_API_BASE_URL = "{{ site.llm_api_base_url | default: 'http://localhost:8000' }}";
+</script>
+<script src="/assets/js/chatbot-widget.js"></script>
