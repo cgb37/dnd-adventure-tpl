@@ -35,6 +35,9 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 #theme: minima
 #plugins:
 
+# Local dev API base URL (used by /tools/chat/ UI)
+llm_api_base_url: "http://localhost:8000"
+
 
 
 # Exclude from processing.
