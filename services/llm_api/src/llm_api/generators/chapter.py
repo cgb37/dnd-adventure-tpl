@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import cast
+
 from pydantic import BaseModel, Field
 from pydantic_ai import UsageLimitExceeded, UsageLimits
 
@@ -63,14 +65,18 @@ SYSTEM_PROMPT = (
 )
 
 
-async def generate_chapter(*, request: GenerateRequest, campaign: str) -> GeneratedDraft:
-    settings = Settings()
+async def generate_chapter(
+    *, request: GenerateRequest, campaign: str, provider_override: str | None = None
+) -> GeneratedDraft:
+    settings = Settings()  # pyright: ignore[reportCallIssue]
     title, slug = resolve_title_and_slug(request=request, fallback_title="New Chapter")
 
-    if settings.llm_provider == "mock":
+    provider = (provider_override or settings.llm_provider or "").strip().lower()
+
+    if provider == "mock":
         return ChapterDraft(title=title, slug=slug, overview="TBD")
 
-    agent = build_agent(output_type=ChapterOutput, system_prompt=SYSTEM_PROMPT)
+    agent = build_agent(output_type=ChapterOutput, system_prompt=SYSTEM_PROMPT, provider_override=provider)
     try:
         result = await agent.run(
             f"Campaign: {campaign}\n\nUser prompt: {request.prompt}\n\n" "Return: overview (markdown).",
@@ -87,5 +93,5 @@ async def generate_chapter(*, request: GenerateRequest, campaign: str) -> Genera
             details={"error": str(exc)},
         )
 
-    out: ChapterOutput = result.output
+    out = cast(ChapterOutput, result.output)
     return ChapterDraft(title=title, slug=slug, overview=out.overview)
