@@ -99,3 +99,8 @@ assets/images/.DS_Store
 /_data/locations.yml
 /_data/monsters.yml
 /_data/npcs.yml
+
+# Backups created by scripts/use-campaign --force
+/_pages.bak-*
+/_posts.bak-*
+/assets/images.bak-*
