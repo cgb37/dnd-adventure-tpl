@@ -1,3 +1,10 @@
+---
+name: ui-chatbot
+description: Design prompt for a dual-panel website layout with an integrated chatbot (desktop split view + mobile drawer).
+argument-hint: "Describe any constraints (colors/components), target breakpoints, and required UI behaviors"
+tools: []
+---
+
 **Figma Design Prompt: Dual-Panel Website with Integrated AI Chatbot**
 
 Create a modern, responsive web application interface with the following layout and components:
