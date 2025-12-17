@@ -23,6 +23,9 @@ def meta_providers():
 
     providers: list[str] = []
 
+    # Built-in dev/test provider that does not require any external model.
+    providers.append("mock")
+
     # Local (Ollama) is always available if base URL is configured.
     if (s.ollama_base_url or "").strip():
         providers.append("ollama")

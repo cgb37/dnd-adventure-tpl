@@ -6,23 +6,32 @@
  * - Scope styles to the chatbot wrapper so existing pages/layouts remain stable.
  */
 
-/* Split-view layout (desktop/tablet) */
+/* Split-view layout (desktop/tablet)
+ * Support both the current wrapper (#chatbot-split) and the legacy wrapper
+ * (#page-container) to avoid regressing to a stacked layout.
+ */
+#chatbot-split.with-chatbot,
 #page-container.with-chatbot {
   display: flex;
   min-height: 100vh;
 }
 
+#chatbot-split.with-chatbot #content-wrap,
 #page-container.with-chatbot #content-wrap {
   flex: 0 0 70%;
   max-width: 70%;
   transition: flex-basis 200ms ease, max-width 200ms ease;
 }
 
+#chatbot-split.with-chatbot #global-chatbot,
 #page-container.with-chatbot #global-chatbot {
   flex: 0 0 30%;
   max-width: 30%;
   overflow: hidden;
   transition: flex-basis 200ms ease, max-width 200ms ease;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
 }
 
 /* Panel shell */
@@ -177,9 +186,19 @@
 }
 
 /* Collapsed state (desktop/tablet): hide panel, expand content */
+html.chatbot-collapsed #chatbot-split.with-chatbot #content-wrap {
+  flex-basis: 100%;
+  max-width: 100%;
+}
+
 html.chatbot-collapsed #page-container.with-chatbot #content-wrap {
   flex-basis: 100%;
   max-width: 100%;
+}
+
+html.chatbot-collapsed #chatbot-split.with-chatbot #global-chatbot {
+  flex-basis: 0;
+  max-width: 0;
 }
 
 html.chatbot-collapsed #page-container.with-chatbot #global-chatbot {
@@ -198,15 +217,18 @@ html.chatbot-collapsed #global-chatbot .chatbot__floatingToggle {
 }
 
 /* Mobile drawer mode */
-@media (max-width: 992px) {
+@media (max-width: 768px) {
+  #chatbot-split.with-chatbot,
   #page-container.with-chatbot {
     display: block;
   }
 
+  #chatbot-split.with-chatbot #content-wrap,
   #page-container.with-chatbot #content-wrap {
     max-width: none;
   }
 
+  #chatbot-split.with-chatbot #global-chatbot,
   #page-container.with-chatbot #global-chatbot {
     position: fixed;
     left: 0;

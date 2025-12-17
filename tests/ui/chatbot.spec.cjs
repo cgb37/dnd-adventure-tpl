@@ -17,6 +17,28 @@ async function getActiveCampaign(repoRoot) {
   }
 }
 
+async function waitForLlmApiReady({ baseUrl = 'http://localhost:8000', timeoutMs = 60_000 } = {}) {
+  const start = Date.now();
+  const url = `${baseUrl.replace(/\/$/, '')}/v1/meta/generators`;
+
+  // The API relaxes auth for localhost origins; mirror what the browser will send.
+  const headers = { Origin: 'http://localhost:4100' };
+
+  // Poll quickly; container startup can be a bit slow on first run.
+  while (Date.now() - start < timeoutMs) {
+    try {
+      const res = await fetch(url, { headers });
+      if (res.ok) return;
+    } catch {
+      // ignore and retry
+    }
+    // eslint-disable-next-line no-await-in-loop
+    await new Promise((r) => setTimeout(r, 1_000));
+  }
+
+  throw new Error(`LLM API not ready after ${timeoutMs}ms: ${url}`);
+}
+
 test('UI chatbot: select generator, generate draft, promote', async ({ page }) => {
   const repoRoot = await getRepoRoot();
   const campaign = (await getActiveCampaign(repoRoot)) || 'rpg-theForsakenCrown';
@@ -32,6 +54,8 @@ test('UI chatbot: select generator, generate draft, promote', async ({ page }) =
     // eslint-disable-next-line no-console
     console.log(`[browser:${msg.type()}] ${msg.text()}`);
   });
+
+  await waitForLlmApiReady();
 
   await page.goto('/tools/chat/', { waitUntil: 'domcontentloaded' });
 
