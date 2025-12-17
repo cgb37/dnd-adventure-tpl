@@ -9,7 +9,7 @@ module.exports = defineConfig({
   webServer: {
     // Serve the already-built `_site/` without live reload to avoid flakiness
     // from Jekyll auto-regeneration during UI automation.
-    command: 'python3 -m http.server 4100 --directory _site',
+    command: 'python3 -m http.server 4100 --directory _site-ui',
     port: 4100,
     reuseExistingServer: true,
     timeout: 120_000,
