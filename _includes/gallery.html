@@ -1,4 +1,6 @@
-{% assign items = site.data[include.gallery] | sort: "chapter" %}
+{% assign empty_array = "" | split: "" %}
+{% assign items_unsorted = site.data[include.gallery] | default: empty_array %}
+{% assign items = items_unsorted | sort: "chapter" %}
 <div class="container">
     <div class="row">
         {% for item in items %}
