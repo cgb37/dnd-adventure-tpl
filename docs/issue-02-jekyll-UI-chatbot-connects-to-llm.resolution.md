@@ -1,4 +1,4 @@
-# Issue #3 — Iteration 4 — Global Chatbot UI (Split View) + DM-Page Gating + Stable UI Test Builds
+# Issue #3 — Global Chatbot UI (Split View) + DM-Page Gating + Stable UI Test Builds
 
 Issue: https://github.com/cgb37/dnd-adventure-tpl/issues/3  
 Branch: `3-feat-add-chatbot-to-all-view-ports`
