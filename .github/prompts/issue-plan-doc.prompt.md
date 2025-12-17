@@ -1,20 +1,20 @@
 ---
-name: iteration-doc
-description: Generate a standard iteration document (developer-facing) with required sections and a diff summary at the bottom.
-argument-hint: "issueNumber iterationNumber short-kebab-slug (and optional: issue URL, branch name, base ref)"
+name: issue-plan-doc
+description: Generate a standard github issue planning document (developer-facing) with required sections and a diff summary at the bottom.
+argument-hint: "issueNumber short-kebab-slug (and optional: issue URL, branch name, base ref)"
 tools: []
 ---
 # Iteration Documentation Prompt (Standard)
 
-You are writing a **developer-facing** iteration document for the `dnd-adventure-tpl` repo.
+You are writing a **developer-facing** github issue planning document for the `dnd-adventure-tpl` repo.
 
 ## Naming convention
 - The output document filename should follow:
-  - `docs/issue-<issueNumber>-iteration-<iterationNumber>-<short-kebab-slug>.md`
+  - `docs/issue-<issueNumber>-<short-kebab-slug>.md`
 
 ## Required header metadata
 At the top of the document:
-- Title line: `# Issue #<N> — Iteration <I> — <Short Title>`
+- Title line: `# Issue #<N> — <Short Title>`
 - `Issue:` link (GitHub URL)
 - `Branch:` backticked branch name
 
