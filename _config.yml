@@ -35,6 +35,45 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 #theme: minima
 #plugins:
 
+# Local dev API base URL (used by /tools/chat/ UI)
+llm_api_base_url: "http://localhost:8000"
+
+# Global chatbot (Iteration 4)
+#
+# The chatbot is intended for DM-facing content pages. It is gated by:
+# - allowlist (layout names and/or URL prefixes)
+# - denylist (URL prefixes and exact URLs)
+#
+# Adjust these lists as new site sections are added.
+chatbot:
+  enabled_layouts:
+    - chapter
+    - episode
+    - scene
+    - location
+    - encounter
+    - monster
+    - npc
+    - reward
+    - dmnote
+    - sessionprep
+    - sessionrecap
+  enabled_url_prefixes:
+    - /chapters/
+    - /encounters/
+    - /locations/
+    - /monsters/
+    - /npcs/
+    - /rewards/
+  disabled_url_prefixes:
+    - /tools/
+    - /toc/
+  disabled_urls:
+    - /
+    - /404.html
+    - /search-results.html
+    - /search.json
+
 
 
 # Exclude from processing.
@@ -48,11 +87,13 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 exclude:
   - _frontmattertpls
   - _prompts
+  - docs
   - docker-compose.yml
   - Dockerfile
   - jekyll-serve.sh
   - assets/main.scss
   - .DS_Store
+  - services
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/

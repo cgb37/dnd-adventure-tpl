@@ -1,0 +1,322 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )/.." && pwd)"
+
+if [[ -f "$ROOT_DIR/.env" ]]; then
+  set -a
+  # shellcheck source=/dev/null
+  . "$ROOT_DIR/.env"
+  set +a
+fi
+
+usage() {
+  cat <<'EOF'
+Usage:
+  scripts/new-iteration-doc <issueNumber> <iterationNumber> <slug> [--title "..."] [--base <ref>] [--doc <path>] [--no-diff]
+
+What it does:
+  1) Scaffolds a new iteration doc under docs/ using the naming convention:
+       docs/issue-<issue>-iteration-<iter>-<slug>.md
+  2) Appends/updates a diff-style "files changed" list at the bottom, using:
+       git diff --name-status <base>...HEAD
+
+Args:
+  issueNumber       GitHub issue number (e.g., 3)
+  iterationNumber   Iteration number (e.g., 4)
+  slug              Short kebab-ish slug (e.g., global-chatbot)
+
+Options:
+  --title "..."     Human-friendly title for the iteration doc
+  --base <ref>      Base ref for diff generation (default: main)
+  --doc <path>      Write/update this file instead of the default docs filename
+  --no-diff         Do not generate/insert the diff section
+
+Examples:
+  scripts/new-iteration-doc 3 4 global-chatbot
+  scripts/new-iteration-doc 3 4 global-chatbot --title "Global Chatbot UI"
+  scripts/new-iteration-doc 3 4 global-chatbot --base origin/main
+EOF
+}
+
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+  usage
+  exit 0
+fi
+
+issue="${1:-}"
+iteration="${2:-}"
+slug_in="${3:-}"
+shift 3 || true
+
+title=""
+base_ref="main"
+doc_path=""
+no_diff="false"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --title)
+      title="${2:-}"
+      shift 2
+      ;;
+    --base)
+      base_ref="${2:-}"
+      shift 2
+      ;;
+    --doc)
+      doc_path="${2:-}"
+      shift 2
+      ;;
+    --no-diff)
+      no_diff="true"
+      shift
+      ;;
+    *)
+      echo "Unknown argument: $1" >&2
+      usage >&2
+      exit 2
+      ;;
+  esac
+done
+
+if [[ -z "$issue" || -z "$iteration" || -z "$slug_in" ]]; then
+  echo "Missing required args." >&2
+  usage >&2
+  exit 2
+fi
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "python3 is required." >&2
+  exit 2
+fi
+
+slug="$(python3 - <<'PY'
+import re,sys
+s=sys.argv[1].strip().lower()
+s=re.sub(r"[^a-z0-9]+","-",s)
+s=re.sub(r"-+","-",s).strip("-")
+print(s or "iteration")
+PY
+"$slug_in")"
+
+branch="(unknown)"
+if command -v git >/dev/null 2>&1; then
+  branch="$(git -C "$ROOT_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "(unknown)")"
+fi
+
+origin_url="$(git -C "$ROOT_DIR" config --get remote.origin.url 2>/dev/null || true)"
+repo_http=""
+if [[ -n "$origin_url" ]]; then
+  # Convert common GitHub remote forms into https://github.com/<owner>/<repo>
+  if [[ "$origin_url" =~ ^git@github\.com:([^/]+)/([^\.]+)(\.git)?$ ]]; then
+    repo_http="https://github.com/${BASH_REMATCH[1]}/${BASH_REMATCH[2]}"
+  elif [[ "$origin_url" =~ ^https?://github\.com/([^/]+)/([^\.]+)(\.git)?$ ]]; then
+    repo_http="https://github.com/${BASH_REMATCH[1]}/${BASH_REMATCH[2]}"
+  fi
+fi
+
+issue_url=""
+if [[ -n "$repo_http" ]]; then
+  issue_url="$repo_http/issues/$issue"
+else
+  issue_url="(set manually)"
+fi
+
+mkdir -p "$ROOT_DIR/docs"
+
+if [[ -z "$doc_path" ]]; then
+  doc_path="$ROOT_DIR/docs/issue-${issue}-iteration-${iteration}-${slug}.md"
+elif [[ "$doc_path" != /* ]]; then
+  doc_path="$ROOT_DIR/$doc_path"
+fi
+
+if [[ -z "$title" ]]; then
+  # Best-effort title from slug
+  title="$(python3 - <<'PY'
+import sys
+slug=sys.argv[1]
+print(" ".join([w.capitalize() for w in slug.split('-')]))
+PY
+"$slug")"
+fi
+
+date_str="$(date +%Y-%m-%d)"
+
+if [[ ! -f "$doc_path" ]]; then
+  cat > "$doc_path" <<EOF
+# Issue #$issue — Iteration $iteration — $title
+
+Issue: $issue_url  
+Branch: \`$branch\`
+
+## Overview
+
+(2–4 sentences: what changed and where it shows up.)
+
+## Goals (what we built)
+
+- 
+
+## Non-goals
+
+- 
+
+## Why this approach
+
+- 
+
+## Implementation details
+
+### Jekyll / site integration
+
+- 
+
+### Front-end (JS/CSS)
+
+- 
+
+### Backend / API (if applicable)
+
+- 
+
+### Testing
+
+- 
+
+## How to validate
+
+- \`npm run test:ui\`
+- \`docker compose up api\` (if required)
+
+## TODO list (execution plan)
+
+- [x] Scaffold doc ($date_str)
+- [ ] Fill in Overview/Goals/Non-goals
+- [ ] Fill in Implementation details
+- [ ] Add validation commands and expected results
+- [ ] Review Security considerations
+- [ ] Confirm .env vars section
+- [ ] Final pass for accuracy
+
+## Security considerations
+
+- (e.g., auth, secret handling, CORS/origin assumptions, XSS safety)
+
+## .env / environment variables added
+
+- None (if true), otherwise list new vars + purpose.
+
+## Diagram (optional)
+
+\`\`\`mermaid
+sequenceDiagram
+  autonumber
+  participant Browser
+  participant Jekyll as Jekyll Site
+  participant API as LLM API
+  Browser->>Jekyll: GET DM page
+  Browser->>API: POST /v1/generate/{kind}
+  API-->>Browser: JSON response
+\`\`\`
+
+## Diff summary (files changed)
+
+\`\`\`diff
+(autogenerated by scripts/new-iteration-doc)
+\`\`\`
+EOF
+
+  echo "Created: $doc_path"
+else
+  echo "Updating existing doc: $doc_path"
+fi
+
+if [[ "$no_diff" == "true" ]]; then
+  exit 0
+fi
+
+# Compute name-status diff against base.
+diff_raw=""
+if git -C "$ROOT_DIR" rev-parse --verify "$base_ref" >/dev/null 2>&1; then
+  diff_raw="$(git -C "$ROOT_DIR" diff --name-status "$base_ref"...HEAD)"
+elif git -C "$ROOT_DIR" rev-parse --verify "origin/$base_ref" >/dev/null 2>&1; then
+  diff_raw="$(git -C "$ROOT_DIR" diff --name-status "origin/$base_ref"...HEAD)"
+else
+  # Fallback: still try using the string as provided (could be origin/main)
+  diff_raw="$(git -C "$ROOT_DIR" diff --name-status "$base_ref"...HEAD 2>/dev/null || true)"
+fi
+
+formatted="$(python3 - <<'PY'
+import sys
+lines=sys.stdin.read().splitlines()
+out=[]
+for line in lines:
+    if not line.strip():
+        continue
+    parts=line.split('\t')
+    status=parts[0]
+    if status.startswith('R') and len(parts) >= 3:
+        old, new = parts[1], parts[2]
+        out.append(f"- {old}")
+        out.append(f"+ {new}")
+        continue
+    if status.startswith('C') and len(parts) >= 3:
+        # copy: treat as added destination
+        new = parts[2]
+        out.append(f"+ {new}")
+        continue
+
+    path = parts[1] if len(parts) > 1 else ''
+    if status == 'A':
+        out.append(f"+ {path}")
+    elif status == 'D':
+        out.append(f"- {path}")
+    elif status == 'M':
+        out.append(f"~ {path}")
+    else:
+        out.append(f"~ {path}")
+
+sys.stdout.write("\n".join(out).rstrip() + ("\n" if out else ""))
+PY
+"$diff_raw")"
+
+python3 - <<'PY'
+import re
+from pathlib import Path
+import sys
+
+doc_path = Path(sys.argv[1])
+diff_lines = sys.argv[2]
+
+text = doc_path.read_text(encoding='utf-8', errors='replace')
+
+header = "## Diff summary (files changed)"
+if header not in text:
+    # Append if missing
+    text = text.rstrip() + "\n\n" + header + "\n\n```diff\n```\n"
+
+# Find the first diff code fence after the header
+idx = text.find(header)
+post = text[idx:]
+
+m = re.search(r"```diff\n([\s\S]*?)\n```", post)
+if not m:
+    # Create empty diff fence if missing
+    insert_at = idx + len(header)
+    text = text[:insert_at] + "\n\n```diff\n```\n" + text[insert_at:]
+    idx = text.find(header)
+    post = text[idx:]
+    m = re.search(r"```diff\n([\s\S]*?)\n```", post)
+
+start = idx + m.start(1)
+end = idx + m.end(1)
+
+replacement = diff_lines if diff_lines.strip() else "(no changes detected)\n"
+text = text[:start] + replacement + text[end:]
+
+doc_path.write_text(text, encoding='utf-8')
+PY
+"$doc_path" "$formatted"
+
+echo "Updated diff summary in: $doc_path"

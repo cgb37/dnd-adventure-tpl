@@ -8,8 +8,51 @@
     {% include styles.html %}
 </head>
 <body>
-<div id="page-container">
-    <div id="content-wrap">
+{% assign chatbot_enabled = false %}
+{% assign page_url = page.url | default: "" %}
+{% assign page_layout = page.layout | default: "" | downcase %}
+
+{% if site.chatbot %}
+    {% if site.chatbot.enabled_layouts %}
+        {% for l in site.chatbot.enabled_layouts %}
+            {% assign enabled_layout = l | downcase %}
+            {% if page_layout == enabled_layout %}
+                {% assign chatbot_enabled = true %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if chatbot_enabled == false and site.chatbot.enabled_url_prefixes %}
+        {% for p in site.chatbot.enabled_url_prefixes %}
+            {% assign prefix_len = p | size %}
+            {% assign prefix = page_url | slice: 0, prefix_len %}
+            {% if prefix == p %}
+                {% assign chatbot_enabled = true %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if chatbot_enabled and site.chatbot.disabled_url_prefixes %}
+        {% for p in site.chatbot.disabled_url_prefixes %}
+            {% assign prefix_len = p | size %}
+            {% assign prefix = page_url | slice: 0, prefix_len %}
+            {% if prefix == p %}
+                {% assign chatbot_enabled = false %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if chatbot_enabled and site.chatbot.disabled_urls %}
+        {% for u in site.chatbot.disabled_urls %}
+            {% if page_url == u %}
+                {% assign chatbot_enabled = false %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endif %}
+
+<div id="page-container" class="{% if chatbot_enabled %}with-chatbot{% endif %}">
+        <div id="content-wrap">
 
         {% include header.html %}
         {% include navigation.html %}
@@ -23,6 +66,10 @@
             <p>Role Playing Masters</p>
         </footer>
     </div>
+
+    {% if chatbot_enabled %}
+      {% include chatbot_shell.html %}
+    {% endif %}
 </div>
 
 

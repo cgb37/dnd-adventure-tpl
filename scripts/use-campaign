@@ -1,0 +1,231 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )/.." && pwd)"
+
+if [[ -f "$ROOT_DIR/.env" ]]; then
+  set -a
+  # shellcheck source=/dev/null
+  . "$ROOT_DIR/.env"
+  set +a
+fi
+
+CAMPAIGNS_DIR="${CAMPAIGNS_DIR:-campaigns}"
+
+print_usage() {
+  cat <<'EOF'
+Usage:
+  scripts/use-campaign --list
+  scripts/use-campaign <campaignDirName> [--force] [--link-images] [--init-submodules] [--bootstrap] [--demo]
+
+Notes:
+  - Activates a campaign by symlinking _pages and _posts to campaigns/<campaign>/_pages and _posts.
+  - By default, refuses to overwrite existing real directories. Use --force to back them up first.
+  - --init-submodules runs: git submodule update --init --recursive <campaign>
+  - --bootstrap creates missing campaign directories (_pages, _posts, and _pages/chapters).
+  - --demo creates minimal demo content files if they don't exist yet.
+  - Set CAMPAIGN=<name> and/or CAMPAIGNS_DIR=<dir> in .env if you prefer.
+EOF
+}
+
+list_campaigns() {
+  local base="$ROOT_DIR/$CAMPAIGNS_DIR"
+  if [[ ! -d "$base" ]]; then
+    echo "No campaigns directory found at: $base" >&2
+    return 1
+  fi
+
+  echo "Available campaigns in $CAMPAIGNS_DIR/:"
+  (cd "$base" && ls -1) | sed 's/^/  - /'
+}
+
+backup_or_remove_path() {
+  local path="$1"
+  local force="$2"
+
+  if [[ -L "$path" ]]; then
+    rm -f "$path"
+    return 0
+  fi
+
+  if [[ -e "$path" ]]; then
+    if [[ "$force" != "true" ]]; then
+      echo "Refusing to overwrite existing path: $path" >&2
+      echo "Re-run with --force to back it up." >&2
+      return 2
+    fi
+
+    local ts
+    ts="$(date +%Y%m%d-%H%M%S)"
+    mv "$path" "${path}.bak-${ts}"
+  fi
+}
+
+force="false"
+link_images="false"
+init_submodules="false"
+bootstrap="false"
+demo="false"
+
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+  print_usage
+  exit 0
+fi
+
+if [[ "${1:-}" == "--list" ]]; then
+  list_campaigns
+  exit 0
+fi
+
+campaign="${1:-${CAMPAIGN:-}}"
+shift || true
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --force)
+      force="true"
+      ;;
+    --link-images)
+      link_images="true"
+      ;;
+    --init-submodules)
+      init_submodules="true"
+      ;;
+    --bootstrap)
+      bootstrap="true"
+      ;;
+    --demo)
+      demo="true"
+      bootstrap="true"
+      ;;
+    *)
+      echo "Unknown argument: $1" >&2
+      print_usage
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+if [[ -z "$campaign" ]]; then
+  echo "Missing campaign name." >&2
+  print_usage
+  echo
+  list_campaigns || true
+  exit 2
+fi
+
+campaign_root="$ROOT_DIR/$CAMPAIGNS_DIR/$campaign"
+
+if [[ "$init_submodules" == "true" ]]; then
+  if [[ ! -f "$ROOT_DIR/.gitmodules" ]]; then
+    echo "No .gitmodules found; cannot init submodules." >&2
+    exit 2
+  fi
+
+  (cd "$ROOT_DIR" && git submodule update --init --recursive "$CAMPAIGNS_DIR/$campaign")
+fi
+
+if [[ ! -d "$campaign_root" ]]; then
+  echo "Campaign not found: $campaign_root" >&2
+  echo
+  list_campaigns || true
+  exit 2
+fi
+
+if [[ "$bootstrap" == "true" ]]; then
+  mkdir -p \
+    "$campaign_root/_pages" \
+    "$campaign_root/_posts" \
+    "$campaign_root/_pages/chapters" \
+    "$campaign_root/_pages/monsters" \
+    "$campaign_root/_pages/npcs" \
+    "$campaign_root/_pages/encounters" \
+    "$campaign_root/_pages/locations"
+
+  if [[ "$demo" == "true" ]]; then
+    demo_chapter="$campaign_root/_pages/chapters/chapter-01/index.html"
+    if [[ ! -f "$demo_chapter" ]]; then
+      mkdir -p "$(dirname "$demo_chapter")"
+      cat > "$demo_chapter" <<'EOF'
+---
+layout: chapter
+title: "Chapter 01: Demo Chapter"
+category: chapter
+chapter: 1
+episode:
+scene:
+jumbo:
+thumb:
+portrait:
+search: true
+excerpt_separator: ""
+---
+
+<div class="col-md-6">
+  <h2>Introduction</h2>
+  <p>This is a demo chapter created by scripts/use-campaign --demo. Replace this content with your campaign material.</p>
+</div>
+
+<div class="col-md-6">
+  <h2>Overview</h2>
+  <p>Use this page as a template for your real Chapter 01 landing page.</p>
+</div>
+EOF
+    fi
+
+    demo_post="$campaign_root/_posts/2025-01-01-welcome-to-the-campaign.md"
+    if [[ ! -f "$demo_post" ]]; then
+      cat > "$demo_post" <<'EOF'
+---
+layout: default
+title: "Welcome to the Campaign"
+search: true
+---
+
+This is a demo post created by scripts/use-campaign --demo.
+EOF
+    fi
+  fi
+fi
+
+pages_src="$campaign_root/_pages"
+posts_src="$campaign_root/_posts"
+
+# Use relative paths for symlinks so they work inside Docker mounts.
+pages_link_target="$CAMPAIGNS_DIR/$campaign/_pages"
+posts_link_target="$CAMPAIGNS_DIR/$campaign/_posts"
+
+if [[ ! -d "$pages_src" || ! -d "$posts_src" ]]; then
+  echo "Campaign content is missing required directories:" >&2
+  [[ -d "$pages_src" ]] || echo "  - $pages_src" >&2
+  [[ -d "$posts_src" ]] || echo "  - $posts_src" >&2
+  echo "Create them in the campaign repo, or re-run with --bootstrap." >&2
+  exit 2
+fi
+
+cd "$ROOT_DIR"
+
+backup_or_remove_path "$ROOT_DIR/_pages" "$force"
+backup_or_remove_path "$ROOT_DIR/_posts" "$force"
+
+ln -s "$pages_link_target" "$ROOT_DIR/_pages"
+ln -s "$posts_link_target" "$ROOT_DIR/_posts"
+
+if [[ "$link_images" == "true" ]]; then
+  images_src="$campaign_root/assets/images"
+  images_dest="$ROOT_DIR/assets/images"
+
+  images_link_target="$CAMPAIGNS_DIR/$campaign/assets/images"
+
+  if [[ -d "$images_src" ]]; then
+    backup_or_remove_path "$images_dest" "$force"
+    ln -s "$images_link_target" "$images_dest"
+  else
+    echo "Skipping images link; not found: $images_src" >&2
+  fi
+fi
+
+echo "$campaign" > "$ROOT_DIR/.active-campaign"
+
+echo "Activated campaign: $campaign"

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )/.." && pwd)"
+
+chmod +x "$ROOT_DIR/scripts/use-campaign" || true
+chmod +x "$ROOT_DIR/scripts/setup" || true
+chmod +x "$ROOT_DIR/scripts/new-iteration-doc" || true
+chmod +x "$ROOT_DIR/jekyll-serve.sh" || true
+
+echo "Setup complete."
+echo
+echo "Next steps:"
+echo "  1) Add/initialize campaign submodules under campaigns/."
+echo "  2) Activate a campaign: ./scripts/use-campaign --list && ./scripts/use-campaign <campaign> [--force]"

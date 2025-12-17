@@ -10,6 +10,28 @@ module Jekyll
       chapters = []
       chapters_dir = File.join(site.source, '_pages', 'chapters')
 
+      unless File.directory?(chapters_dir)
+        Jekyll.logger.info "Skipping _pages/chapters (directory not found); generating empty _data/chapters.yml"
+        chapters_data_yaml = YAML.dump(chapters)
+        chapters_data_hash = Digest::SHA256.hexdigest(chapters_data_yaml)
+
+        current_hash = ''
+        data_file_path = File.join(site.source, '_data', 'chapters.yml')
+        if File.exist?(data_file_path)
+          current_hash = Digest::SHA256.hexdigest(File.read(data_file_path))
+        end
+
+        if current_hash != chapters_data_hash
+          Dir.mkdir(File.dirname(data_file_path)) unless Dir.exist?(File.dirname(data_file_path))
+          File.open(data_file_path, 'w') { |file| file.write(chapters_data_yaml) }
+          Jekyll.logger.info "Regenerated _data/chapters.yml"
+        else
+          Jekyll.logger.info "No changes to _data/chapters.yml"
+        end
+
+        return
+      end
+
       Dir.foreach(chapters_dir) do |chapter|
         next if chapter == '.' || chapter == '..'
 
@@ -65,9 +87,15 @@ module Jekyll
     end
 
     def read_front_matter(file_path)
-      content = File.read(file_path)
+      content = File.binread(file_path)
+      content = content.force_encoding('UTF-8')
+      content = content.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
+
       front_matter = content.match(/---\s*\n(.*?)\n---\s*\n/m)
       front_matter ? YAML.safe_load(front_matter[1]) : {}
+    rescue StandardError => e
+      Jekyll.logger.error "Error reading front matter from #{file_path}: #{e.message}"
+      {}
     end
 
     def generate_jekyll_path(chapter, file)

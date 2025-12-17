@@ -4,13 +4,51 @@ services:
   jekyll:
     platform: linux/amd64
     build: .
-    command: ["sh", "-c", "bundle install && jekyll serve --watch --livereload --force_polling --trace --verbose"]
+    command:
+      - sh
+      - -c
+      - |
+        ./scripts/setup
+        ./scripts/use-campaign "${CAMPAIGN:-rpg-theForsakenCrown}" --bootstrap
+        bundle install
+        bundle exec jekyll serve --host 0.0.0.0 --watch --livereload --force_polling --trace --verbose
     ports:
       - 4000:4000
+      - 35729:35729
     volumes:
       - .:/srv/jekyll
     environment:
       JEKYLL_ENV: development
+      CAMPAIGN: ${CAMPAIGN:-rpg-theForsakenCrown}
+    networks:
+      - jekyll-network
+
+  api:
+    image: python:3.12-slim
+    working_dir: /srv/jekyll/services/llm_api
+    command:
+      - sh
+      - -c
+      - |
+        pip install -e .[dev]
+        uvicorn llm_api.app:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/srv/jekyll
+    environment:
+      LLM_API_KEY: ${LLM_API_KEY:-dev-key}
+      LLM_PROVIDER: ${LLM_PROVIDER:-ollama}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2}
+      CORS_ALLOW_ORIGINS: ${CORS_ALLOW_ORIGINS:-http://localhost:4000}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DEBUG_PROMPTS: ${DEBUG_PROMPTS:-false}
+      MAX_CONCURRENCY: ${MAX_CONCURRENCY:-4}
+      MAX_CONCURRENCY_PER_PROVIDER: ${MAX_CONCURRENCY_PER_PROVIDER:-2}
+      REQUESTS_PER_MINUTE: ${REQUESTS_PER_MINUTE:-30}
+      MAX_OUTPUT_TOKENS: ${MAX_OUTPUT_TOKENS:-1200}
+      MAX_REQUEST_BYTES: ${MAX_REQUEST_BYTES:-200000}
     networks:
       - jekyll-network
 
