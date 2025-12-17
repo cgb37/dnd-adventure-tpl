@@ -1,5 +1,9 @@
-`````prompt
-````markdown
+---
+name: iteration-doc
+description: Generate a standard iteration document (developer-facing) with required sections and a diff summary at the bottom.
+argument-hint: "issueNumber iterationNumber short-kebab-slug (and optional: issue URL, branch name, base ref)"
+tools: []
+---
 # Iteration Documentation Prompt (Standard)
 
 You are writing a **developer-facing** iteration document for the `dnd-adventure-tpl` repo.
@@ -73,7 +77,3 @@ Use these sections, in this order (headers can be adjusted slightly, but keep al
 - Keep “Diff summary” at the bottom.
 - Do not include file contents; only reference file paths.
 - If something wasn’t changed, don’t mention it.
-
-````
-
-`````
