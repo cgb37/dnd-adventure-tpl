@@ -1,12 +1,23 @@
 {
-  "name": "dnd-adventure-tpl-ui-tests",
+  "name": "dnd-adventure-tpl",
   "private": true,
   "devDependencies": {
-    "@playwright/test": "^1.50.0"
+    "@playwright/test": "^1.50.0",
+    "conventional-changelog-cli": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cgb37/dnd-adventure-tpl.git"
   },
   "scripts": {
-    "test:ui": "docker compose exec -T jekyll bundle exec jekyll build && playwright test",
+    "test:ui": "docker compose exec -T jekyll bundle exec jekyll build --destination _site-ui && playwright test",
     "test:ui:headed": "playwright test --headed",
-    "test:ui:debug": "playwright test --debug"
+    "test:ui:debug": "playwright test --debug",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "release": "bash ./scripts/release.sh",
+    "release:major": "bash ./scripts/release.sh major",
+    "release:minor": "bash ./scripts/release.sh minor",
+    "release:patch": "bash ./scripts/release.sh patch",
+    "release:set": "bash ./scripts/release.sh set"
   }
 }
