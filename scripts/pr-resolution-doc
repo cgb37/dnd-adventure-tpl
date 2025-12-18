@@ -1,0 +1,724 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ------------------------------------------------------------------------------
+# PR resolution doc generator (v2 - simplified metadata extraction)
+#
+# Key change: Uses temp files instead of multi-line string parsing to avoid
+# issues with special characters in PR titles/bodies.
+# ------------------------------------------------------------------------------
+
+LOG_PREFIX="[pr-resolution-doc]"
+
+log() { printf '%s %s\n' "$LOG_PREFIX" "$*" >&2; }
+die() { printf '%s [ERROR] %s\n' "$LOG_PREFIX" "$*" >&2; exit 1; }
+
+SCRIPT_BASENAME="$(basename "${BASH_SOURCE[0]}")"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# Load optional repo-local .env
+if [[ -f "$ROOT_DIR/.env" ]]; then
+  _PRE_ENV_GH_TOKEN="${GH_TOKEN:-}"
+  _PRE_ENV_GITHUB_TOKEN="${GITHUB_TOKEN:-}"
+
+  set -a
+  # shellcheck source=/dev/null
+  . "$ROOT_DIR/.env"
+  set +a
+
+  if [[ -z "${GH_TOKEN:-}" && -n "$_PRE_ENV_GH_TOKEN" ]]; then
+    GH_TOKEN="$_PRE_ENV_GH_TOKEN"
+    export GH_TOKEN
+  fi
+  if [[ -z "${GITHUB_TOKEN:-}" && -n "$_PRE_ENV_GITHUB_TOKEN" ]]; then
+    GITHUB_TOKEN="$_PRE_ENV_GITHUB_TOKEN"
+    export GITHUB_TOKEN
+  fi
+
+  unset _PRE_ENV_GH_TOKEN _PRE_ENV_GITHUB_TOKEN
+fi
+
+usage() {
+  cat <<EOF
+Usage:
+  scripts/$SCRIPT_BASENAME --pr <prNumber> [--slug <kebab-slug>] [--title "..."]
+                           [--sha <merge_commit_sha>] [--base <ref>] [--doc <path>]
+                           [--repo "owner/repo"] [--no-diff] [--debug-auth]
+
+Options:
+  --pr <number>      GitHub PR number (required)
+  --slug <slug>      Optional filename slug (kebab-case)
+  --title "..."      Optional title (if omitted, fetched via gh/API)
+  --sha <sha>        Optional merge/squash commit SHA
+  --base <ref>       Base ref for WIP diffs (default: origin/main)
+  --doc <path>       Optional explicit output path
+  --repo "o/r"       Optional repo slug (default: inferred from git remote)
+  --no-diff          Do not generate/insert the diff section
+  --debug-auth       Print auth diagnostics
+
+EOF
+}
+
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+  usage
+  exit 0
+fi
+
+require_cmd() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+if ! require_cmd python3; then
+  die "python3 is required."
+fi
+if ! require_cmd git; then
+  die "git is required."
+fi
+if [[ ! -d "$ROOT_DIR/.git" ]]; then
+  die "This script must be run from inside the git repo."
+fi
+
+# Slug generation
+slug_from_title() {
+  local input="${1:-}"
+  python3 - "$input" <<'PY'
+import re, sys
+
+raw = (sys.argv[1] if len(sys.argv) > 1 else "").strip().lower()
+
+vocab = [
+  (r"\buser\s*interface\b", "ui"),
+  (r"\bfront\s*end\b", "frontend"),
+  (r"\bback\s*end\b", "backend"),
+  (r"\bbug\s*fix(es)?\b", "fix"),
+  (r"\bfix(es)?\b", "fix"),
+  (r"\bdocumentation\b", "docs"),
+  (r"\bconfiguration\b", "config"),
+  (r"\bcontinuous\s*integration\b", "ci"),
+  (r"\bgithub\s*actions\b", "gha"),
+  (r"\bpull\s*request\b", "pr"),
+  (r"\bsecurity\b", "sec"),
+  (r"\bperformance\b", "perf"),
+]
+
+s = raw
+for pattern, repl in vocab:
+  s = re.sub(pattern, repl, s)
+
+stop = {"a","an","and","or","the","to","of","for","in","on","with","without","from","into","over","under","via","by","as","at","is","are","was","were","be","been","being","this","that","these","those","it"}
+s = re.sub(r"[^a-z0-9]+", " ", s)
+tokens = [t for t in s.split() if t and t not in stop]
+
+if not tokens:
+  slug = "pr"
+else:
+  slug = "-".join(tokens)
+
+slug = re.sub(r"[^a-z0-9-]+", "-", slug)
+slug = re.sub(r"-+", "-", slug).strip("-")
+slug = slug[:25].rstrip("-")
+
+print(slug or "pr")
+PY
+}
+
+sanitize_slug() {
+  local input="${1:-}"
+  python3 - "$input" <<'PY'
+import re, sys
+s = (sys.argv[1] if len(sys.argv) > 1 else "").strip().lower()
+s = re.sub(r"[^a-z0-9]+", "-", s)
+s = re.sub(r"-+", "-", s).strip("-")
+s = s[:25].rstrip("-")
+print(s or "pr")
+PY
+}
+
+pad_pr() {
+  local input="${1:-}"
+  python3 - "$input" <<'PY'
+import sys
+s=(sys.argv[1] if len(sys.argv) > 1 else "").strip()
+try:
+  n=int(s)
+  print(f"{n:04d}")
+except Exception:
+  print(s)
+PY
+}
+
+infer_repo_slug() {
+  local origin_url
+  origin_url="$(git -C "$ROOT_DIR" config --get remote.origin.url 2>/dev/null || true)"
+  if [[ -z "$origin_url" ]]; then
+    echo ""
+    return 0
+  fi
+  if [[ "$origin_url" =~ ^git@github\.com:([^/]+)/([^\.]+)(\.git)?$ ]]; then
+    echo "${BASH_REMATCH[1]}/${BASH_REMATCH[2]}"
+    return 0
+  fi
+  if [[ "$origin_url" =~ ^https?://github\.com/([^/]+)/([^\.]+)(\.git)?$ ]]; then
+    echo "${BASH_REMATCH[1]}/${BASH_REMATCH[2]}"
+    return 0
+  fi
+  echo ""
+}
+
+redact_token() {
+  local t="${1:-}"
+  if [[ -z "$t" ]]; then
+    printf '%s' "(empty)"
+    return 0
+  fi
+  local prefix="${t:0:4}"
+  local suffix="${t: -4}"
+  local len="${#t}"
+  if [[ "$t" == github_pat_* ]]; then
+    prefix="github_pat_"
+    suffix="${t: -4}"
+  fi
+  printf '%s' "${prefix}****${suffix} (len=${len})"
+}
+
+infer_token_type() {
+  local t="${1:-}"
+  if [[ -z "$t" ]]; then
+    printf '%s' "none"
+  elif [[ "$t" == github_pat_* ]]; then
+    printf '%s' "fine-grained"
+  elif [[ "$t" == ghp_* ]]; then
+    printf '%s' "classic"
+  else
+    printf '%s' "unknown"
+  fi
+}
+
+# -----------------------------
+# Args
+# -----------------------------
+PR=""
+SLUG_IN=""
+TITLE=""
+SHA=""
+BASE_REF=""
+DOC_PATH=""
+NO_DIFF="false"
+REPO_SLUG=""
+PR_BODY=""
+DEBUG_AUTH="false"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --pr)    PR="${2:-}"; shift 2;;
+    --slug)  SLUG_IN="${2:-}"; shift 2;;
+    --title) TITLE="${2:-}"; shift 2;;
+    --sha)   SHA="${2:-}"; shift 2;;
+    --base)  BASE_REF="${2:-}"; shift 2;;
+    --doc)   DOC_PATH="${2:-}"; shift 2;;
+    --repo)  REPO_SLUG="${2:-}"; shift 2;;
+    --no-diff) NO_DIFF="true"; shift;;
+    --debug-auth) DEBUG_AUTH="true"; shift;;
+    *) die "Unknown argument: $1 (use --help)";;
+  esac
+done
+
+[[ -n "$PR" ]] || { usage >&2; die "--pr is required."; }
+
+if [[ -z "$BASE_REF" ]]; then
+  if git -C "$ROOT_DIR" rev-parse --verify origin/main >/dev/null 2>&1; then
+    BASE_REF="origin/main"
+  else
+    BASE_REF="main"
+  fi
+fi
+
+if [[ -z "$REPO_SLUG" ]]; then
+  REPO_SLUG="$(infer_repo_slug)"
+fi
+
+# -----------------------------
+# Auth diagnostics (optional)
+# -----------------------------
+if [[ "$DEBUG_AUTH" == "true" ]]; then
+  log "Auth diagnostics enabled (--debug-auth)."
+
+  if require_cmd gh; then
+    log "gh detected: $(command -v gh)"
+  else
+    log "gh not detected on PATH."
+  fi
+
+  log "Repo slug: ${REPO_SLUG:-'(empty)'}"
+
+  token_effective="${GH_TOKEN:-${GITHUB_TOKEN:-}}"
+  log "Token present: $( [[ -n "$token_effective" ]] && echo yes || echo no )"
+  log "Token type: $(infer_token_type "$token_effective")"
+  log "Token hint: $(redact_token "$token_effective")"
+fi
+
+# -----------------------------
+# SIMPLIFIED METADATA FETCH
+# Key change: Extract fields directly using Python, no multi-line string parsing
+# -----------------------------
+
+# This function writes JSON to a temp file and extracts fields directly
+fetch_and_extract_metadata() {
+  local pr="$1"
+  local repo="$2"
+  local tmp_json
+  tmp_json="$(mktemp)"
+  trap 'rm -f "$tmp_json"' RETURN
+
+  local fetch_ok="false"
+
+  # Try gh first
+  if require_cmd gh; then
+    if [[ "$DEBUG_AUTH" == "true" ]]; then
+      log "Trying gh CLI..."
+    fi
+    
+    if [[ -n "$repo" ]]; then
+      gh -R "$repo" pr view "$pr" --json title,mergeCommit,mergedAt,baseRefName,body > "$tmp_json" 2>/dev/null && fetch_ok="true"
+    else
+      gh pr view "$pr" --json title,mergeCommit,mergedAt,baseRefName,body > "$tmp_json" 2>/dev/null && fetch_ok="true"
+    fi
+  fi
+
+  # Fall back to API if gh failed
+  if [[ "$fetch_ok" != "true" ]] && require_cmd curl; then
+    local token="${GH_TOKEN:-${GITHUB_TOKEN:-}}"
+    if [[ -n "$token" && -n "$repo" ]]; then
+      if [[ "$DEBUG_AUTH" == "true" ]]; then
+        log "Trying GitHub API..."
+      fi
+      
+      local code
+      code="$(curl -sS -o "$tmp_json" \
+        -H "Authorization: Bearer $token" \
+        -H "Accept: application/vnd.github+json" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        -w "%{http_code}" \
+        "https://api.github.com/repos/$repo/pulls/$pr" || echo "000")"
+      
+      if [[ "$code" == "200" ]]; then
+        fetch_ok="true"
+      fi
+    fi
+  fi
+
+  if [[ "$fetch_ok" != "true" ]]; then
+    log "Could not fetch PR metadata via gh or API."
+    return 1
+  fi
+
+  # Debug: show raw JSON
+  if [[ "$DEBUG_AUTH" == "true" ]]; then
+    log "Raw JSON from fetch (first 500 chars):"
+    head -c 500 "$tmp_json" >&2
+    echo "" >&2
+  fi
+
+  # Extract fields directly from the JSON file using Python
+  # This avoids all the multi-line string parsing issues
+  python3 - "$tmp_json" "$DEBUG_AUTH" <<'PY'
+import json
+import sys
+import base64
+
+json_path = sys.argv[1]
+debug = sys.argv[2] == "true"
+
+try:
+    with open(json_path, 'r', encoding='utf-8') as f:
+        obj = json.load(f)
+except json.JSONDecodeError as e:
+    if debug:
+        sys.stderr.write(f"[pr-resolution-doc] ERROR: Invalid JSON: {e}\n")
+    sys.exit(1)
+except Exception as e:
+    if debug:
+        sys.stderr.write(f"[pr-resolution-doc] ERROR: Could not read file: {e}\n")
+    sys.exit(1)
+
+# Determine if this is gh CLI output or GitHub API output
+# gh CLI output has: title, mergeCommit, mergedAt, baseRefName, body
+# GitHub API output has: title, merge_commit_sha, merged, merged_at, base.ref, body
+
+if 'mergeCommit' in obj:
+    # gh CLI format
+    title = obj.get('title', '') or ''
+    merge_commit = obj.get('mergeCommit') or {}
+    sha = merge_commit.get('oid', '') if isinstance(merge_commit, dict) else ''
+    merged_at = obj.get('mergedAt', '') or ''
+    merged = bool(merged_at)
+    base = obj.get('baseRefName', '') or ''
+    body = obj.get('body', '') or ''
+else:
+    # GitHub API format
+    title = obj.get('title', '') or ''
+    sha = obj.get('merge_commit_sha', '') or ''
+    merged = obj.get('merged', False)
+    merged_at = obj.get('merged_at', '') or ''
+    base_obj = obj.get('base') or {}
+    base = base_obj.get('ref', '') if isinstance(base_obj, dict) else ''
+    body = obj.get('body', '') or ''
+
+if debug:
+    sys.stderr.write(f"[pr-resolution-doc] Extracted title: {title!r}\n")
+    sys.stderr.write(f"[pr-resolution-doc] Extracted sha: {sha!r}\n")
+    sys.stderr.write(f"[pr-resolution-doc] Extracted merged: {merged}\n")
+    sys.stderr.write(f"[pr-resolution-doc] Extracted merged_at: {merged_at!r}\n")
+    sys.stderr.write(f"[pr-resolution-doc] Extracted base: {base!r}\n")
+    sys.stderr.write(f"[pr-resolution-doc] Body length: {len(body)} chars\n")
+
+# Output as KEY=VALUE pairs, one per line (easier to parse in bash)
+# Base64 encode body to handle multiline/special chars
+body_b64 = base64.b64encode(body.encode('utf-8')).decode('ascii')
+
+print(f"TITLE={title}")
+print(f"SHA={sha}")
+print(f"MERGED={'true' if merged else 'false'}")
+print(f"MERGED_AT={merged_at}")
+print(f"BASE={base}")
+print(f"BODY_B64={body_b64}")
+PY
+}
+
+# Parse KEY=VALUE output into bash variables
+parse_metadata_output() {
+  local line
+  while IFS= read -r line; do
+    case "$line" in
+      TITLE=*)    auto_title="${line#TITLE=}" ;;
+      SHA=*)      auto_sha="${line#SHA=}" ;;
+      MERGED=*)   auto_merged="${line#MERGED=}" ;;
+      MERGED_AT=*) auto_merged_at="${line#MERGED_AT=}" ;;
+      BASE=*)     auto_base="${line#BASE=}" ;;
+      BODY_B64=*) auto_body_b64="${line#BODY_B64=}" ;;
+    esac
+  done
+}
+
+# Initialize
+auto_title=""
+auto_sha=""
+auto_merged=""
+auto_merged_at=""
+auto_base=""
+auto_body_b64=""
+
+# Only fetch if something is missing
+if [[ -z "$TITLE" || -z "$SHA" || -z "$PR_BODY" ]]; then
+  metadata_output="$(fetch_and_extract_metadata "$PR" "$REPO_SLUG" || true)"
+  
+  if [[ -n "$metadata_output" ]]; then
+    # Parse the KEY=VALUE output
+    parse_metadata_output <<< "$metadata_output"
+    
+    if [[ "$DEBUG_AUTH" == "true" ]]; then
+      log "Parsed from metadata output:"
+      log "  - title: ${auto_title:-(empty)}"
+      log "  - sha: ${auto_sha:-(empty)}"
+      log "  - merged: ${auto_merged:-(empty)}"
+      log "  - merged_at: ${auto_merged_at:-(empty)}"
+      log "  - base: ${auto_base:-(empty)}"
+      log "  - body_b64 length: ${#auto_body_b64} chars"
+    fi
+
+    [[ -z "$TITLE" && -n "$auto_title" ]] && TITLE="$auto_title"
+    [[ -z "$SHA" && -n "$auto_sha" ]] && SHA="$auto_sha"
+
+    if [[ -z "$SHA" && -n "$auto_base" ]]; then
+      if git -C "$ROOT_DIR" rev-parse --verify "origin/$auto_base" >/dev/null 2>&1; then
+        BASE_REF="origin/$auto_base"
+      elif git -C "$ROOT_DIR" rev-parse --verify "$auto_base" >/dev/null 2>&1; then
+        BASE_REF="$auto_base"
+      fi
+    fi
+
+    if [[ -z "$PR_BODY" && -n "$auto_body_b64" ]]; then
+      PR_BODY="$(printf '%s' "$auto_body_b64" | python3 -c 'import base64,sys; print(base64.b64decode(sys.stdin.read().strip()).decode("utf-8", errors="replace"))')"
+    fi
+
+    if [[ "$auto_merged" == "false" ]]; then
+      log "PR #$PR not marked as merged. Pass --sha explicitly after merge."
+    fi
+  else
+    log "No PR metadata fetched. Check gh auth or set GH_TOKEN."
+  fi
+fi
+
+# -----------------------------
+# Compute padded PR and slug
+# -----------------------------
+PR_PADDED="$(pad_pr "$PR")"
+
+DOC_DATE=""
+if [[ -n "${auto_merged_at:-}" ]]; then
+  DOC_DATE="$(printf '%s' "$auto_merged_at" | python3 -c 'import sys; s=sys.stdin.read().strip(); print(s[0:4]+s[5:7]+s[8:10]) if len(s)>=10 and s[4]=="-" and s[7]=="-" else ""')"
+fi
+
+if [[ -z "$DOC_DATE" && -n "$SHA" ]]; then
+  DOC_DATE="$(git -C "$ROOT_DIR" show -s --format=%cs "$SHA" 2>/dev/null | tr -d '-' || true)"
+fi
+
+if [[ -z "$DOC_DATE" ]]; then
+  DOC_DATE="$(date +%Y%m%d)"
+fi
+
+if [[ -z "$TITLE" ]]; then
+  TITLE="(title not fetched)"
+fi
+
+if [[ -n "$SLUG_IN" ]]; then
+  SLUG="$(sanitize_slug "$SLUG_IN")"
+else
+  SLUG="$(slug_from_title "$TITLE")"
+fi
+
+if [[ "$SLUG" =~ ^pr-0*${PR}$ ]] || [[ "$SLUG" == "pr" ]]; then
+  SLUG="title-not-fetched"
+fi
+
+# -----------------------------
+# Paths + URLs
+# -----------------------------
+mkdir -p "$ROOT_DIR/docs/prs"
+
+if [[ -z "$DOC_PATH" ]]; then
+  DOC_PATH="$ROOT_DIR/docs/prs/pr-${PR_PADDED}-${SLUG}-${DOC_DATE}-resolution.md"
+elif [[ "$DOC_PATH" != /* ]]; then
+  DOC_PATH="$ROOT_DIR/$DOC_PATH"
+fi
+
+PR_URL="(set manually)"
+if [[ -n "$REPO_SLUG" ]]; then
+  PR_URL="https://github.com/$REPO_SLUG/pull/$PR"
+fi
+
+merge_date=""
+if [[ -n "$SHA" ]]; then
+  merge_date="$(git -C "$ROOT_DIR" show -s --format=%cs "$SHA" 2>/dev/null || true)"
+fi
+
+# -----------------------------
+# Create doc (if missing)
+# -----------------------------
+if [[ ! -f "$DOC_PATH" ]]; then
+  mkdir -p "$(dirname "$DOC_PATH")"
+  cat > "$DOC_PATH" <<EOF
+# PR #$PR_PADDED — $TITLE
+
+Merged: ${merge_date:-"(unknown; run with --sha for merged PRs)"}  
+Doc date: $DOC_DATE  
+PR: $PR_URL
+
+## Resolution Summary
+
+(2–4 sentences: what changed and where it shows up.)
+
+## PR description
+
+<!-- pr-body:start -->
+${PR_BODY:-"(auto-populated when available; otherwise paste PR description here.)"}
+<!-- pr-body:end -->
+
+## Overview
+
+(Details: rationale, context, what areas were touched.)
+
+## Goals (what we built)
+
+- 
+
+## Non-goals
+
+- 
+
+## Why this approach
+
+- 
+
+## Implementation details
+
+### Jekyll / site integration
+
+- 
+
+### Front-end (JS/CSS)
+
+- 
+
+### Backend / API (if applicable)
+
+- 
+
+### Testing
+
+- 
+
+## How to validate
+
+- \`npm run test\` (or your project command)
+
+## TODO list (execution plan)
+
+- [x] Scaffold doc ($(date +%Y-%m-%d))
+- [ ] Fill in Resolution Summary / Overview / Goals / Non-goals
+- [ ] Fill in Implementation details
+- [ ] Add validation commands and expected results
+- [ ] Final pass for accuracy
+
+## Security considerations
+
+- (e.g., auth, secret handling, XSS safety)
+
+## Diff summary (files changed)
+
+\`\`\`diff
+(autogenerated by scripts/$SCRIPT_BASENAME)
+\`\`\`
+EOF
+
+  log "Created: $DOC_PATH"
+else
+  log "Updating existing doc: $DOC_PATH"
+fi
+
+if [[ "$NO_DIFF" == "true" ]]; then
+  printf '%s\n' "$DOC_PATH"
+  exit 0
+fi
+
+# -----------------------------
+# Diff calculation
+# -----------------------------
+DIFF_RAW=""
+
+if [[ -n "$SHA" ]]; then
+  if ! git -C "$ROOT_DIR" cat-file -e "${SHA}^{commit}" >/dev/null 2>&1; then
+    die "Commit SHA not found locally: $SHA. Run: git fetch --all --prune"
+  fi
+  DIFF_RAW="$(git -C "$ROOT_DIR" diff --name-status "${SHA}^" "${SHA}" || true)"
+else
+  if git -C "$ROOT_DIR" rev-parse --verify "$BASE_REF" >/dev/null 2>&1; then
+    DIFF_RAW="$(git -C "$ROOT_DIR" diff --name-status "$BASE_REF"...HEAD || true)"
+  elif git -C "$ROOT_DIR" rev-parse --verify "origin/$BASE_REF" >/dev/null 2>&1; then
+    DIFF_RAW="$(git -C "$ROOT_DIR" diff --name-status "origin/$BASE_REF"...HEAD || true)"
+  else
+    DIFF_RAW="$(git -C "$ROOT_DIR" diff --name-status "$BASE_REF"...HEAD 2>/dev/null || true)"
+  fi
+fi
+
+FORMATTED="$(python3 -c 'import sys
+lines=sys.stdin.read().splitlines()
+out=[]
+for line in lines:
+  if not line.strip():
+    continue
+  parts=line.split("\t")
+  status=parts[0]
+  if status.startswith("R") and len(parts) >= 3:
+    old, new = parts[1], parts[2]
+    out.append(f"- {old}")
+    out.append(f"+ {new}")
+    continue
+  if status.startswith("C") and len(parts) >= 3:
+    new = parts[2]
+    out.append(f"+ {new}")
+    continue
+  path = parts[1] if len(parts) > 1 else ""
+  if status == "A":
+    out.append(f"+ {path}")
+  elif status == "D":
+    out.append(f"- {path}")
+  elif status == "M":
+    out.append(f"~ {path}")
+  else:
+    out.append(f"~ {path}")
+sys.stdout.write("\n".join(out).rstrip() + ("\n" if out else ""))
+' <<<"$DIFF_RAW")"
+
+python3 - "$DOC_PATH" "$FORMATTED" <<'PY'
+import re
+from pathlib import Path
+import sys
+
+doc_path = Path(sys.argv[1])
+diff_lines = sys.argv[2]
+
+text = doc_path.read_text(encoding='utf-8', errors='replace')
+
+header = "## Diff summary (files changed)"
+if header not in text:
+  text = text.rstrip() + "\n\n" + header + "\n\n```diff\n```\n"
+
+idx = text.find(header)
+post = text[idx:]
+
+m = re.search(r"```diff\n([\s\S]*?)\n```", post)
+if not m:
+  insert_at = idx + len(header)
+  text = text[:insert_at] + "\n\n```diff\n```\n" + text[insert_at:]
+  idx = text.find(header)
+  post = text[idx:]
+  m = re.search(r"```diff\n([\s\S]*?)\n```", post)
+
+start = idx + m.start(1)
+end = idx + m.end(1)
+
+replacement = diff_lines if diff_lines.strip() else "(no changes detected)\n"
+text = text[:start] + replacement + text[end:]
+
+doc_path.write_text(text, encoding='utf-8')
+PY
+
+log "Updated diff summary in: $DOC_PATH"
+
+# -----------------------------
+# Update PR description if we have PR_BODY
+# -----------------------------
+if [[ -n "${PR_BODY// }" ]]; then
+  python3 - "$DOC_PATH" "$PR_BODY" <<'PY'
+from pathlib import Path
+import sys
+
+doc_path = Path(sys.argv[1])
+body = sys.argv[2]
+
+text = doc_path.read_text(encoding='utf-8', errors='replace')
+start_tag = "<!-- pr-body:start -->"
+end_tag = "<!-- pr-body:end -->"
+
+body_clean = body.rstrip("\n") + "\n"
+
+if start_tag in text and end_tag in text and text.index(start_tag) < text.index(end_tag):
+  start = text.index(start_tag) + len(start_tag)
+  end = text.index(end_tag)
+  replacement = "\n" + body_clean
+  text = text[:start] + replacement + text[end:]
+else:
+  marker = "## Resolution Summary"
+  lines = text.splitlines(True)
+  idx = next((i for i,l in enumerate(lines) if l.strip() == marker), None)
+  section = "## PR description\n\n" + start_tag + "\n" + body_clean + end_tag + "\n\n"
+  if idx is None:
+    text = section + text
+  else:
+    j = idx + 1
+    while j < len(lines) and lines[j].strip() == "":
+      j += 1
+    while j < len(lines) and lines[j].strip() != "":
+      j += 1
+    while j < len(lines) and lines[j].strip() == "":
+      j += 1
+    lines.insert(j, section)
+    text = "".join(lines)
+
+doc_path.write_text(text, encoding='utf-8')
+PY
+  log "Updated PR description in: $DOC_PATH"
+fi
+
+printf '%s\n' "$DOC_PATH"
