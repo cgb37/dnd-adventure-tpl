@@ -1,3 +1,41 @@
+## [0.1.1](https://github.com/cgb37/dnd-adventure-tpl/compare/v0.1.0...v0.1.1) (2025-12-18)
+
+
+* Implements a new script for scaffolding issue resolution summary documents. ([ad0f32e](https://github.com/cgb37/dnd-adventure-tpl/commit/ad0f32efe47b1e09398bbb35e731f8026e8cbe3f))
+
+
+### Bug Fixes
+
+* **docker:** update CORS settings and LLM provider ([f716434](https://github.com/cgb37/dnd-adventure-tpl/commit/f716434a1cddbba8f8b2393fef07cc4c5b8d7003))
+* **gallery:** address Jekyll error in gallery rendering ([82c77cd](https://github.com/cgb37/dnd-adventure-tpl/commit/82c77cd1e762891d618817a89a148286288046d2)), closes [#456](https://github.com/cgb37/dnd-adventure-tpl/issues/456)
+
+
+### Code Refactoring
+
+* **prompts:** rename iteration document to issue planning document ([93edec3](https://github.com/cgb37/dnd-adventure-tpl/commit/93edec340873e6cef7de6e09e1aa4aef69b50d1c))
+
+
+### Features
+
+* **chatbot:** enhance desktop split-view layout and testing ([f32b957](https://github.com/cgb37/dnd-adventure-tpl/commit/f32b95795c7e709f42916ff2efefadf99fcc9ebf))
+* **chatbot:** enhance responsive layout support ([85322ff](https://github.com/cgb37/dnd-adventure-tpl/commit/85322ffa437da02196e47ced70a2dd24e61fdac7))
+* **meta:** add mock provider for local development ([3d2bc36](https://github.com/cgb37/dnd-adventure-tpl/commit/3d2bc361a3efed45f9d501776263ca31f017578a))
+* **pr-resolution-doc:** add PR resolution documentation generator ([7b962eb](https://github.com/cgb37/dnd-adventure-tpl/commit/7b962eba14d0dcf2a1819057ecab4d9360396e47))
+* **prompt:** add design prompt for ui-chatbot layout ([7aa0935](https://github.com/cgb37/dnd-adventure-tpl/commit/7aa09356370c838f80ffe6f3f287ce3923f2bd8a))
+* **prompts:** enhance iteration-doc template structure ([3d026fb](https://github.com/cgb37/dnd-adventure-tpl/commit/3d026fbc0c0e6affa1edb5fa2293f656807845f4))
+* **scripts:** add docker-compose command for development ([6fe99c5](https://github.com/cgb37/dnd-adventure-tpl/commit/6fe99c5d782c41e65266a755aa1a36a44482cf8d)), closes [#5](https://github.com/cgb37/dnd-adventure-tpl/issues/5)
+* **test:** add waitForLlmApiReady utility function ([b1461aa](https://github.com/cgb37/dnd-adventure-tpl/commit/b1461aaed0c0fdadfb7efcf90a72665d942ea1af))
+* **vscode:** add task for running UI tests ([2634833](https://github.com/cgb37/dnd-adventure-tpl/commit/2634833c38819cdf3181e3358482ce381b806b02))
+
+
+### BREAKING CHANGES
+
+* **pr-resolution-doc:** The method for fetching PR data has been altered; ensure compatibility with existing workflows.
+* Argument changes from iterationNumber and slug to issueTitleSlug, altering the input parameters significantly.
+* **prompts:** The prompt's name and argument structure have changed, potentially affecting existing integrations.
+
+
+
 # 0.1.0 (2025-12-17)
 
 
