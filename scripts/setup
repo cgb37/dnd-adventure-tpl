@@ -5,8 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )/.." && pwd)"
 
 chmod +x "$ROOT_DIR/scripts/use-campaign" || true
 chmod +x "$ROOT_DIR/scripts/setup" || true
-chmod +x "$ROOT_DIR/scripts/new-iteration-doc" || true
-chmod +x "$ROOT_DIR/scripts/new-issue-resolution-summary-doc" || true
+chmod +x "$ROOT_DIR/scripts/pr-resolution-doc" || true
 chmod +x "$ROOT_DIR/jekyll-serve.sh" || true
 
 echo "Setup complete."
