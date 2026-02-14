@@ -51,24 +51,28 @@
     {% endif %}
 {% endif %}
 
-<div id="page-container" class="{% if chatbot_enabled %}with-chatbot{% endif %}">
+<div id="split-wrapper" class="{% if chatbot_enabled %}with-chatbot{% endif %}">
+    <div id="page-container">
         <div id="content-wrap">
 
-        {% include header.html %}
-        {% include navigation.html %}
-        {% include searchbar.html %}
-        {% include heroimage.html %}
-        <main>
-            {{ content }}
-        </main>
+            {% include header.html %}
+            {% include navigation.html %}
+            {% include searchbar.html %}
+            {% include heroimage.html %}
+            <main>
+                {{ content }}
+            </main>
 
-        <footer id="footer" class="app-footer text-center">
-            <p>Role Playing Masters</p>
-        </footer>
+            <footer id="footer" class="app-footer text-center">
+                <p>Role Playing Masters</p>
+            </footer>
+        </div>
     </div>
 
     {% if chatbot_enabled %}
-      {% include chatbot_shell.html %}
+        <div id="chatbot-column">
+            {% include chatbot_shell.html %}
+        </div>
     {% endif %}
 </div>
 
