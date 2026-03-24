@@ -37,8 +37,49 @@ From repo root:
 - `pip install -e services/llm_api[dev]`
 - `uvicorn llm_api.app:app --reload --port 8000`
 
+Behavior:
+- `APP_ENV` (default: `development`) — controls logging renderer and 500 error detail exposure
+  - `development` → color-coded human-readable console output; `details.debug` included in 500 responses
+  - `production` → structured JSON logs; `details` omitted from 500 responses
+
 ## API
-- `GET /healthz`
-- `POST /v1/generate/{kind}` where `{kind}` in `npc|monster|encounter|chapter|location`
 
 All `/v1/*` endpoints require `X-API-Key: $LLM_API_KEY`.
+
+### Chat endpoint
+
+**POST /v1/chat** — Plain conversational chat. No draft is written; no active campaign required.
+
+Request body:
+```json
+{
+  "messages": [
+    {"role": "user", "content": "Describe a goblin warcamp."}
+  ],
+  "provider": "openai"
+}
+```
+
+Response (`200 OK`):
+```json
+{
+  "request_id": "...",
+  "data": {
+    "message": {
+      "role": "assistant",
+      "content": "The goblin warcamp sprawls..."
+    }
+  }
+}
+```
+
+Optional headers:
+- `X-LLM-Provider: <provider>` — override the server's default provider for this request.
+- `X-API-Key: <key>` — required unless `RELAX_AUTH_ON_LOCALHOST=true`.
+
+Error codes: `no_user_message` (400), `provider_not_configured` (400), `rate_limited` (429).
+
+### Generate endpoint
+
+- `GET /healthz`
+- `POST /v1/generate/{kind}` where `{kind}` in `npc|monster|encounter|chapter|location`
