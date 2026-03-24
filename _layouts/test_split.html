@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }}</title>
+    {% include styles.html %}
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .split-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh; /* let body scroll */
+        }
+        .left-panel {
+            flex: 2;
+            background-color: #EEE5CE;
+            overflow: visible; /* allow dropdowns to escape */
+        }
+        .right-panel {
+            flex: 1;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #333;
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0; /* keep chatbot/right pane visible while body scrolls */
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="split-container">
+        <div class="left-panel">
+            <div id="content-wrap">
+                {% include header.html %}
+                {% include navigation.html %}
+                {% include searchbar.html %}
+                {% include heroimage.html %}
+                <main>
+                    {{ content }}
+                </main>
+                
+                <footer id="footer" class="app-footer text-center">
+                    <p>Role Playing Masters</p>
+                </footer>
+            </div>
+        </div>
+        <div class="right-panel">
+            Hello 1/3
+        </div>
+    </div>
+
+    {% include scripts.html %}
+    <script src="/assets/js/search.js"></script>
+</body>
+</html></content>
+<parameter name="filePath">/Users/charlesbrownroberts/Code/CGB37/dnd-ai/dnd-adventure-tpl/_layouts/test_split.html

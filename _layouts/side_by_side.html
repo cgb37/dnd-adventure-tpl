@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }}</title>
+
+    {% include styles.html %}
+</head>
+<body>
+
+<div id="split-wrapper" class="with-chatbot">
+    <div id="page-container">
+        <div id="content-wrap">
+
+            {% include header.html %}
+            {% include navigation.html %}
+            {% include searchbar.html %}
+            {% include heroimage.html %}
+            <main>
+                {{ content }}
+            </main>
+
+            <footer id="footer" class="app-footer text-center">
+                <p>Role Playing Masters</p>
+            </footer>
+        </div>
+    </div>
+
+    <div id="chatbot-column">
+        {% include chatbot_shell.html %}
+    </div>
+</div>
+
+{% include scripts.html %}
+<script src="/assets/js/search.js"></script>
+</body>
+</html></content>
+<parameter name="filePath">/Users/charlesbrownroberts/Code/CGB37/dnd-ai/dnd-adventure-tpl/_layouts/side_by_side.html

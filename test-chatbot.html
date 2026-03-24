@@ -1,0 +1,76 @@
+---
+title: Test Chatbot Split
+permalink: /test-chatbot.html
+---
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Test Chatbot Split</title>
+  {% include styles.html %}
+  <style>
+    html,body{height:100%;margin:0}
+
+    #split-wrapper.with-chatbot{display:flex;min-height:100vh;width:100%}
+    #split-wrapper.with-chatbot > #page-container{
+      flex:0 0 66.666667%;
+      max-width:66.666667%;
+      min-width:0;
+      background:#EEE5CE;
+      box-sizing:border-box;
+    }
+    #split-wrapper.with-chatbot > #chatbot-column{
+      flex:0 0 33.333333%;
+      max-width:33.333333%;
+      min-width:0;
+      height:100vh;
+      position:sticky;
+      top:0;
+      overflow:hidden;
+      box-sizing:border-box;
+      background:var(--bs-body-bg);
+    }
+
+    #content-wrap{padding:0 1rem}
+    main{max-width:900px;margin:0 auto}
+
+    /* Test-page only: keep full nav visible within the 2/3 pane */
+    #split-wrapper .navbar-toggler{display:none !important}
+    #split-wrapper .navbar .container-fluid{align-items:flex-start}
+    #split-wrapper .navbar-collapse{display:block !important;flex-basis:100%}
+    #split-wrapper .navbar-nav{
+      margin:0 !important;
+      display:flex;
+      flex-wrap:wrap;
+      row-gap:0.25rem;
+    }
+    #split-wrapper .navbar-nav .nav-link{white-space:nowrap}
+
+    /* Ensure chatbot fills its 1/3 pane */
+    #chatbot-column #global-chatbot{height:100%}
+    #chatbot-column #global-chatbot .chatbot__panel{height:100%}
+  </style>
+</head>
+<body>
+  <div id="split-wrapper" class="with-chatbot">
+    <div id="page-container">
+      <div id="content-wrap">
+        {% include header.html %}
+        {% include navigation.html %}
+        {% include searchbar.html %}
+        <main>
+          <h1>Test: Site (left)</h1>
+          <p>This is the website area. Keep it simple.</p>
+        </main>
+      </div>
+    </div>
+
+    <div id="chatbot-column">
+      {% include chatbot_shell.html %}
+    </div>
+  </div>
+
+  {% include scripts.html %}
+</body>
+</html>
