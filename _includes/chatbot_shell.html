@@ -1,5 +1,5 @@
 {%- comment -%}
-Global chatbot shell (Iteration 4)
+Global chatbot shell (Iteration 5)
 - Rendered only on allowlisted DM content pages (see _config.yml -> chatbot)
 - Excluded on /tools/* and other denylisted pages
 {%- endcomment -%}
@@ -8,19 +8,16 @@ Global chatbot shell (Iteration 4)
   // Apply persisted open/closed state before the widget renders to reduce flicker.
   (function () {
     try {
-      var key = 'dnd_global_chatbot_open';
-      var open = localStorage.getItem(key);
-      if (open === 'false') {
-        document.documentElement.classList.add('chatbot-collapsed');
-      }
-    } catch (_) {
-      // ignore
-    }
+      var open = localStorage.getItem('dnd_global_chatbot_open');
+      if (open === 'false') document.documentElement.classList.add('chatbot-collapsed');
+    } catch (_) {}
   })();
 </script>
 
 <aside id="global-chatbot" class="chatbot" aria-label="AI Assistant">
   <div class="chatbot__panel">
+
+    <!-- ── Header ── -->
     <div class="chatbot__header">
       <div class="chatbot__title">
         <span class="chatbot__badge" aria-hidden="true">AI</span>
@@ -29,36 +26,150 @@ Global chatbot shell (Iteration 4)
           <div class="chatbot__subheading">DM tools</div>
         </div>
       </div>
-
-      <button id="chatbotToggle" class="btn btn-sm btn-outline-secondary chatbot__toggle" type="button" aria-label="Toggle chatbot">
+      <button id="chatbotToggle" class="btn btn-sm btn-outline-secondary chatbot__toggle"
+              type="button" aria-label="Toggle chatbot">
         <span class="chatbot__toggleIcon" aria-hidden="true">›</span>
       </button>
     </div>
 
-    <div class="chatbot__toolbar">
-      <div class="chatbot__toolbarRow">
-        <select id="chatbotProvider" class="form-select form-select-sm chatbot__select" aria-label="LLM provider"></select>
-        <select id="chatbotKind" class="form-select form-select-sm chatbot__select" aria-label="Generate type"></select>
-      </div>
-      <div class="chatbot__toolbarRow chatbot__toolbarRow--icons" aria-hidden="true">
-        <button class="btn btn-sm btn-outline-secondary" type="button" disabled>Attach</button>
-        <button class="btn btn-sm btn-outline-secondary" type="button" disabled>Model</button>
-        <button class="btn btn-sm btn-outline-secondary" type="button" disabled>Tools</button>
-      </div>
-    </div>
+    <!-- ── Messages ── -->
+    <div id="chatbotMessages" class="chatbot__messages"
+         role="log" aria-live="polite" aria-relevant="additions"></div>
 
-    <div id="chatbotMessages" class="chatbot__messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+    <!-- ── Unified input box ── -->
+    <div class="chatbot__inputArea">
 
-    <div class="chatbot__input">
-      <textarea id="chatbotInput" class="form-control chatbot__textarea" rows="1" placeholder="Ask me anything..." aria-label="Chat input"></textarea>
-      <div class="chatbot__inputRow">
-        <div class="chatbot__hint">Sends your prompt to the selected generator.</div>
-        <button id="chatbotSend" class="btn btn-primary chatbot__send" type="button">Send</button>
-      </div>
-    </div>
-  </div>
+      <!-- Attachment preview strip (hidden until files are attached) -->
+      <div id="chatbotAttachments" class="chatbot__attachments" hidden></div>
+      <div id="chatbotAttachError" class="chatbot__attachError" hidden></div>
 
-  <button id="chatbotFloatingToggle" class="btn btn-primary chatbot__floatingToggle" type="button" aria-label="Show chatbot">
+      <!-- Input box: focus ring wraps textarea + bottom bar -->
+      <div class="chatbot__inputBox" data-mode="ask" id="chatbotInputBox">
+
+        <textarea id="chatbotInput"
+                  class="chatbot__textarea"
+                  rows="1"
+                  placeholder="Ask anything..."
+                  aria-label="Chat input"></textarea>
+
+        <!-- Bottom action bar -->
+        <div class="chatbot__bottomBar">
+
+          <!-- Left controls -->
+          <div class="chatbot__bottomLeft">
+
+            <!-- Mode toggle: Ask / Agent -->
+            <div class="chatbot__dropdownWrap" id="modeDropdownWrap">
+              <button class="chatbot__pillBtn chatbot__pillBtn--active"
+                      type="button"
+                      data-testid="mode-toggle"
+                      id="modePillBtn"
+                      aria-haspopup="true"
+                      aria-expanded="false">
+                <svg class="chatbot__pillIcon" aria-hidden="true" viewBox="0 0 16 16" width="14" height="14">
+                  <path fill="currentColor" d="M2 2h12v8H9l-3 3v-3H2z"/>
+                </svg>
+                <span id="modePillLabel">Ask</span>
+                <svg class="chatbot__chevron" aria-hidden="true" viewBox="0 0 16 16" width="10" height="10">
+                  <path fill="currentColor" d="M4 6l4 4 4-4"/>
+                </svg>
+              </button>
+              <ul class="chatbot__dropdownMenu" id="modeMenu" role="menu" hidden>
+                <li role="menuitem" data-value="ask">
+                  <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14">
+                    <path fill="currentColor" d="M2 2h12v8H9l-3 3v-3H2z"/>
+                  </svg>
+                  Ask
+                </li>
+                <li role="menuitem" data-value="agent">
+                  <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14">
+                    <path fill="currentColor" d="M8 1a5 5 0 100 10A5 5 0 008 1zm0 2a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 7c-2 0-3.5-1-3.5-2.5C4.5 6 6 5 8 5s3.5 1 3.5 2.5C11.5 9 10 10 8 10z"/>
+                  </svg>
+                  Agent
+                </li>
+              </ul>
+            </div>
+
+            <!-- Agent type selector — only visible in agent mode -->
+            <div class="chatbot__dropdownWrap" id="agentTypeWrap">
+              <button class="chatbot__pillBtn"
+                      type="button"
+                      data-testid="agent-type-btn"
+                      id="agentTypePillBtn"
+                      aria-haspopup="true"
+                      aria-expanded="false">
+                <svg class="chatbot__pillIcon" aria-hidden="true" viewBox="0 0 16 16" width="14" height="14">
+                  <path fill="currentColor" d="M1 3h14v2H1zm2 4h10v2H3zm2 4h6v2H5z"/>
+                </svg>
+                <span id="agentTypePillLabel">NPC</span>
+                <svg class="chatbot__chevron" aria-hidden="true" viewBox="0 0 16 16" width="10" height="10">
+                  <path fill="currentColor" d="M4 6l4 4 4-4"/>
+                </svg>
+              </button>
+              <ul class="chatbot__dropdownMenu" id="agentTypeMenu" role="menu" hidden></ul>
+            </div>
+
+            <!-- Attach button -->
+            <button class="chatbot__pillBtn chatbot__pillBtn--icon"
+                    type="button"
+                    data-testid="attach-btn"
+                    id="attachBtn"
+                    aria-label="Attach file">
+              <svg aria-hidden="true" viewBox="0 0 16 16" width="15" height="15">
+                <path fill="currentColor" d="M13.5 6.5l-6 6a3.5 3.5 0 01-4.95-4.95l6-6a2 2 0 012.83 2.83l-5.66 5.66a.5.5 0 01-.71-.71l5.66-5.66"/>
+              </svg>
+            </button>
+
+            <!-- Hidden real file input -->
+            <input type="file"
+                   id="chatbotFileInput"
+                   class="chatbot__fileInput"
+                   accept="image/*,.pdf,.doc,.docx,.txt,.md,.json"
+                   multiple
+                   hidden>
+          </div>
+
+          <!-- Right controls: model selector + send -->
+          <div class="chatbot__bottomRight">
+            <div class="chatbot__dropdownWrap" id="modelDropdownWrap">
+              <button class="chatbot__modelBtn"
+                      type="button"
+                      data-testid="model-btn"
+                      id="modelBtn"
+                      aria-haspopup="true"
+                      aria-expanded="false">
+                <span id="modelBtnLabel">Loading…</span>
+                <svg class="chatbot__chevron" aria-hidden="true" viewBox="0 0 16 16" width="10" height="10">
+                  <path fill="currentColor" d="M4 6l4 4 4-4"/>
+                </svg>
+              </button>
+              <ul class="chatbot__dropdownMenu chatbot__modelDropdown"
+                  id="modelMenu" role="menu" hidden></ul>
+            </div>
+
+            <div class="chatbot__sendDivider" aria-hidden="true"></div>
+
+            <button id="chatbotSend"
+                    class="chatbot__sendBtn"
+                    type="button"
+                    data-testid="send-btn"
+                    aria-label="Send message">
+              <svg aria-hidden="true" viewBox="0 0 16 16" width="15" height="15">
+                <path fill="currentColor" d="M2 14L14 8 2 2v4l8 2-8 2z"/>
+              </svg>
+            </button>
+          </div>
+
+        </div><!-- /.chatbot__bottomBar -->
+      </div><!-- /.chatbot__inputBox -->
+    </div><!-- /.chatbot__inputArea -->
+
+  </div><!-- /.chatbot__panel -->
+
+  <button id="chatbotFloatingToggle"
+          class="btn btn-primary chatbot__floatingToggle"
+          type="button"
+          aria-label="Show chatbot">
     <span aria-hidden="true">‹</span>
   </button>
 </aside>
