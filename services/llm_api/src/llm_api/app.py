@@ -46,7 +46,7 @@ def create_app() -> FastAPI:
             expose_headers=["X-Request-ID"],
         )
 
-    install_exception_handlers(app)
+    install_exception_handlers(app, settings)
 
     app.include_router(health_router)
     app.include_router(generate_router, prefix="/v1")
