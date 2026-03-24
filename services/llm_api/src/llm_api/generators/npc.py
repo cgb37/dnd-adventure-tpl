@@ -1,23 +1,38 @@
+"""NPC generator — produces a D&D NPC draft for a Jekyll campaign site.
+
+The public entry point is :func:`generate_npc`.  In ``mock`` mode it
+short-circuits immediately with placeholder content so tests and local
+development work without an LLM API key.
+"""
 from __future__ import annotations
 
+import structlog
 from pydantic import BaseModel, Field
-from pydantic_ai import UsageLimitExceeded, UsageLimits
 
-from llm_api.generators.base import resolve_title_and_slug
+from llm_api.generators.base import resolve_title_and_slug, run_generation
 from llm_api.models.generated import GeneratedDraft
 from llm_api.models.requests import GenerateRequest
-from llm_api.providers.factory import build_agent
 from llm_api.services.config import Settings
-from llm_api.services.errors import ApiError
+
+log = structlog.get_logger(__name__)
+
+_SYSTEM_PROMPT = (
+    "You generate D&D NPC draft content for a Jekyll campaign site. "
+    "Return concise, usable text. Do NOT include YAML frontmatter."
+)
 
 
 class NpcOutput(BaseModel):
+    """Structured LLM output for an NPC generation request."""
+
     name: str = Field(min_length=1, max_length=100)
     summary: str = Field(min_length=1, max_length=4000)
     tags: list[str] = Field(default_factory=list)
 
 
 class NpcDraft(GeneratedDraft):
+    """Jekyll-ready NPC draft with YAML front-matter and Markdown body."""
+
     def __init__(self, *, title: str, slug: str, name: str, summary: str, tags: list[str]):
         self.title = title
         self.slug = slug
@@ -26,27 +41,23 @@ class NpcDraft(GeneratedDraft):
         self._tags = tags
 
     def required_yaml_keys(self) -> list[str]:
+        """Return the list of YAML front-matter keys expected by the NPC layout."""
         return [
-            "layout",
-            "title",
-            "name",
-            "permalink",
-            "category",
-            "chapter",
-            "episode",
-            "scene",
-            "jumbo",
-            "thumb",
-            "portrait",
-            "tags",
-            "search",
-            "excerpt_separator",
-            "id",
-            "slug",
+            "layout", "title", "name", "permalink", "category",
+            "chapter", "episode", "scene", "jumbo", "thumb", "portrait",
+            "tags", "search", "excerpt_separator", "id", "slug",
         ]
 
-    def frontmatter_yaml(self, *, draft_id, campaign: str):
-        # Placeholders live in the campaign content repo.
+    def frontmatter_yaml(self, *, draft_id, campaign: str) -> dict:
+        """Build the YAML front-matter dict for this NPC draft.
+
+        Args:
+            draft_id: UUID assigned by the drafts service.
+            campaign: Active campaign name (used for campaign-specific paths).
+
+        Returns:
+            A dict whose keys match the NPC Jekyll layout requirements.
+        """
         return {
             "layout": "npc",
             "title": self.title,
@@ -67,40 +78,53 @@ class NpcDraft(GeneratedDraft):
         }
 
 
-SYSTEM_PROMPT = (
-    "You generate D&D NPC draft content for a Jekyll campaign site. "
-    "Return concise, usable text. Do NOT include YAML frontmatter."
-)
-
-
 async def generate_npc(
     *, request: GenerateRequest, campaign: str, provider_override: str | None = None
 ) -> GeneratedDraft:
+    """Generate a D&D NPC draft and return it as an :class:`NpcDraft`.
+
+    In ``mock`` mode (``LLM_PROVIDER=mock`` or ``provider_override="mock"``)
+    the function returns immediately with placeholder content — no API call is
+    made.
+
+    Args:
+        request: The validated generation request containing the user prompt,
+                 optional title, and optional slug.
+        campaign: Name of the active campaign (injected into the LLM prompt
+                  for context).
+        provider_override: Optional provider name from the request header.
+                           Falls back to the ``LLM_PROVIDER`` env var.
+
+    Returns:
+        An :class:`NpcDraft` ready to be serialised and written to disk.
+
+    Raises:
+        ApiError: ``usage_limit_exceeded`` (507) if the LLM exceeds configured
+                  request or token limits.
+    """
+    # Settings are instantiated fresh per call so env-var changes in tests
+    # are picked up without restarting the server.
     settings = Settings()  # pyright: ignore[reportCallIssue]
     title, slug = resolve_title_and_slug(request=request, fallback_title="New NPC")
-
     provider = (provider_override or settings.llm_provider or "").strip().lower()
 
+    log.info("npc.generate.start", title=title, provider=provider)
+
     if provider == "mock":
+        log.debug("npc.generate.mock")
         return NpcDraft(title=title, slug=slug, name=title, summary="TBD", tags=[])
 
-    agent = build_agent(output_type=NpcOutput, system_prompt=SYSTEM_PROMPT, provider_override=provider)
-    try:
-        result = await agent.run(
-            f"Campaign: {campaign}\n\nUser prompt: {request.prompt}\n\n"
-            "Return: name (full), summary (markdown), tags (list).",
-            usage_limits=UsageLimits(
-                request_limit=settings.max_model_requests_per_generation,
-                response_tokens_limit=settings.max_output_tokens,
-            ),
-        )
-    except UsageLimitExceeded as exc:
-        raise ApiError(
-            code="usage_limit_exceeded",
-            message="Generation exceeded configured usage limits",
-            status_code=507,
-            details={"error": str(exc)},
-        )
+    user_prompt = (
+        f"Campaign: {campaign}\n\nUser prompt: {request.prompt}\n\n"
+        "Return: name (full), summary (markdown), tags (list)."
+    )
+    out: NpcOutput = await run_generation(
+        output_type=NpcOutput,
+        system_prompt=_SYSTEM_PROMPT,
+        user_prompt=user_prompt,
+        provider=provider,
+        settings=settings,
+    )
 
-    out: NpcOutput = result.output
+    log.info("npc.generate.done", title=title, slug=slug)
     return NpcDraft(title=title, slug=slug, name=out.name, summary=out.summary, tags=out.tags)
