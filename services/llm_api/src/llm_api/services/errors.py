@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import traceback
 from dataclasses import dataclass
 
 import structlog
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 
 @dataclass
@@ -21,7 +22,17 @@ def _request_id() -> str | None:
     return ctx.get("request_id")
 
 
-def install_exception_handlers(app: FastAPI) -> None:
+def install_exception_handlers(app: FastAPI, settings=None) -> None:
+    """Install exception handlers on the FastAPI app.
+
+    Args:
+        app: The FastAPI application instance.
+        settings: Optional Settings instance. When provided, dev mode
+                  (settings.is_production == False) includes exception
+                  details in 500 responses to aid local debugging.
+    """
+    is_production = getattr(settings, "is_production", True)
+
     def _json_sanitize(value):
         if isinstance(value, (bytes, bytearray)):
             return value.decode("utf-8", errors="replace")
@@ -66,9 +77,16 @@ def install_exception_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(_: Request, exc: Exception):
-        # Don't leak internal details to clients.
         log = structlog.get_logger(__name__)
         log.exception("Unhandled exception")
+
+        # In development, expose the exception message (not stack trace) to
+        # help developers diagnose issues without scanning server logs.
+        # In production, details are always empty to avoid leaking internals.
+        details: dict = {}
+        if not is_production:
+            details["debug"] = str(exc)
+
         return JSONResponse(
             status_code=500,
             content={
@@ -76,7 +94,7 @@ def install_exception_handlers(app: FastAPI) -> None:
                 "error": {
                     "code": "internal_error",
                     "message": "Internal server error",
-                    "details": {},
+                    "details": details,
                 },
             },
         )
