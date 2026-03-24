@@ -58,3 +58,10 @@ class Settings(BaseSettings):
     # Logging
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
     debug_prompts: bool = Field(default=False, alias="DEBUG_PROMPTS")
+
+    # Environment: "development" | "staging" | "production"
+    app_env: str = Field(default="development", alias="APP_ENV")
+
+    @property
+    def is_production(self) -> bool:
+        return self.app_env.lower() == "production"
