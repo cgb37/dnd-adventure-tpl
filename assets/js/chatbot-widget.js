@@ -377,25 +377,16 @@
           appendPromoteButton(kind, slug);
         }
       } else {
-        // Ask mode: POST /v1/chat, fallback to /v1/generate/chat
-        let res;
-        try {
-          res = await httpJson('/v1/chat', {
-            method: 'POST',
-            headers: model ? { 'X-LLM-Provider': model } : {},
-            body: JSON.stringify({ message: text }),
-          });
-        } catch {
-          res = await httpJson('/v1/generate/chat', {
-            method: 'POST',
-            headers: model ? { 'X-LLM-Provider': model } : {},
-            body: JSON.stringify({ prompt: text }),
-          });
-        }
+        // Ask mode: POST /v1/chat
+        const res = await httpJson('/v1/chat', {
+          method: 'POST',
+          headers: model ? { 'X-LLM-Provider': model } : {},
+          body: JSON.stringify({ messages: [{ role: 'user', content: text }] }),
+        });
         state.attachedFiles = [];
         renderAttachChips();
         stopThinking();
-        const reply = res?.data?.reply || res?.data?.text || res?.data?.content || JSON.stringify(res?.data);
+        const reply = res?.data?.message?.content || JSON.stringify(res?.data);
         appendMessage({ role: 'ai', text: reply });
       }
     } catch (e) {
