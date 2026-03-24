@@ -20,11 +20,12 @@
     "release:minor": "bash ./scripts/release.sh minor",
     "release:patch": "bash ./scripts/release.sh patch",
     "release:set": "bash ./scripts/release.sh set",
-    "start:docker:dub": "docker compose down && docker compose up --build",
-    "start": "docker compose up",
-    "start:detached": "docker compose up -d",
     "docker:build": "docker compose build",
+    "docker:up": "docker compose up",
+    "docker:up:detached": "docker compose up -d",
     "docker:up:build": "docker compose up --build",
-    "stop": "docker compose down"
+    "docker:stop": "docker compose down",
+    "docker:restart": "docker compose down && docker compose up",
+    "docker:restart:build": "docker compose down && docker compose up --build"
   }
 }
