@@ -225,7 +225,16 @@ async def generate_npc(
             return NpcDraft(title=title, slug=slug, name=title, summary="TBD", tags=[])
         user_prompt = (
             f"Campaign: {campaign}\n\nUser prompt: {request.prompt}\n\n"
-            "Return: name (full), summary (markdown), tags (list)."
+            "Respond with ONLY a JSON object (no markdown fences, no function-call wrapper).\n"
+            "Required top-level fields:\n"
+            '  "name"    — full NPC name (non-empty string)\n'
+            '  "summary" — 1–3 paragraph markdown description (non-empty string)\n'
+            '  "tags"    — list of 2–5 short descriptor strings\n\n'
+            "Example:\n"
+            '{"name": "Aldric the Grey", '
+            '"summary": "A weathered elven wizard who guards the northern pass. '
+            'He speaks little but carries ancient secrets.", '
+            '"tags": ["wizard", "elf", "mysterious"]}'
         )
         out: NpcOutput = await run_generation(
             output_type=NpcOutput,
