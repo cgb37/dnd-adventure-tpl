@@ -57,3 +57,57 @@ def test_generate_npc_mock_provider_override():
         generate_npc(request=req, campaign="test-campaign", provider_override="mock")
     )
     assert draft.slug == "bob"
+
+
+@pytest.mark.asyncio
+async def test_generate_npc_with_combat_type_mock(monkeypatch, tmp_path):
+    """Mock mode with npc_type=combat_npc returns StructuredNpcDraft."""
+    monkeypatch.setenv("CHROMADB_PATH", str(tmp_path / "chroma"))
+
+    from llm_api.services.vector_store import reset_client
+    reset_client()
+
+    from llm_api.generators.npc import generate_npc
+    from llm_api.generators.npc_renderer import StructuredNpcDraft
+    from llm_api.models.requests import GenerateRequest
+
+    req = GenerateRequest(
+        prompt="A goblin ambush leader",
+        title="Snarg",
+        constraints={"npc_type": "combat_npc"},
+    )
+    draft = await generate_npc(request=req, campaign="test-campaign")
+    assert isinstance(draft, StructuredNpcDraft)
+    assert draft._npc_type == "combat_npc"
+
+
+@pytest.mark.asyncio
+async def test_generate_npc_with_roleplay_type_mock(monkeypatch, tmp_path):
+    monkeypatch.setenv("CHROMADB_PATH", str(tmp_path / "chroma"))
+
+    from llm_api.services.vector_store import reset_client
+    reset_client()
+
+    from llm_api.generators.npc import generate_npc
+    from llm_api.generators.npc_renderer import StructuredNpcDraft
+    from llm_api.models.requests import GenerateRequest
+
+    req = GenerateRequest(
+        prompt="A mysterious herbalist",
+        title="Old Meg",
+        constraints={"npc_type": "roleplay_npc"},
+    )
+    draft = await generate_npc(request=req, campaign="test-campaign")
+    assert isinstance(draft, StructuredNpcDraft)
+    assert draft._npc_type == "roleplay_npc"
+
+
+@pytest.mark.asyncio
+async def test_generate_npc_without_type_falls_back_to_legacy():
+    """No npc_type constraint → existing flat NPC behavior (backward compat)."""
+    from llm_api.generators.npc import generate_npc, NpcDraft
+    from llm_api.models.requests import GenerateRequest
+
+    req = GenerateRequest(prompt="A blacksmith", title="Tom")
+    draft = await generate_npc(request=req, campaign="test-campaign")
+    assert isinstance(draft, NpcDraft)
