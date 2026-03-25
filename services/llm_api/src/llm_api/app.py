@@ -7,6 +7,7 @@ from llm_api.routes.chat import router as chat_router
 from llm_api.routes.generate import router as generate_router
 from llm_api.routes.health import router as health_router
 from llm_api.routes.meta import router as meta_router
+from llm_api.routes.npc import router as npc_router
 from llm_api.routes.promote import router as promote_router
 from llm_api.services.body_size_limit import BodySizeLimitMiddleware
 from llm_api.services.config import Settings
@@ -53,6 +54,7 @@ def create_app() -> FastAPI:
     app.include_router(chat_router, prefix="/v1")
     app.include_router(generate_router, prefix="/v1")
     app.include_router(meta_router, prefix="/v1")
+    app.include_router(npc_router, prefix="/v1")
     app.include_router(promote_router, prefix="/v1")
 
     return app
