@@ -51,6 +51,9 @@ services:
       REQUESTS_PER_MINUTE: ${REQUESTS_PER_MINUTE:-30}
       MAX_OUTPUT_TOKENS: ${MAX_OUTPUT_TOKENS:-1200}
       MAX_REQUEST_BYTES: ${MAX_REQUEST_BYTES:-200000}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-google/gemini-2.5-flash}
     networks:
       - jekyll-network
 
