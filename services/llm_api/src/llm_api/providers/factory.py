@@ -66,6 +66,22 @@ def build_agent(*, output_type, system_prompt: str, provider_override: str | Non
         )
         return Agent(model, output_type=output_type, system_prompt=system_prompt)
 
+    if provider == "openrouter":
+        if not settings.openrouter_api_key:
+            raise ApiError(
+                code="provider_not_configured",
+                message="OPENROUTER_API_KEY is required when provider=openrouter",
+                status_code=400,
+            )
+        model = OpenAIChatModel(
+            settings.openrouter_model,
+            provider=OpenAIProvider(
+                base_url=settings.openrouter_base_url.rstrip("/"),
+                api_key=settings.openrouter_api_key,
+            ),
+        )
+        return Agent(model, output_type=output_type, system_prompt=system_prompt)
+
     if provider == "mock":
         # Generators handle mock provider without PydanticAI.
         raise RuntimeError("mock provider must be handled by generator")
