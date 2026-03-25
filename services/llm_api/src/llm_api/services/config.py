@@ -59,6 +59,10 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
     debug_prompts: bool = Field(default=False, alias="DEBUG_PROMPTS")
 
+    # ChromaDB
+    chromadb_path: str = Field(default=".chromadb", alias="CHROMADB_PATH")
+    chromadb_collection: str = Field(default="npcs", alias="CHROMADB_COLLECTION")
+
     # Environment: "development" | "staging" | "production"
     app_env: str = Field(default="development", alias="APP_ENV")
 
