@@ -46,16 +46,14 @@ async def test_generate_npc_mock_frontmatter_has_required_keys():
         assert key in fm, f"Missing frontmatter key: {key}"
 
 
-def test_generate_npc_mock_provider_override():
+@pytest.mark.asyncio
+async def test_generate_npc_mock_provider_override():
     """Provider override of 'mock' should resolve immediately without LLM call."""
-    import asyncio
     from llm_api.generators.npc import generate_npc
     from llm_api.models.requests import GenerateRequest
 
     req = GenerateRequest(prompt="A merchant", title="Bob")
-    draft = asyncio.get_event_loop().run_until_complete(
-        generate_npc(request=req, campaign="test-campaign", provider_override="mock")
-    )
+    draft = await generate_npc(request=req, campaign="test-campaign", provider_override="mock")
     assert draft.slug == "bob"
 
 
