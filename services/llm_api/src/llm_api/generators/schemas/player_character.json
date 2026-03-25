@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "player_character",
+  "title": "PlayerCharacter",
+  "description": "A D&D 5e player character with full sheet data.",
+  "type": "object",
+  "required": ["character_type", "identity", "ability_scores", "combat", "proficiencies", "features", "equipment", "personality"],
+  "properties": {
+    "character_type": { "const": "player_character" },
+    "identity": {
+      "type": "object",
+      "required": ["name", "race", "class", "level", "background", "alignment"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "race": { "type": "string" },
+        "subrace": { "type": ["string", "null"] },
+        "class": { "type": "string" },
+        "subclass": { "type": ["string", "null"] },
+        "level": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "background": { "type": "string" },
+        "alignment": { "type": "string" },
+        "xp": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "ability_scores": {
+      "type": "object",
+      "required": ["method", "final_scores", "modifiers"],
+      "properties": {
+        "method": { "type": "string", "enum": ["roll", "standard_array", "point_buy"] },
+        "base_scores": { "$ref": "#/$defs/ability_block" },
+        "racial_bonuses": { "$ref": "#/$defs/ability_block" },
+        "asi_bonuses": { "$ref": "#/$defs/ability_block" },
+        "final_scores": { "$ref": "#/$defs/ability_block" },
+        "modifiers": { "$ref": "#/$defs/ability_block" }
+      }
+    },
+    "combat": {
+      "type": "object",
+      "required": ["armor_class", "hit_points", "speed", "proficiency_bonus"],
+      "properties": {
+        "armor_class": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "integer" },
+            "source": { "type": "string" }
+          }
+        },
+        "hit_points": {
+          "type": "object",
+          "properties": {
+            "max": { "type": "integer" },
+            "formula": { "type": "string" }
+          }
+        },
+        "hit_dice": {
+          "type": "object",
+          "properties": {
+            "total": { "type": "string" },
+            "remaining": { "type": "string" }
+          }
+        },
+        "speed": { "type": "string" },
+        "initiative": { "type": "integer" },
+        "proficiency_bonus": { "type": "integer" }
+      }
+    },
+    "proficiencies": {
+      "type": "object",
+      "properties": {
+        "armor": { "type": "array", "items": { "type": "string" } },
+        "weapons": { "type": "array", "items": { "type": "string" } },
+        "tools": { "type": "array", "items": { "type": "string" } },
+        "saving_throws": { "type": "array", "items": { "type": "string" } },
+        "skills": { "type": "array", "items": { "type": "string" } },
+        "languages": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "source", "description"],
+        "properties": {
+          "name": { "type": "string" },
+          "source": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "equipment": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "quantity"],
+        "properties": {
+          "name": { "type": "string" },
+          "quantity": { "type": "integer", "minimum": 1 },
+          "properties": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "spellcasting": {
+      "type": ["object", "null"],
+      "properties": {
+        "ability": { "type": "string" },
+        "spell_save_dc": { "type": "integer" },
+        "spell_attack_bonus": { "type": "integer" },
+        "cantrips": { "type": "array", "items": { "type": "string" } },
+        "spell_slots": { "type": "object", "additionalProperties": { "type": "integer" } },
+        "spells_known": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "level": { "type": "integer" },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "personality": {
+      "type": "object",
+      "required": ["traits", "ideals", "bonds", "flaws"],
+      "properties": {
+        "traits": { "type": "array", "items": { "type": "string" } },
+        "ideals": { "type": "array", "items": { "type": "string" } },
+        "bonds": { "type": "array", "items": { "type": "string" } },
+        "flaws": { "type": "array", "items": { "type": "string" } },
+        "backstory_hook": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "ability_block": {
+      "type": "object",
+      "required": ["str", "dex", "con", "int", "wis", "cha"],
+      "properties": {
+        "str": { "type": "integer" },
+        "dex": { "type": "integer" },
+        "con": { "type": "integer" },
+        "int": { "type": "integer" },
+        "wis": { "type": "integer" },
+        "cha": { "type": "integer" }
+      }
+    }
+  }
+}

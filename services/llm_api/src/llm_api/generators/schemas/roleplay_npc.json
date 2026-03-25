@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "roleplay_npc",
+  "title": "RoleplayNpc",
+  "description": "A D&D 5e roleplay-focused NPC with personality, secrets, and plot hooks.",
+  "type": "object",
+  "required": ["character_type", "identity", "personality", "appearance", "relationships", "plot_hooks"],
+  "properties": {
+    "character_type": { "const": "roleplay_npc" },
+    "identity": {
+      "type": "object",
+      "required": ["name", "race", "occupation", "alignment"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "race": { "type": "string" },
+        "occupation": { "type": "string" },
+        "alignment": { "type": "string" },
+        "age": { "type": "string" },
+        "location": { "type": "string" }
+      }
+    },
+    "personality": {
+      "type": "object",
+      "required": ["traits", "ideals", "bonds", "flaws"],
+      "properties": {
+        "traits": { "type": "array", "items": { "type": "string" } },
+        "ideals": { "type": "array", "items": { "type": "string" } },
+        "bonds": { "type": "array", "items": { "type": "string" } },
+        "flaws": { "type": "array", "items": { "type": "string" } },
+        "mannerisms": { "type": "string" },
+        "speech_pattern": { "type": "string" },
+        "motivation": { "type": "string" }
+      }
+    },
+    "appearance": {
+      "type": "object",
+      "properties": {
+        "description": { "type": "string" },
+        "distinguishing_features": { "type": "array", "items": { "type": "string" } },
+        "typical_attire": { "type": "string" }
+      }
+    },
+    "secrets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["secret", "impact"],
+        "properties": {
+          "secret": { "type": "string" },
+          "impact": { "type": "string" },
+          "known_by": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "relationship", "attitude"],
+        "properties": {
+          "name": { "type": "string" },
+          "relationship": { "type": "string" },
+          "attitude": { "type": "string" }
+        }
+      }
+    },
+    "plot_hooks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["hook", "tier"],
+        "properties": {
+          "hook": { "type": "string" },
+          "tier": { "type": "string", "enum": ["minor", "major", "campaign"] }
+        }
+      }
+    },
+    "stat_block": {
+      "type": ["object", "null"],
+      "description": "Optional abbreviated stat block for major roleplay NPCs who might see combat.",
+      "properties": {
+        "armor_class": { "type": "integer" },
+        "hit_points": { "type": "integer" },
+        "challenge_rating": { "type": "string" },
+        "notable_abilities": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
