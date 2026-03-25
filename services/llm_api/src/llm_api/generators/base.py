@@ -14,6 +14,7 @@ from typing import Any, TypeVar
 import structlog
 from pydantic import BaseModel
 from pydantic_ai import UsageLimitExceeded, UsageLimits
+from pydantic_ai.exceptions import UnexpectedModelBehavior
 from slugify import slugify
 
 from llm_api.models.requests import GenerateRequest
@@ -79,6 +80,8 @@ async def run_generation(
                   configured request or token limits.
         ApiError: ``provider_not_configured`` / ``unknown_provider`` (400) when
                   ``build_agent`` cannot satisfy the provider (propagated as-is).
+        ApiError: ``model_behavior_error`` (502) when the model returns invalid
+                  structured output after exhausting retries.
     """
     log.debug("generation.llm_call", provider=provider, prompt_length=len(user_prompt))
 
@@ -102,6 +105,18 @@ async def run_generation(
             status_code=507,
             details={"error": str(exc)},
         )
+    except UnexpectedModelBehavior as exc:
+        log.warning(
+            "generation.model_behavior_error",
+            provider=provider,
+            error=str(exc),
+        )
+        raise ApiError(
+            code="model_behavior_error",
+            message="The model failed to produce valid structured output after retries",
+            status_code=502,
+            details={"error": str(exc)},
+        ) from exc
 
     log.debug("generation.llm_done", output_type=output_type.__name__)
     return result.output  # type: ignore[return-value]
