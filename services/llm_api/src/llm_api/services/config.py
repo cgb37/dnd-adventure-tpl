@@ -44,6 +44,17 @@ class Settings(BaseSettings):
     gemini_api_key: str | None = Field(default=None, alias="GEMINI_API_KEY")
     gemini_model: str = Field(default="gemini-1.5-flash", alias="GEMINI_MODEL")
 
+    # OpenRouter (OpenAI-compatible proxy)
+    openrouter_api_key: str | None = Field(default=None, alias="OPENROUTER_API_KEY")
+    openrouter_base_url: str = Field(
+        default="https://openrouter.ai/api/v1",
+        alias="OPENROUTER_BASE_URL",
+    )
+    openrouter_model: str = Field(
+        default="google/gemini-2.5-flash",
+        alias="OPENROUTER_MODEL",
+    )
+
     # Limits
     max_concurrency: int = Field(default=4, alias="MAX_CONCURRENCY")
     max_concurrency_per_provider: int = Field(default=2, alias="MAX_CONCURRENCY_PER_PROVIDER")

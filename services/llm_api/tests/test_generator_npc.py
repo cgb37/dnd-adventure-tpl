@@ -109,3 +109,33 @@ async def test_generate_npc_without_type_falls_back_to_legacy():
     req = GenerateRequest(prompt="A blacksmith", title="Tom")
     draft = await generate_npc(request=req, campaign="test-campaign")
     assert isinstance(draft, NpcDraft)
+
+
+@pytest.mark.asyncio
+async def test_legacy_user_prompt_includes_json_example_and_field_names():
+    """The legacy user_prompt must contain the expected output field names and a
+    concrete JSON example so small models do not return function-call shapes."""
+    from unittest.mock import patch
+
+    from llm_api.generators.npc import NpcOutput, generate_npc
+    from llm_api.models.requests import GenerateRequest
+
+    captured: dict = {}
+
+    async def _fake_run_generation(**kwargs):
+        captured["user_prompt"] = kwargs["user_prompt"]
+        return NpcOutput(
+            name="Test NPC",
+            summary="A test NPC for unit testing.",
+            tags=["test"],
+        )
+
+    with patch("llm_api.generators.npc.run_generation", side_effect=_fake_run_generation):
+        req = GenerateRequest(prompt="generate a 2nd level paladin", title="")
+        await generate_npc(request=req, campaign="test-campaign", provider_override="ollama")
+
+    prompt = captured["user_prompt"]
+    assert '"name"' in prompt, 'prompt must include "name" field example'
+    assert '"summary"' in prompt, 'prompt must include "summary" field example'
+    assert '"tags"' in prompt, 'prompt must include "tags" field example'
+    assert "JSON" in prompt.upper(), "prompt must explicitly mention JSON"
