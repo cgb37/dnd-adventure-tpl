@@ -1,0 +1,131 @@
+{
+  "character_type": "roleplay_npc",
+  "identity": {
+    "name": "Vashti Tideborne",
+    "race": "Tiefling",
+    "occupation": "Proprietor of The Drowned Lantern, a magic item shop",
+    "location": "The Drowned Lantern, a narrow storefront wedged between a chandlery and a sail-maker's loft on Anchorage Row in the port district",
+    "complexity_tier": "major"
+  },
+  "personality": {
+    "motivation_primary": "Knowledge — Vashti is obsessed with cataloging the provenance of every enchanted object that passes through her hands. She believes that understanding an item's history reveals hidden properties no Identify spell can detect.",
+    "motivation_secondary": "Redemption — She once sold a cursed artifact that destroyed a fishing village. She tells no one, but she now quietly tracks every item she sells to ensure none cause similar harm.",
+    "traits": [
+      "Suspicious of anyone who asks too many questions about her suppliers, yet deeply generous with information about the items themselves",
+      "Speaks with slow, measured precision, as if each word is a coin she is reluctant to spend",
+      "Compulsively arranges and rearranges objects on her shelves by criteria only she understands — sometimes by color, sometimes by the date she acquired them, sometimes by how dangerous they are"
+    ],
+    "speech_pattern": "Cryptic and deliberate, with a habit of answering questions with questions. Drops her voice to a near-whisper when discussing powerful items, forcing listeners to lean in. Example: 'You want to know what this ring does? Mm. Better question — what did it do to the last three people who wore it? Sit down. I'll make tea. This will take a while.'",
+    "quirk": "Keeps a massive salt-crusted logbook behind the counter and writes an entry for every transaction — not just the sale, but a sketch of the buyer's face and her impression of their intentions. She calls it 'the Ledger of Fates.'"
+  },
+  "appearance": {
+    "distinguishing_feature": "Her left eye is a pale, milky opal that occasionally glows faintly violet when she handles a particularly powerful magic item — she claims it is a gift from a sea hag she once bartered with, and that it lets her see an object's 'emotional residue.'",
+    "brief_description": "A lean tiefling woman in her late middle years with dark plum skin and short-cropped silver hair. She wears a heavy leather apron covered in scorch marks and alchemical stains over a fine but salt-faded merchant's coat. Her ram-like horns are capped with tarnished brass fittings engraved with tiny nautical symbols."
+  },
+  "secrets": [
+    {
+      "secret": "The cursed artifact she sold fifteen years ago — a coral crown called the Tide King's Diadem — was not destroyed when the village sank. She recently learned a salvage crew pulled it from the seabed, and she is desperately trying to locate it before it surfaces on the black market.",
+      "discovery_method": "Players who investigate rumors of a sunken village called Cael's Rest, or who find a tattered wanted poster for a 'coral crown of terrible power' in the back rooms of a rival dealer, can piece together her connection. Alternatively, a DC 18 Insight check during a conversation about cursed items reveals she becomes visibly shaken."
+    },
+    {
+      "secret": "She maintains a secret arrangement with the port's harbormaster, paying a substantial monthly bribe to get first access to any magical contraband confiscated from incoming ships. This is how she stocks many of her rarer items.",
+      "discovery_method": "Players who follow her on the third night of each month will see her meeting the harbormaster at a locked warehouse on Pier 9. A DC 15 Investigation check of her shop's financial records reveals payments to 'maritime consultation services' that match the harbormaster's known aliases."
+    }
+  ],
+  "relationships": {
+    "party_role": "information_source",
+    "connections": [
+      {
+        "name": "Harbormaster Oleg Durn",
+        "relationship": "Corrupt business partner. He gives her first pick of confiscated magical goods; she keeps him supplied with a minor enchantment that eases his chronic back pain. Neither trusts the other."
+      },
+      {
+        "name": "Captain Iridia Voss",
+        "relationship": "A privateer who occasionally brings Vashti items from distant ports. Vashti suspects Iridia knows the location of the Tide King's Diadem but is holding that information as leverage."
+      },
+      {
+        "name": "Brother Callum of the Temple of Savras",
+        "relationship": "A young divination priest who visits the shop weekly to study Vashti's logbook. She tolerates him because his visions have twice warned her of dangerous items before they reached the shop. He is beginning to suspect her secret about the coral crown."
+      }
+    ]
+  },
+  "plot_hooks": [
+    "Vashti hires the party to intercept a salvage shipment arriving in port — she believes it contains the Tide King's Diadem and will pay handsomely for its quiet retrieval and destruction. But the salvage crew has their own buyer, and the item may be more sentient than anyone realizes.",
+    "A customer who purchased a wand from Vashti has gone missing, and she asks the party to find them — partly out of genuine concern, partly because the wand was more dangerous than she disclosed at the time of sale, and she needs it back before the city guard starts asking questions.",
+    "The harbormaster's operation is about to be exposed by a crusading magistrate. Vashti needs the party to either help her sever ties cleanly or find her a new supplier — and she's willing to offer a significant magic item as payment.",
+    "Vashti's opal eye begins reacting violently to an item the party brings into her shop, suggesting it has a history far darker than they knew. She refuses to buy it but offers to help them understand what they're carrying — for a price."
+  ],
+  "stat_block": {
+    "character_type": "combat_npc",
+    "identity": {
+      "name": "Vashti Tideborne",
+      "creature_type": "Medium humanoid (tiefling), lawful neutral",
+      "role": "Magic item dealer with defensive spellcasting — fights only to protect herself and her shop"
+    },
+    "challenge": {
+      "rating": "6",
+      "xp": 2300
+    },
+    "combat": {
+      "armor_class": { "value": 12, "source": "15 with mage armor" },
+      "hit_points": { "value": 40, "formula": "9d8" },
+      "speed": "30 ft."
+    },
+    "ability_scores": {
+      "str": 9, "dex": 14, "con": 11,
+      "int": 17, "wis": 15, "cha": 14
+    },
+    "defenses": {
+      "saving_throws": ["Int +6", "Wis +5"],
+      "skills": ["Arcana +6", "History +6", "Insight +5", "Perception +5", "Persuasion +5"],
+      "damage_resistances": ["fire"],
+      "damage_immunities": [],
+      "condition_immunities": []
+    },
+    "senses": "darkvision 60 ft., passive Perception 15",
+    "languages": "Common, Infernal, Draconic, Elvish, Primordial",
+    "traits": [
+      {
+        "name": "Hellish Resistance",
+        "description": "Vashti has resistance to fire damage."
+      },
+      {
+        "name": "Appraiser's Intuition",
+        "description": "Vashti has advantage on Intelligence (Arcana) checks to identify magical items and their properties."
+      },
+      {
+        "name": "Warded Shop",
+        "description": "While inside The Drowned Lantern, Vashti can use a bonus action to activate a glyph of warding (thunderwave at 3rd level, DC 14 Constitution save, 4d8 thunder damage). The shop contains three such glyphs, and she knows their locations."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Dagger",
+        "description": "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d4 + 2) piercing damage."
+      },
+      {
+        "name": "Hellish Rebuke (Innate, 1/day)",
+        "description": "When damaged by a creature within 60 feet, Vashti can use her reaction to force the attacker to make a DC 13 Dexterity saving throw, taking 11 (2d10) fire damage on a failed save, or half on a success. Cast at 2nd level."
+      }
+    ],
+    "reactions": [
+      {
+        "name": "Shield (1st-level spell)",
+        "description": "When hit by an attack or targeted by magic missile, Vashti adds +5 to her AC until the start of her next turn, including against the triggering attack."
+      }
+    ],
+    "spellcasting": {
+      "description": "Vashti is a 9th-level spellcaster. Her spellcasting ability is Intelligence (spell save DC 14, +6 to hit with spell attacks). She has the following wizard spells prepared:",
+      "cantrips": ["mage hand", "prestidigitation", "fire bolt", "mending"],
+      "spell_slots": { "1st": 4, "2nd": 3, "3rd": 3, "4th": 2, "5th": 1 },
+      "prepared_spells": [
+        { "level": "1st", "spells": ["detect magic", "identify", "mage armor", "shield"] },
+        { "level": "2nd", "spells": ["detect thoughts", "locate object", "hold person"] },
+        { "level": "3rd", "spells": ["counterspell", "dispel magic", "nondetection"] },
+        { "level": "4th", "spells": ["arcane eye", "Leomund's secret chest"] },
+        { "level": "5th", "spells": ["legend lore"] }
+      ]
+    },
+    "tactical_notes": "Vashti avoids combat whenever possible. If threatened in her shop, she activates a glyph of warding as her first action to blast attackers back while she casts mage armor and prepares to flee via a hidden trapdoor beneath the counter. If cornered, she uses hold person and counterspell defensively, saving her higher slots for escape. She will not fight to the death — her survival and knowledge are worth more to her than any item in the shop."
+  }
+}

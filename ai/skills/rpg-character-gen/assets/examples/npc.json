@@ -1,0 +1,66 @@
+{
+  "character_type": "combat_npc",
+  "identity": {
+    "name": "Kareth Voss, the Gray Fang",
+    "creature_type": "Medium humanoid (human), lawful evil",
+    "role": "Bandit leader who orchestrates highway ambushes from concealed positions, commanding a disciplined gang of highwaymen"
+  },
+  "challenge": {
+    "rating": "3",
+    "xp": 700
+  },
+  "combat": {
+    "armor_class": { "value": 15, "source": "studded leather armor" },
+    "hit_points": { "value": 78, "formula": "12d8 + 24" },
+    "speed": "30 ft."
+  },
+  "ability_scores": {
+    "str": 16, "dex": 16, "con": 14,
+    "int": 14, "wis": 12, "cha": 14
+  },
+  "defenses": {
+    "saving_throws": ["Str +5", "Dex +5"],
+    "skills": ["Athletics +5", "Deception +4", "Intimidation +4", "Perception +3", "Stealth +5"],
+    "damage_resistances": [],
+    "damage_immunities": [],
+    "condition_immunities": []
+  },
+  "senses": "passive Perception 13",
+  "languages": "Common, Thieves' Cant",
+  "traits": [
+    {
+      "name": "Ambush Tactician",
+      "description": "Kareth and any allies within 30 feet of him have advantage on initiative rolls. In addition, Kareth has advantage on attack rolls against any creature that hasn't taken a turn in combat yet."
+    },
+    {
+      "name": "Pack Leader",
+      "description": "Kareth has advantage on an attack roll against a creature if at least one of his allies is within 5 feet of the creature and the ally isn't incapacitated."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Kareth makes three melee attacks: two with his longsword and one with his hand crossbow. Alternatively, he makes two ranged attacks with his hand crossbow."
+    },
+    {
+      "name": "Longsword",
+      "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage, or 8 (1d10 + 3) slashing damage if used with two hands."
+    },
+    {
+      "name": "Hand Crossbow",
+      "description": "Ranged Weapon Attack: +5 to hit, range 30/120 ft., one target. Hit: 6 (1d6 + 3) piercing damage."
+    },
+    {
+      "name": "Spring the Trap (Recharge 5-6)",
+      "description": "Kareth lets out a sharp whistle, signaling his gang to attack. Up to three allied bandits within 60 feet that can hear Kareth can use their reactions to make one weapon attack or move up to half their speed without provoking opportunity attacks."
+    }
+  ],
+  "reactions": [
+    {
+      "name": "Parry",
+      "description": "Kareth adds 2 to his AC against one melee attack that would hit him. To do so, he must see the attacker and be wielding a melee weapon."
+    }
+  ],
+  "spellcasting": null,
+  "tactical_notes": "Kareth never fights fair. He positions his bandits in concealed locations along a road or narrow pass, then uses Ambush Tactician to ensure his side acts first. On round one, he opens with his hand crossbow from cover while his bandits pepper the party with ranged attacks. He uses Spring the Trap to reposition his allies or pile damage onto isolated targets. Once melee is joined, he relies on Pack Leader to maintain advantage, focusing down the most dangerous-looking target (usually an obvious spellcaster or healer). If reduced below 20 HP, he uses the Dash action to flee, trusting his remaining bandits to cover his escape. He always has an escape route planned — a hidden horse, a rope down a cliff, or a concealed tunnel."
+}

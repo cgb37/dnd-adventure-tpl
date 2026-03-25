@@ -1,0 +1,102 @@
+{
+  "character_type": "player_character",
+  "identity": {
+    "name": "Caelynn Amakiir",
+    "race": "Half-Elf",
+    "subrace": null,
+    "class": "Bard",
+    "subclass": "College of Lore",
+    "level": 5,
+    "background": "Entertainer",
+    "alignment": "Chaotic Good",
+    "xp": 6500
+  },
+  "ability_scores": {
+    "method": "standard_array",
+    "base_scores": { "str": 8, "dex": 14, "con": 13, "int": 10, "wis": 12, "cha": 15 },
+    "racial_bonuses": { "str": 0, "dex": 1, "con": 1, "int": 0, "wis": 0, "cha": 2 },
+    "asi_bonuses": { "str": 0, "dex": 1, "con": 0, "int": 0, "wis": 0, "cha": 1 },
+    "final_scores": { "str": 8, "dex": 16, "con": 14, "int": 10, "wis": 12, "cha": 18 },
+    "modifiers": { "str": -1, "dex": 3, "con": 2, "int": 0, "wis": 1, "cha": 4 }
+  },
+  "combat": {
+    "armor_class": { "value": 15, "source": "studded leather (12 + Dex modifier)" },
+    "hit_points": { "max": 38, "formula": "8 (level 1 max d8) + 4 * (5 avg + 2 Con mod) = 8 + 28 = 38" },
+    "hit_dice": { "total": "5d8", "remaining": "5d8" },
+    "speed": "30 ft.",
+    "initiative": 3,
+    "proficiency_bonus": 3
+  },
+  "proficiencies": {
+    "armor": ["light armor"],
+    "weapons": ["simple weapons", "hand crossbow", "longsword", "rapier", "shortsword"],
+    "tools": ["lute", "flute", "drum", "disguise kit"],
+    "saving_throws": ["Dexterity", "Charisma"],
+    "skills": [
+      "Performance (Expertise)",
+      "Persuasion (Expertise)",
+      "Deception",
+      "Insight",
+      "Arcana",
+      "History",
+      "Perception",
+      "Acrobatics"
+    ],
+    "languages": ["Common", "Elvish", "Sylvan"]
+  },
+  "features": [
+    { "name": "Darkvision", "source": "Race (Half-Elf)", "description": "Can see in dim light within 60 feet as if it were bright light, and in darkness as if it were dim light." },
+    { "name": "Fey Ancestry", "source": "Race (Half-Elf)", "description": "Advantage on saving throws against being charmed, and magic can't put you to sleep." },
+    { "name": "Skill Versatility", "source": "Race (Half-Elf)", "description": "Gain proficiency in two skills of your choice (Perception, Acrobatics)." },
+    { "name": "Bardic Inspiration", "source": "Class (Bard 1)", "description": "As a bonus action, grant one creature within 60 feet a d8 Bardic Inspiration die. Uses equal to Charisma modifier (4) per short or long rest." },
+    { "name": "Spellcasting", "source": "Class (Bard 1)", "description": "Charisma-based spellcasting. Spell save DC 15, spell attack bonus +7. Use a musical instrument as a spellcasting focus." },
+    { "name": "Jack of All Trades", "source": "Class (Bard 2)", "description": "Add half your proficiency bonus (rounded down, +1) to any ability check that doesn't already include your proficiency bonus." },
+    { "name": "Song of Rest", "source": "Class (Bard 2)", "description": "During a short rest, you and friendly creatures who hear your performance regain an extra 1d6 hit points if they spend at least one Hit Die." },
+    { "name": "Expertise", "source": "Class (Bard 3)", "description": "Double proficiency bonus for two skill proficiencies: Performance and Persuasion." },
+    { "name": "Bard College: College of Lore", "source": "Class (Bard 3)", "description": "Bonus Proficiencies in three skills of your choice (Arcana, History, Acrobatics — note: Acrobatics from Half-Elf, so this grants Arcana, History, and the extra covered by Skill Versatility)." },
+    { "name": "Cutting Words", "source": "Class (Bard 3, College of Lore)", "description": "As a reaction, when a creature within 60 feet makes an attack roll, ability check, or damage roll, expend one Bardic Inspiration die to subtract the result from the creature's roll." },
+    { "name": "Font of Inspiration", "source": "Class (Bard 5)", "description": "Bardic Inspiration dice are regained on a short or long rest." },
+    { "name": "ASI (Level 4)", "source": "Class (Bard 4)", "description": "+1 Charisma, +1 Dexterity." }
+  ],
+  "equipment": [
+    { "name": "Rapier", "quantity": 1, "properties": ["finesse", "1d8 piercing"] },
+    { "name": "Studded Leather Armor", "quantity": 1, "properties": ["AC 12 + Dex modifier"] },
+    { "name": "Lute", "quantity": 1, "properties": ["spellcasting focus"] },
+    { "name": "Dagger", "quantity": 2, "properties": ["finesse", "light", "thrown (20/60)", "1d4 piercing"] },
+    { "name": "Diplomat's Pack", "quantity": 1, "properties": ["chest", "2 cases for maps/scrolls", "fine clothes", "ink", "pen", "lamp", "2 flasks of oil", "5 sheets of paper", "vial of perfume", "sealing wax", "soap"] },
+    { "name": "Disguise Kit", "quantity": 1, "properties": ["tool"] },
+    { "name": "Costume", "quantity": 1, "properties": ["entertainer background"] },
+    { "name": "Belt Pouch", "quantity": 1, "properties": ["contains 15 gp"] }
+  ],
+  "spellcasting": {
+    "ability": "Charisma",
+    "spell_save_dc": 15,
+    "spell_attack_bonus": 7,
+    "cantrips": [
+      "Vicious Mockery",
+      "Minor Illusion",
+      "Mage Hand"
+    ],
+    "spell_slots": { "1st": 4, "2nd": 3, "3rd": 2 },
+    "spells_known": [
+      { "name": "Healing Word", "level": 1, "description": "Bonus action, 60 ft range, 1d4 + Cha mod healing" },
+      { "name": "Thunderwave", "level": 1, "description": "15 ft cube, 2d8 thunder damage, Con save or pushed 10 ft" },
+      { "name": "Faerie Fire", "level": 1, "description": "20 ft cube, creatures outlined in light, attacks have advantage" },
+      { "name": "Dissonant Whispers", "level": 1, "description": "3d6 psychic damage, target must use reaction to flee, Wis save for half" },
+      { "name": "Hold Person", "level": 2, "description": "Paralyze a humanoid, Wis save each turn to end" },
+      { "name": "Shatter", "level": 2, "description": "10 ft radius, 3d8 thunder damage, Con save for half" },
+      { "name": "Hypnotic Pattern", "level": 3, "description": "30 ft cube, creatures charmed and incapacitated, Wis save" },
+      { "name": "Dispel Magic", "level": 3, "description": "End one spell of 3rd level or lower on a target; higher levels require ability check" }
+    ]
+  },
+  "personality": {
+    "traits": [
+      "Knows a story relevant to almost every situation and insists on telling it, even mid-combat.",
+      "Changes accents depending on who she's talking to — not to mock, but because she genuinely absorbs the speech patterns of everyone she meets."
+    ],
+    "ideals": ["Freedom — everyone should be free to express themselves and live without oppression. Art and music are the antidote to tyranny."],
+    "bonds": ["She carries a half-finished song her elven mother started before disappearing. Completing it and understanding its meaning drives every journey she takes."],
+    "flaws": ["Cannot resist inserting herself into other people's conflicts, especially when she thinks she can talk her way to a clever solution. This has made her enemies she doesn't even know about yet."],
+    "backstory_hook": "Raised in a human merchant town by her father after her elven mother vanished when Caelynn was young, she found her mother's lute and an unfinished musical manuscript in the attic. The melody haunts her dreams and seems to resonate with ancient Feywild magic. She joined the College of Lore to research its origins, but every answer leads to two more questions — and increasingly dangerous places."
+  }
+}

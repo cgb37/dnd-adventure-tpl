@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "combat_npc",
+  "title": "CombatNpc",
+  "description": "A D&D 5e combat NPC with full stat block.",
+  "type": "object",
+  "required": ["character_type", "identity", "challenge", "combat", "ability_scores", "actions"],
+  "properties": {
+    "character_type": { "const": "combat_npc" },
+    "identity": {
+      "type": "object",
+      "required": ["name", "creature_type", "role"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "creature_type": { "type": "string" },
+        "role": { "type": "string" }
+      }
+    },
+    "challenge": {
+      "type": "object",
+      "required": ["rating", "xp"],
+      "properties": {
+        "rating": { "type": "string" },
+        "xp": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "combat": {
+      "type": "object",
+      "required": ["armor_class", "hit_points", "speed"],
+      "properties": {
+        "armor_class": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "integer" },
+            "source": { "type": "string" }
+          }
+        },
+        "hit_points": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "integer" },
+            "formula": { "type": "string" }
+          }
+        },
+        "speed": { "type": "string" }
+      }
+    },
+    "ability_scores": { "$ref": "#/$defs/ability_block" },
+    "defenses": {
+      "type": "object",
+      "properties": {
+        "saving_throws": { "type": "array", "items": { "type": "string" } },
+        "skills": { "type": "array", "items": { "type": "string" } },
+        "damage_resistances": { "type": "array", "items": { "type": "string" } },
+        "damage_immunities": { "type": "array", "items": { "type": "string" } },
+        "condition_immunities": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "senses": { "type": "string" },
+    "languages": { "type": "string" },
+    "traits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "reactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "spellcasting": {
+      "type": ["object", "null"],
+      "properties": {
+        "ability": { "type": "string" },
+        "spell_save_dc": { "type": "integer" },
+        "spell_attack_bonus": { "type": "integer" },
+        "spells": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "tactical_notes": { "type": "string" }
+  },
+  "$defs": {
+    "ability_block": {
+      "type": "object",
+      "required": ["str", "dex", "con", "int", "wis", "cha"],
+      "properties": {
+        "str": { "type": "integer" },
+        "dex": { "type": "integer" },
+        "con": { "type": "integer" },
+        "int": { "type": "integer" },
+        "wis": { "type": "integer" },
+        "cha": { "type": "integer" }
+      }
+    }
+  }
+}
