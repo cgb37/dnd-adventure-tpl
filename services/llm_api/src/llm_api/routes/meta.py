@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
+from llm_api.models.npc_types import NPC_TYPE_NAMES
 from llm_api.services.config import Settings
 from llm_api.services.kinds import normalize_kind
 from llm_api.services.registry import list_generator_kinds, schema_for_kind
@@ -12,7 +13,10 @@ router = APIRouter()
 
 @router.get("/meta/generators")
 def meta_generators():
-    return ok({"generators": list_generator_kinds()})
+    return ok({
+        "generators": list_generator_kinds(),
+        "npc_types": list(NPC_TYPE_NAMES),
+    })
 
 
 @router.get("/meta/providers")
