@@ -94,6 +94,7 @@ exclude:
   - assets/main.scss
   - .DS_Store
   - services
+  - ai
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/
