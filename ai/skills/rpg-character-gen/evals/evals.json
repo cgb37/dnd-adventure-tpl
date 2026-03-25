@@ -1,0 +1,49 @@
+{
+  "skill_name": "rpg-character-gen",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Create a level 5 half-elf bard for my campaign",
+      "expected_output": "A complete player character JSON with half-elf racial traits, bard class features through level 5, rolled ability scores, spells, equipment, and personality",
+      "files": [],
+      "assertions": [
+        { "name": "valid_json", "description": "Output is parseable JSON" },
+        { "name": "correct_schema", "description": "Uses nested player_character schema with identity, ability_scores, combat, proficiencies, features, equipment, spellcasting, personality sections" },
+        { "name": "correct_race", "description": "Race is Half-Elf with Cha +2 and two other ability scores +1" },
+        { "name": "correct_class_level", "description": "Class is Bard, level is 5" },
+        { "name": "hp_calculation", "description": "HP is plausible for a level 5 bard (d8 hit die): roughly 20-43 range depending on Con" },
+        { "name": "has_spellcasting", "description": "Includes cantrips and spell slots appropriate for a 5th-level bard (3 cantrips, slots up to 3rd level)" },
+        { "name": "has_personality", "description": "Personality section includes traits, ideals, bonds, and flaws that are specific" }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "I need a CR 3 bandit leader NPC with a stat block for an ambush encounter",
+      "expected_output": "A combat NPC JSON stat block at CR 3 with appropriate HP, AC, actions, and tactical notes for an ambush scenario",
+      "files": [],
+      "assertions": [
+        { "name": "valid_json", "description": "Output is parseable JSON" },
+        { "name": "correct_schema", "description": "Uses nested combat_npc schema with identity, challenge, combat, ability_scores, actions sections" },
+        { "name": "correct_cr", "description": "Challenge rating is 3" },
+        { "name": "has_actions", "description": "At least one attack action with to-hit bonus and damage" },
+        { "name": "has_tactical_notes", "description": "Includes tactical or ambush-relevant notes" },
+        { "name": "plausible_stats", "description": "HP roughly 50-85 and AC roughly 13-17, appropriate for CR 3" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Generate a mysterious shopkeeper NPC for a magic item store in a port city",
+      "expected_output": "A roleplay NPC JSON with personality, motivations, speech pattern, secrets, appearance, and plot hooks fitting a mysterious magic shop owner in a port setting",
+      "files": [],
+      "assertions": [
+        { "name": "valid_json", "description": "Output is parseable JSON" },
+        { "name": "correct_schema", "description": "Uses nested roleplay_npc schema with identity, personality, appearance, secrets, relationships, plot_hooks sections" },
+        { "name": "has_motivation", "description": "Primary motivation field is populated with a specific motivation" },
+        { "name": "has_speech_pattern", "description": "Speech pattern is described with example dialogue" },
+        { "name": "has_secrets", "description": "At least one secret with a discovery method" },
+        { "name": "has_plot_hooks", "description": "At least one plot hook" },
+        { "name": "fits_theme", "description": "Content specifically relates to a port city magic shop, not a generic NPC" }
+      ]
+    }
+  ]
+}
