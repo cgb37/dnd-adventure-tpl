@@ -88,6 +88,10 @@ exclude:
   - _frontmattertpls
   - _prompts
   - docs
+  # jekyll-watch requires exclude paths to exist on disk (globs don't work)
+  # and to be listed literally — add a new line here for each new campaign.
+  - campaigns/rpg-theForsakenCrown/_drafts
+  - campaigns/rpg-icewindDaleRedux/_drafts
   - docker-compose.yml
   - Dockerfile
   - jekyll-serve.sh
