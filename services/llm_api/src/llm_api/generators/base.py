@@ -95,7 +95,7 @@ async def run_generation(
             user_prompt,
             usage_limits=UsageLimits(
                 request_limit=settings.max_model_requests_per_generation,
-                response_tokens_limit=settings.max_output_tokens,
+                output_tokens_limit=settings.max_output_tokens,
             ),
         )
     except UsageLimitExceeded as exc:
