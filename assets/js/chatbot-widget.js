@@ -8,6 +8,12 @@
   const LS_MODE    = 'dnd_global_chatbot_mode';     // 'ask' | 'agent'
   const LS_KIND    = 'dnd_global_chatbot_kind';     // 'npc', 'location', …
   const LS_MODEL   = 'dnd_global_chatbot_model';    // provider string
+  const LS_HISTORY = 'dnd_global_chatbot_history';  // transcript, decoupled from page lifecycle
+
+  // Jekyll's dev livereload (and any other full-page reload) tears down this
+  // script's in-memory state. The transcript is persisted here and replayed
+  // on init so the conversation survives a reload it didn't ask for.
+  const MAX_HISTORY = 50;
 
   // ── Element references ─────────────────────────────────────────────────────
   const el = {
@@ -46,6 +52,7 @@
     kind:          lsGet(LS_KIND) || 'npc',
     model:         lsGet(LS_MODEL) || '',
     attachedFiles: [],
+    history:       loadHistory(),
   };
 
   // ── LocalStorage helpers ───────────────────────────────────────────────────
@@ -54,6 +61,22 @@
   }
   function lsSet(key, val) {
     try { localStorage.setItem(key, val); } catch { /* ignore */ }
+  }
+
+  // ── Transcript persistence ─────────────────────────────────────────────────
+  function loadHistory() {
+    try {
+      const raw = lsGet(LS_HISTORY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch { return []; }
+  }
+  function pushHistory(entry) {
+    state.history.push(entry);
+    if (state.history.length > MAX_HISTORY) {
+      state.history = state.history.slice(-MAX_HISTORY);
+    }
+    lsSet(LS_HISTORY, JSON.stringify(state.history));
   }
 
   // ── HTTP helper ────────────────────────────────────────────────────────────
@@ -78,7 +101,9 @@
   }
 
   // ── Messages ───────────────────────────────────────────────────────────────
-  function appendMessage({ role, text, meta }) {
+  // renderMessage: DOM only, used both for live sends and history replay.
+  // appendMessage: render + persist — the entry point everything else calls.
+  function renderMessage({ role, text, meta }) {
     const wrap = document.createElement('div');
     wrap.className = `chatbot__msg chatbot__msg--${role}`;
     const bubble = document.createElement('div');
@@ -93,6 +118,11 @@
     wrap.appendChild(bubble);
     el.messages.appendChild(wrap);
     el.messages.scrollTop = el.messages.scrollHeight;
+  }
+
+  function appendMessage(entry) {
+    renderMessage(entry);
+    pushHistory({ type: 'message', ...entry });
   }
 
   function appendThinking() {
@@ -395,7 +425,7 @@
     }
   }
 
-  function appendPromoteButton(kind, slug) {
+  function renderPromote(kind, slug) {
     const wrap = document.createElement('div');
     wrap.className = 'chatbot__msg chatbot__msg--ai';
     const bubble = document.createElement('div');
@@ -423,6 +453,11 @@
     wrap.appendChild(bubble);
     el.messages.appendChild(wrap);
     el.messages.scrollTop = el.messages.scrollHeight;
+  }
+
+  function appendPromoteButton(kind, slug) {
+    renderPromote(kind, slug);
+    pushHistory({ type: 'promote', kind, slug });
   }
 
   // ── Panel collapse / expand ────────────────────────────────────────────────
@@ -474,10 +509,17 @@
 
     applyMode(state.mode);
 
-    appendMessage({
-      role: 'ai',
-      text: 'Hi! Use Ask for questions or switch to Agent to generate NPCs, locations and more.',
-    });
+    if (state.history.length) {
+      for (const entry of state.history) {
+        if (entry.type === 'promote') renderPromote(entry.kind, entry.slug);
+        else renderMessage(entry);
+      }
+    } else {
+      appendMessage({
+        role: 'ai',
+        text: 'Hi! Use Ask for questions or switch to Agent to generate NPCs, locations and more.',
+      });
+    }
   }
 
   // ── Wire up inputs ─────────────────────────────────────────────────────────
