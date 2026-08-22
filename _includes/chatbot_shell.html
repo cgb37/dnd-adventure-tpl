@@ -177,4 +177,4 @@ Global chatbot shell (Iteration 5)
 <script>
   window.LLM_API_BASE_URL = "{{ site.llm_api_base_url | default: 'http://localhost:8000' }}";
 </script>
-<script src="/assets/js/chatbot-widget.js"></script>
+<script src="/assets/js/chatbot-widget.js?v={{ site.time | date: '%s' }}"></script>
