@@ -30,7 +30,7 @@ produces — out of scope here.
 ## File Layout
 
 ```
-ai/skills/_shared/
+shared/
   write_draft.py          # shared: build frontmatter, compute deterministic id, write .md draft
 
 ai/skills/encounter-generator/
@@ -43,10 +43,22 @@ ai/skills/encounter-generator/
     evals.json
 ```
 
-`_shared/` sits alongside per-skill directories. Later Phase 1 skills
-(`location-generator`, `monster-generator`, `magic-generator`) import the same
-`write_draft.py` rather than reimplementing draft-writing logic. This is the
-one intentional cross-skill dependency — everything else about each skill
+`shared/` lives at the repo root — a sibling of `ai/` and `services/`, not
+nested under `ai/skills/` — so it can become the single source of this logic
+for both the skill scripts and, eventually, the FastAPI service. The
+FastAPI service's `services/llm_api/src/llm_api/services/drafts.py`
+currently duplicates this same write-draft logic; that's the same pattern
+as the pre-existing duplication between
+`ai/skills/rpg-character-gen/scripts/dice_roller.py` and
+`services/llm_api/src/llm_api/services/dice_roller.py`. Consolidating either
+pair is out of scope for this spec, but the new shared module's location is
+chosen so that consolidation is possible later without moving it again.
+Skill scripts reach `shared/` via a small sys.path bootstrap (walk up from
+the script's own path to find `.git`, then add `repo_root / "shared"` to
+`sys.path`) rather than importing across the `ai/skills` ↔ `services/llm_api`
+boundary. Later Phase 1 skills (`location-generator`, `monster-generator`,
+`magic-generator`) use the same bootstrap to import `write_draft.py` rather
+than reimplementing draft-writing logic. Everything else about each skill
 stays self-contained, matching the `rpg-character-gen` convention.
 
 ## Party State (low-friction inputs)
@@ -95,7 +107,7 @@ a richer memory model; this spec only commits to level/size/composition.
    `EncounterDraft.required_yaml_keys()` (`layout`, `title`, `permalink`,
    `category`, `chapter`, `episode`, `scene`, `jumbo`, `thumb`, `portrait`,
    `tags`, `search`, `excerpt_separator`, `id`, `slug`) plus a Markdown body.
-7. Call `_shared/write_draft.py` with `kind="encounter"`, campaign, slug,
+7. Call `shared/write_draft.py` with `kind="encounter"`, campaign, slug,
    title, frontmatter, body → writes
    `campaigns/<campaign>/_drafts/encounter/<slug>.md`, matching the exact
    format `drafts.write_draft()` produces today (front-matter block, `# Title`,
@@ -149,7 +161,7 @@ to sanity-check the encounter, not necessarily surfaced verbatim to players.
 
 - `scripts/encounter_budget.py` is a pure calculator (inputs → XP numbers),
   unit-testable directly, same as `rpg-character-gen/scripts/dice_roller.py`.
-- `ai/skills/_shared/write_draft.py` gets its own test since every Phase 1
+- `shared/write_draft.py` gets its own test since every Phase 1
   skill will depend on it — a bug there breaks all of them.
 - Skill-level testing follows the existing convention:
   `ai/skills/encounter-generator/evals/evals.json`, mirroring the shape of
@@ -169,5 +181,8 @@ to sanity-check the encounter, not necessarily surfaced verbatim to players.
   not a general-purpose memory store.
 - `location-generator`, `monster-generator`, `magic-generator` — each gets
   its own brainstorm once this pattern is validated, reusing
-  `_shared/write_draft.py`.
+  `shared/write_draft.py`.
+- Consolidating the pre-existing `dice_roller.py` duplication, and pointing
+  `services/llm_api/src/llm_api/services/drafts.py` at `shared/write_draft.py`
+  instead of its own copy.
 - `dm-guide`, `players-handbook`, `dm-orchestrator` (Phases 2–4).
