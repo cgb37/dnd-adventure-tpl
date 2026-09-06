@@ -79,14 +79,25 @@ def compute_draft_id(*, kind: str, campaign: str, slug: str) -> uuid.UUID:
     return uuid.uuid5(UUID_NAMESPACE, name)
 
 
-_YAML_BOOL_NULL_LOOKALIKES = {
-    "yes", "no", "true", "false", "on", "off", "null", "~", "none",
+# Exact-case sets matching PyYAML's YAML 1.1 resolver regexes (yaml.resolver.Resolver
+# .add_implicit_resolver for tag:yaml.org,2002:bool / :null) - these are the *specific*
+# case spellings PyYAML treats as lookalikes, not a case-insensitive family. e.g. "None",
+# "NONE", "yEs", or "nUll" are NOT lookalikes and safe_dump leaves them unquoted.
+_YAML_BOOL_LOOKALIKES = {
+    "yes", "Yes", "YES", "no", "No", "NO",
+    "true", "True", "TRUE", "false", "False", "FALSE",
+    "on", "On", "ON", "off", "Off", "OFF",
 }
-_YAML_INDICATOR_PREFIXES = ("*", "&", "!", "|", ">", "%", "@", "`", "[", "{", "-")
+_YAML_NULL_LOOKALIKES = {"null", "Null", "NULL", "~"}
+# Leading-character indicators that make PyYAML quote a plain scalar. "-" is deliberately
+# excluded here: PyYAML only treats a leading hyphen as ambiguous when the string IS "-"
+# or STARTS WITH "- " (hyphen + space, the block-sequence-entry form) - an ordinary word
+# like "-foo" is emitted unquoted. That standalone/space case is handled separately below.
+_YAML_INDICATOR_PREFIXES = ("*", "&", "!", "|", ">", "%", "@", "`", "[", "{")
 
 
 def _looks_like_yaml_non_string(text: str) -> bool:
-    if text.lower() in _YAML_BOOL_NULL_LOOKALIKES:
+    if text in _YAML_BOOL_LOOKALIKES or text in _YAML_NULL_LOOKALIKES:
         return True
     try:
         int(text)
@@ -98,6 +109,8 @@ def _looks_like_yaml_non_string(text: str) -> bool:
         return True
     except ValueError:
         pass
+    if text == "-" or text.startswith("- "):
+        return True
     return text.startswith(_YAML_INDICATOR_PREFIXES)
 
 

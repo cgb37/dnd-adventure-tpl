@@ -54,6 +54,32 @@ def test_render_frontmatter_quotes_leading_indicator_chars():
     assert 'title: "*The Wailing Deep*"' in yaml_text
 
 
+def test_render_frontmatter_does_not_quote_ordinary_hyphen_prefixed_words():
+    # PyYAML's safe_dump only treats a leading "-" as ambiguous when the string IS "-"
+    # or starts with "- " (the block-sequence-entry form) - an ordinary word that merely
+    # starts with a hyphen, like "-foo", is emitted unquoted.
+    yaml_text = render_frontmatter({"k": "-foo", "j": "-1a", "m": "-yes"})
+    assert "k: -foo" in yaml_text
+    assert "j: -1a" in yaml_text
+    assert "m: -yes" in yaml_text
+
+
+def test_render_frontmatter_does_not_quote_none_string():
+    # "none" (any case) is not a YAML 1.1 null lookalike - only null/Null/NULL/~/"" are.
+    yaml_text = render_frontmatter({"k": "none", "j": "None", "m": "NONE"})
+    assert "k: none" in yaml_text
+    assert "j: None" in yaml_text
+    assert "m: NONE" in yaml_text
+
+
+def test_render_frontmatter_quotes_standalone_or_leading_hyphen_space():
+    # These really are YAML-ambiguous: a bare "-" or "- " prefix reads as a block
+    # sequence entry marker.
+    yaml_text = render_frontmatter({"k": "-", "j": "- foo"})
+    assert 'k: "-"' in yaml_text
+    assert 'j: "- foo"' in yaml_text
+
+
 def test_compute_draft_id_is_deterministic():
     first = compute_draft_id(kind="encounter", campaign="test-campaign", slug="goblin-ambush")
     second = compute_draft_id(kind="encounter", campaign="test-campaign", slug="goblin-ambush")
