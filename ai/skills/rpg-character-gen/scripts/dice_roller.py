@@ -18,37 +18,39 @@ Output: JSON object with the six ability scores and metadata.
 
 import argparse
 import json
-import random
 import sys
-
-STANDARD_ARRAY = [15, 14, 13, 12, 10, 8]
-
-POINT_BUY_COSTS = {
-    8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9
-}
-
-POINT_BUY_BUDGET = 27
+from pathlib import Path
 
 
-def modifier(score: int) -> int:
-    return (score - 10) // 2
+def _add_repo_root_to_path() -> None:
+    """Make the repo-root ``shared`` package importable.
+
+    This script is invoked directly (``python dice_roller.py ...``), not
+    as part of an installed package, so it walks up from its own location
+    to find the repo root (the ``shared/`` directory's parent) and adds it
+    to sys.path.
+    """
+    for parent in Path(__file__).resolve().parents:
+        if (parent / "shared" / "dice_roller.py").exists():
+            sys.path.insert(0, str(parent))
+            return
+    raise RuntimeError("Could not locate repo-root 'shared' package from dice_roller.py")
 
 
-def roll_4d6_drop_lowest() -> int:
-    rolls = [random.randint(1, 6) for _ in range(4)]
-    rolls.sort(reverse=True)
-    return sum(rolls[:3])
+_add_repo_root_to_path()
+
+from shared.dice_roller import (  # noqa: E402
+    POINT_BUY_BUDGET,
+    STANDARD_ARRAY,
+    check_point_buy,
+    generate_rolled as _generate_rolled,
+    modifier,
+)
 
 
-def generate_rolled() -> dict:
-    scores = sorted([roll_4d6_drop_lowest() for _ in range(6)], reverse=True)
-    return {
-        "method": "roll",
-        "scores": scores,
-        "modifiers": [modifier(s) for s in scores],
-        "total": sum(scores),
-        "average": round(sum(scores) / 6, 2)
-    }
+def generate_rolled(*, seed: int | None = None) -> dict:
+    result = _generate_rolled(seed=seed)
+    return {"method": "roll", **result}
 
 
 def generate_standard() -> dict:
@@ -62,28 +64,15 @@ def generate_standard() -> dict:
     }
 
 
-def validate_point_buy(scores: list[int]) -> tuple[bool, str]:
-    if len(scores) != 6:
-        return False, f"Need exactly 6 scores, got {len(scores)}"
-    for s in scores:
-        if s < 8 or s > 15:
-            return False, f"Score {s} out of range (8-15)"
-    total_cost = sum(POINT_BUY_COSTS[s] for s in scores)
-    if total_cost > POINT_BUY_BUDGET:
-        return False, f"Total cost {total_cost} exceeds budget of {POINT_BUY_BUDGET}"
-    return True, f"Valid. Points spent: {total_cost}/{POINT_BUY_BUDGET}"
-
-
 def generate_point_buy(scores: list[int] | None = None) -> dict:
     if scores is None:
         # Default balanced point buy: 15, 14, 13, 12, 10, 8 (cost = 27)
         scores = [15, 14, 13, 12, 10, 8]
 
-    valid, msg = validate_point_buy(scores)
+    valid, msg, total_cost = check_point_buy(scores)
     if not valid:
         return {"method": "point_buy", "error": msg}
 
-    total_cost = sum(POINT_BUY_COSTS[s] for s in scores)
     scores_sorted = sorted(scores, reverse=True)
     return {
         "method": "point_buy",
@@ -107,17 +96,14 @@ def main():
 
     args = parser.parse_args()
 
-    if args.seed is not None:
-        random.seed(args.seed)
-
     if args.method == "roll":
-        result = generate_rolled()
+        result = generate_rolled(seed=args.seed)
     elif args.method == "standard":
         result = generate_standard()
     elif args.method == "pointbuy":
         result = generate_point_buy(args.scores)
     else:
-        result = generate_rolled()
+        result = generate_rolled(seed=args.seed)
 
     print(json.dumps(result, indent=2))
 
