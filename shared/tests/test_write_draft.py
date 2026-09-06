@@ -36,6 +36,24 @@ def test_render_frontmatter_handles_empty_list():
     assert "tags: []" in yaml_text
 
 
+def test_render_frontmatter_quotes_numeric_looking_strings():
+    yaml_text = render_frontmatter({"chapter": "01", "episode": "02"})
+    assert 'chapter: "01"' in yaml_text
+    assert 'episode: "02"' in yaml_text
+
+
+def test_render_frontmatter_quotes_yaml_bool_and_null_lookalikes():
+    yaml_text = render_frontmatter({"a": "yes", "b": "null", "c": "true"})
+    assert 'a: "yes"' in yaml_text
+    assert 'b: "null"' in yaml_text
+    assert 'c: "true"' in yaml_text
+
+
+def test_render_frontmatter_quotes_leading_indicator_chars():
+    yaml_text = render_frontmatter({"title": "*The Wailing Deep*"})
+    assert 'title: "*The Wailing Deep*"' in yaml_text
+
+
 def test_compute_draft_id_is_deterministic():
     first = compute_draft_id(kind="encounter", campaign="test-campaign", slug="goblin-ambush")
     second = compute_draft_id(kind="encounter", campaign="test-campaign", slug="goblin-ambush")

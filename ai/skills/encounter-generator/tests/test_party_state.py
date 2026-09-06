@@ -30,6 +30,13 @@ def test_read_party_state_returns_none_when_incomplete(tmp_path: Path):
     assert read_party_state(tmp_path, "my-campaign") is None
 
 
+def test_read_party_state_returns_none_on_malformed_numeric_field(tmp_path: Path):
+    campaign_dir = tmp_path / "campaigns" / "my-campaign"
+    campaign_dir.mkdir(parents=True)
+    (campaign_dir / "party.yml").write_text("level: five\nsize: 4\n", encoding="utf-8")
+    assert read_party_state(tmp_path, "my-campaign") is None
+
+
 def test_cli_write_then_read(tmp_path: Path):
     (tmp_path / ".git").mkdir()
     script = Path(__file__).resolve().parents[1] / "scripts" / "party_state.py"

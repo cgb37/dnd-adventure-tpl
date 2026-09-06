@@ -105,12 +105,18 @@ Where `<json payload>` is:
 ```json
 {
   "kind": "encounter",
+  "campaign": "<active-campaign>",
   "slug": "<kebab-case-slug>",
   "title": "<title>",
   "frontmatter": { "...": "as built above" },
   "body": "<markdown body>"
 }
 ```
+
+Use the `<active-campaign>` value already resolved in Step 1 — don't rely on
+`write_draft.py`'s `.active-campaign`/cwd-based auto-resolution, since
+campaign directories are git submodules and a cwd inside one could resolve
+the wrong repo root.
 
 On success this prints the draft's path (e.g.
 `campaigns/<campaign>/_drafts/encounter/<slug>.md`) and its id. Tell the

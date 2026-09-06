@@ -40,7 +40,7 @@ XP_THRESHOLDS: dict[int, dict[str, int]] = {
     17: {"easy": 2000, "medium": 3900, "hard": 5900, "deadly": 8800},
     18: {"easy": 2100, "medium": 4200, "hard": 6300, "deadly": 9500},
     19: {"easy": 2400, "medium": 4900, "hard": 7300, "deadly": 10900},
-    20: {"easy": 2800, "medium": 5700, "hard": 8500, "deadly": 12000},
+    20: {"easy": 2800, "medium": 5700, "hard": 8500, "deadly": 12700},
 }
 
 # XP value per monster, by challenge rating (D&D 5e Basic Rules).

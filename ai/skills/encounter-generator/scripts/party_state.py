@@ -57,9 +57,15 @@ def read_party_state(repo_root: Path, campaign: str) -> dict | None:
         if not line or line == "composition:":
             continue
         if line.startswith("level:"):
-            level = int(line.split(":", 1)[1].strip())
+            try:
+                level = int(line.split(":", 1)[1].strip())
+            except ValueError:
+                level = None
         elif line.startswith("size:"):
-            size = int(line.split(":", 1)[1].strip())
+            try:
+                size = int(line.split(":", 1)[1].strip())
+            except ValueError:
+                size = None
         elif line.startswith("- class:"):
             composition.append({"class": line.split(":", 1)[1].strip()})
 
