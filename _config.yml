@@ -92,6 +92,8 @@ exclude:
   # and to be listed literally — add a new line here for each new campaign.
   - campaigns/rpg-theForsakenCrown/_drafts
   - campaigns/rpg-icewindDaleRedux/_drafts
+  # Add a `campaigns/<name>/party.yml` line here (same pattern as the
+  # _drafts entries above) once any campaign actually has that file on disk.
   - docker-compose.yml
   - Dockerfile
   - jekyll-serve.sh
@@ -99,6 +101,7 @@ exclude:
   - .DS_Store
   - services
   - ai
+  - shared
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/

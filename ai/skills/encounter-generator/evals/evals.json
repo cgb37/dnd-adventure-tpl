@@ -1,0 +1,39 @@
+{
+  "skill_name": "encounter-generator",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "My level 5 party of 4 just found a hidden crypt guarded by cultists. Generate a medium encounter for the crypt entrance.",
+      "expected_output": "A written draft at campaigns/<active-campaign>/_drafts/encounter/<slug>.md with cultist-themed monsters whose combined effective XP fits the medium budget for a level 5, 4-person party (2000 XP), tactical notes referencing the crypt setting, and all required frontmatter keys.",
+      "files": [],
+      "assertions": [
+        { "name": "draft_written", "description": "A file exists at campaigns/<active-campaign>/_drafts/encounter/<slug>.md" },
+        { "name": "valid_frontmatter", "description": "Frontmatter includes layout, title, permalink, category, chapter, episode, scene, jumbo, thumb, portrait, tags, search, excerpt_separator, id, slug" },
+        { "name": "budget_used", "description": "encounter_budget.py was invoked with level=5, party-size=4, difficulty=medium rather than hand-computed XP" },
+        { "name": "fits_theme", "description": "Monsters and setting are specifically cultists/crypt-themed, not generic" },
+        { "name": "has_tactics", "description": "Body includes tactical notes describing how the fight unfolds" }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Generate an encounter for my campaign.",
+      "expected_output": "No active campaign is set, so the skill reports the no_active_campaign error and tells the user to run scripts/use-campaign first, without writing any draft.",
+      "files": [],
+      "assertions": [
+        { "name": "no_draft_written", "description": "No file is created under any campaigns/*/_drafts/encounter/" },
+        { "name": "clear_error", "description": "Response tells the user to run scripts/use-campaign, matching the no_active_campaign error message" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Generate a hard encounter for the party in the frozen wastes chapter.",
+      "expected_output": "party.yml doesn't exist yet for the active campaign, so the skill asks once for party level and size, then writes campaigns/<active-campaign>/party.yml with the given values before generating the encounter.",
+      "files": [],
+      "assertions": [
+        { "name": "asks_once", "description": "Exactly one clarifying question about party level/size is asked, not a multi-question interrogation" },
+        { "name": "party_file_written", "description": "campaigns/<active-campaign>/party.yml exists after the response with the level/size the user gave" },
+        { "name": "draft_written", "description": "An encounter draft is still written using the newly-provided level/size and hard difficulty" }
+      ]
+    }
+  ]
+}
