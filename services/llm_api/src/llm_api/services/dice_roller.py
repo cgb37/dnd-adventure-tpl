@@ -1,56 +1,63 @@
 """Dice roller for D&D 5e ability score generation.
 
-Ported from ai/skills/rpg-character-gen/scripts/dice_roller.py.
-Three methods: roll (4d6 drop lowest), standard array, point buy.
+Thin adapter over the canonical implementation in shared/dice_roller.py
+(repo root), which is also used by
+ai/skills/rpg-character-gen/scripts/dice_roller.py. This module exists so
+callers can keep importing ``llm_api.services.dice_roller`` unchanged.
 """
 from __future__ import annotations
 
-import random
-
-STANDARD_ARRAY: list[int] = [15, 14, 13, 12, 10, 8]
-
-# Point-buy cost table (score → cost). Scores 8–15 only.
-_POINT_COSTS: dict[int, int] = {
-    8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9,
-}
-_POINT_BUY_BUDGET = 27
+import sys
+from pathlib import Path
 
 
-def _modifier(score: int) -> int:
-    return (score - 10) // 2
+def _ensure_shared_on_path() -> None:
+    """Add the repo root to sys.path so ``shared`` can be imported.
 
+    llm_api is installed as a normal pip package (see pyproject.toml), so
+    it can't reach the repo-root ``shared/`` directory the way the
+    ai/skills/* standalone scripts do. This walks up from this file's
+    on-disk location (stable under an editable install) to find the repo
+    root and adds it to sys.path once.
 
-def generate_rolled(*, seed: int | None = None) -> dict:
-    """Roll 4d6-drop-lowest for six ability scores.
-
-    Args:
-        seed: Optional RNG seed for reproducibility.
-
-    Returns:
-        Dict with ``scores`` (sorted descending), ``modifiers``, ``total``, ``average``.
+    Note: this only works when the source tree is present on disk (local
+    dev, editable install, or the docker-compose ``api`` service, which
+    bind-mounts the whole repo). The standalone services/llm_api/Dockerfile
+    does not currently copy shared/ into its image and is not wired into
+    docker-compose.yml's build step; it would need that fix separately
+    before an image built from it could import this module.
     """
-    rng = random.Random(seed)
-    scores: list[int] = []
-    for _ in range(6):
-        rolls = sorted([rng.randint(1, 6) for _ in range(4)])
-        scores.append(sum(rolls[1:]))  # drop lowest
-    scores.sort(reverse=True)
-    modifiers = [_modifier(s) for s in scores]
-    return {
-        "scores": scores,
-        "modifiers": modifiers,
-        "total": sum(scores),
-        "average": round(sum(scores) / 6, 1),
-    }
+    for parent in Path(__file__).resolve().parents:
+        if (parent / "shared" / "dice_roller.py").exists():
+            root = str(parent)
+            if root not in sys.path:
+                sys.path.insert(0, root)
+            return
+    raise ImportError(
+        "Could not locate the repo-root 'shared' package from "
+        f"{__file__}. It must be present on disk alongside 'services/'."
+    )
+
+
+_ensure_shared_on_path()
+
+from shared.dice_roller import (  # noqa: E402
+    POINT_BUY_BUDGET,
+    POINT_BUY_COSTS,
+    STANDARD_ARRAY,
+    generate_rolled,
+    generate_standard_array as _generate_standard_array,
+    modifier,
+    validate_point_buy_scores,
+)
+
+__all__ = ["STANDARD_ARRAY", "generate_rolled", "generate_standard_array", "generate_point_buy"]
 
 
 def generate_standard_array() -> dict:
     """Return the standard array [15, 14, 13, 12, 10, 8]."""
-    scores = list(STANDARD_ARRAY)
-    return {
-        "scores": scores,
-        "modifiers": [_modifier(s) for s in scores],
-    }
+    result = _generate_standard_array()
+    return {"scores": result["scores"], "modifiers": result["modifiers"]}
 
 
 def generate_point_buy(scores: list[int]) -> dict:
@@ -63,20 +70,15 @@ def generate_point_buy(scores: list[int]) -> dict:
         Dict with ``scores``, ``modifiers``, ``costs``, ``total_points``, ``valid``.
 
     Raises:
-        ValueError: If any score is outside 8–15 or count != 6.
+        ValueError: If any score is outside 8-15 or count != 6.
     """
-    if len(scores) != 6:
-        raise ValueError(f"Expected 6 scores, got {len(scores)}")
-    for s in scores:
-        if s < 8 or s > 15:
-            raise ValueError(f"Point-buy scores must be 8–15, got {s}")
-
-    costs = [_POINT_COSTS[s] for s in scores]
+    validate_point_buy_scores(scores)
+    costs = [POINT_BUY_COSTS[s] for s in scores]
     total = sum(costs)
     return {
         "scores": scores,
-        "modifiers": [_modifier(s) for s in scores],
+        "modifiers": [modifier(s) for s in scores],
         "costs": costs,
         "total_points": total,
-        "valid": total <= _POINT_BUY_BUDGET,
+        "valid": total <= POINT_BUY_BUDGET,
     }
