@@ -26,6 +26,7 @@
     "docker:up:build": "docker compose up --build",
     "docker:stop": "docker compose down",
     "docker:restart": "docker compose down && docker compose up",
-    "docker:restart:build": "docker compose down && docker compose up --build"
+    "docker:restart:build": "docker compose down && docker compose up --build",
+    "docker:restart:clean": "rm -f .jekyll-metadata && rm -rf _site && npm run docker:restart"
   }
 }
