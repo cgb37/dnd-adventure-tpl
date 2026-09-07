@@ -1,0 +1,46 @@
+{
+  "skill_name": "players-handbook",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "It's my turn in combat. My rogue already used their bonus action on Cunning Action to Disengage. Can I still take the Attack action normally?",
+      "expected_output": "An answer explaining that a bonus action is independent of your action - using Cunning Action as your bonus action doesn't consume or restrict your action for the turn, so the Attack action is still available, sourced from references/player-actions.md without calling the SRD API.",
+      "files": [],
+      "assertions": [
+        { "name": "answered_locally", "description": "The Bonus Actions section in references/player-actions.md is used; dnd5eapi_client.py is not invoked" },
+        { "name": "mechanically_correct", "description": "Response confirms the action and bonus action are independent and both are usable on the same turn" }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "What exactly does the Fireball spell do - damage, area, save?",
+      "expected_output": "An answer giving Fireball's damage, area of effect, and saving throw, sourced from calling dnd5eapi_client.py against the spells/fireball endpoint since specific spell details aren't in the local reference files, falling back to best judgment with a stated API-unreachable caveat only if the call fails.",
+      "files": [],
+      "assertions": [
+        { "name": "api_fallback_used", "description": "dnd5eapi_client.py is called against a spells/* endpoint since spell-specific details are not in references/spellcasting-basics.md" },
+        { "name": "graceful_fallback_if_used", "description": "If the API call failed, the response still answers the question and states the API was unreachable rather than refusing to answer" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Compile the player quick reference for my campaign.",
+      "expected_output": "A draft written to campaigns/<active-campaign>/_drafts/players-handbook/quick-reference.md with layout: playernote frontmatter and a body covering every section from both player-actions.md and spellcasting-basics.md.",
+      "files": [],
+      "assertions": [
+        { "name": "draft_written", "description": "A file exists at campaigns/<active-campaign>/_drafts/players-handbook/quick-reference.md" },
+        { "name": "correct_layout", "description": "Frontmatter includes layout: playernote, category: players-handbook, permalink: /players-handbook/:slug" },
+        { "name": "content_complete", "description": "Body includes content from both reference files' sections, not a partial subset" }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Compile the player quick reference.",
+      "expected_output": "No active campaign is set, so the skill reports the no_active_campaign error and tells the user to run scripts/use-campaign first, without writing any draft.",
+      "files": [],
+      "assertions": [
+        { "name": "no_draft_written", "description": "No file is created under any campaigns/*/_drafts/players-handbook/" },
+        { "name": "clear_error", "description": "Response tells the user to run scripts/use-campaign, matching the no_active_campaign error message" }
+      ]
+    }
+  ]
+}
