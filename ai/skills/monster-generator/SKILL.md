@@ -64,8 +64,8 @@ original rather than reskinning a known creature.)
 
 ### Step 5: Write the draft
 
-Build the frontmatter with these exact keys (matching the existing FastAPI
-monster generator's schema):
+Build the frontmatter with these exact keys (matching `_layouts/monster.html`'s
+expected fields):
 
 ```json
 {
@@ -77,8 +77,8 @@ monster generator's schema):
   "episode": "<episode, if known, else \"01\">",
   "scene": "<scene, if known, else \"01\">",
   "jumbo": "",
-  "thumb": "/assets/images/placeholders/monster-thumb.png",
-  "portrait": "/assets/images/placeholders/monster-portrait.png",
+  "thumb": "monster-thumb.png",
+  "portrait": "monster-portrait.png",
   "tags": ["<relevant tags>"],
   "search": true,
   "excerpt_separator": "",
@@ -102,13 +102,14 @@ monster generator's schema):
   "skills": "<e.g. \"Perception +4, Stealth +3\">",
   "senses": "<e.g. \"darkvision 60 ft., passive Perception 14\">",
   "languages": ["<language>"],
-  "challenge": "<N (NNN XP)>",
+  "challenge": "<N>",
+  "challenge_xp": "<NNN>",
   "special_abilities": [{ "name": "<name>", "description": "<description>" }],
   "actions": [
     {
       "name": "<name>",
       "type": "Melee Weapon Attack",
-      "hit_bonus": "+0",
+      "hit_bonus": 0,
       "reach": "5 ft.",
       "target": "one target",
       "damage": [{ "type": "piercing", "dice": "1d10 + 2", "avg": 7 }]
@@ -117,17 +118,37 @@ monster generator's schema):
 }
 ```
 
+`thumb`/`portrait` are bare filenames, not a full path — the layout
+prepends `/assets/images/` itself.
+
 Notes on optional keys:
+- `hit_bonus` is a plain number (no leading `+`) — `monster.html` prepends
+  the sign itself when rendering.
 - `abilities.*.modifier` and any ability-check-derived numbers should come
   from `monster_statblock.py --score <score>`, not hand math.
-- `challenge`'s XP comes from
+- `challenge` (the CR number itself) and `challenge_xp` (its XP value) are
+  both required keys, not one combined string. `challenge_xp` comes from
   `../encounter-generator/scripts/encounter_budget.py`'s `cr_to_xp` table
   (run it with any valid `--level`/`--party-size`/`--difficulty` just to
-  read the table, or read
-  `../rpg-character-gen/references/npc-stat-blocks.md` directly) — don't
-  invent the XP number.
-- Include `spellcasting` (with `ability`, `dc`, `slots`, `spells`) only if
-  the monster casts spells; omit the key entirely otherwise.
+  read the table) — don't invent the XP number.
+- Include `spellcasting` only if the monster casts spells; omit the key
+  entirely otherwise. When included, it must match this exact shape (the
+  layout depends on the precise key names — `slots` and the `spells`
+  sub-object use `level_N` keys, separate from a `cantrips` key):
+
+  ```json
+  "spellcasting": {
+    "ability": "Charisma",
+    "dc": 13,
+    "slots": { "level_1": 4, "level_2": 3 },
+    "spells": {
+      "cantrips": ["Minor Illusion", "Prestidigitation"],
+      "level_1": ["Charm Person", "Disguise Self"],
+      "level_2": ["Suggestion"]
+    }
+  }
+  ```
+
 - Include `reactions`, `treasure`, `notes` only when applicable; omit
   otherwise.
 

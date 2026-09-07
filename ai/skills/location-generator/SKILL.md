@@ -47,8 +47,8 @@ Write:
 
 ### Step 4: Write the draft
 
-Build the frontmatter with these exact keys (matching the existing FastAPI
-location generator's schema):
+Build the frontmatter with these exact keys (matching `_layouts/location.html`'s
+expected fields):
 
 ```json
 {
@@ -60,8 +60,8 @@ location generator's schema):
   "episode": "<episode, if known, else \"01\">",
   "scene": "<scene, if known, else \"01\">",
   "jumbo": "",
-  "thumb": "/assets/images/placeholders/location-thumb.png",
-  "portrait": "/assets/images/placeholders/location-portrait.png",
+  "thumb": "location-thumb.png",
+  "portrait": "location-portrait.png",
   "tags": ["<relevant tags>"],
   "search": true,
   "excerpt_separator": "",
@@ -81,6 +81,9 @@ location generator's schema):
   "additional_notes": "<prose guidance for the DM>"
 }
 ```
+
+`thumb`/`portrait` are bare filenames, not a full path — the layout
+prepends `/assets/images/` itself.
 
 Each populated `challenges` category is a single string whose *content* is
 a Markdown-style bullet list (one `- Name: description` per line, joined

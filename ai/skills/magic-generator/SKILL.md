@@ -73,13 +73,16 @@ generator for this kind — this schema is the standard for this skill):
   "episode": "<episode, if known, else \"01\">",
   "scene": "<scene, if known, else \"01\">",
   "jumbo": "",
-  "thumb": "/assets/images/placeholders/reward-thumb.png",
-  "portrait": "/assets/images/placeholders/reward-portrait.png",
+  "thumb": "reward-thumb.png",
+  "portrait": "reward-portrait.png",
   "tags": ["<relevant tags>"],
   "search": true,
   "excerpt_separator": ""
 }
 ```
+
+`thumb`/`portrait` are bare filenames, not a full path — the layout
+prepends `/assets/images/` itself.
 
 (`id` and `slug` are filled in automatically by `write_draft.py` — don't
 set them yourself.)

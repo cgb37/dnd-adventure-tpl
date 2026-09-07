@@ -10,7 +10,7 @@
         { "name": "draft_written", "description": "A file exists at campaigns/<active-campaign>/_drafts/location/<slug>.md" },
         { "name": "valid_frontmatter", "description": "Frontmatter includes layout, title, permalink, category, chapter, episode, scene, jumbo, thumb, portrait, tags, search, excerpt_separator, id, slug, name, type, description" },
         { "name": "fits_theme", "description": "name/type/description/environmental_features are specifically elven-ruins-themed, not generic" },
-        { "name": "no_stray_body", "description": "The draft's Markdown body is empty - all content lives in frontmatter" }
+        { "name": "no_stray_body", "description": "The draft's Markdown body content (beyond the auto-generated title heading) is empty - all substantive content lives in frontmatter" }
       ]
     },
     {
