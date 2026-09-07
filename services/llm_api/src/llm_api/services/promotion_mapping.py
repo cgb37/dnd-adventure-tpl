@@ -21,6 +21,7 @@ PROMOTION_RULES: Final[dict[str, PromotionRule]] = {
     "npc": PromotionRule(kind="npc", target_pages_dir="_pages/npcs"),
     "character": PromotionRule(kind="character", target_pages_dir="_pages/characters"),
     "dm-guide": PromotionRule(kind="dm-guide", target_pages_dir="_pages/dm-guide"),
+    "players-handbook": PromotionRule(kind="players-handbook", target_pages_dir="_pages/players-handbook"),
 }
 
 

@@ -68,9 +68,11 @@ common "moderately hard" target.
 
 - Roll two d20s: take the higher for advantage, the lower for
   disadvantage.
-- They never stack — any number of advantage sources plus any number of
-  disadvantage sources still cancels down to a single net advantage,
-  disadvantage, or (if they fully cancel) a flat roll.
+- They never stack — multiple sources of advantage don't compound, and
+  neither do multiple sources of disadvantage. If you have at least one
+  source of advantage and at least one source of disadvantage at the
+  same time, they cancel out completely and you roll a single flat d20,
+  no matter how many sources of each apply.
 - Ways you can gain advantage: an ally helps you, you attack a prone
   target in melee, you attack a target that can't see you.
 - Ways you can end up with disadvantage: attacking a prone target at

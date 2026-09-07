@@ -18,7 +18,8 @@
       "files": [],
       "assertions": [
         { "name": "api_fallback_used", "description": "dnd5eapi_client.py is called against a spells/* endpoint since spell-specific details are not in references/spellcasting-basics.md" },
-        { "name": "graceful_fallback_if_used", "description": "If the API call failed, the response still answers the question and states the API was unreachable rather than refusing to answer" }
+        { "name": "graceful_fallback_if_used", "description": "If the API call failed, the response still answers the question and states the API was unreachable rather than refusing to answer" },
+        { "name": "mechanically_correct", "description": "If the API succeeded, response states Fireball deals 8d6 fire damage in a 20-foot-radius sphere with a Dexterity saving throw for half damage" }
       ]
     },
     {
@@ -49,7 +50,8 @@
       "files": [],
       "assertions": [
         { "name": "api_fallback_attempted", "description": "dnd5eapi_client.py is called against the spells/haste endpoint since spell-specific details are not in references/spellcasting-basics.md" },
-        { "name": "unreachable_api_does_not_block_answer", "description": "When the API call fails, the response explicitly states the rules API was unreachable and still gives a best-judgment answer about Haste rather than refusing or hard-failing" }
+        { "name": "unreachable_api_does_not_block_answer", "description": "When the API call fails, the response explicitly states the rules API was unreachable and still gives a best-judgment answer about Haste rather than refusing or hard-failing" },
+        { "name": "mechanically_correct", "description": "If the API succeeded, response covers that Haste doubles the target's speed, grants +2 AC, advantage on Dexterity saving throws, and an extra action limited to Attack/Dash/Disengage/Hide/Use an Object" }
       ]
     }
   ]

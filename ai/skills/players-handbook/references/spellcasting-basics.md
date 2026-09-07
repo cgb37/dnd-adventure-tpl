@@ -29,9 +29,11 @@ short rest instead — check your class features).
   or the casting fails and the slot is wasted.
 
 You can only cast one spell with a casting time other than a reaction
-per turn — casting a second one that turn (even as a bonus action) isn't
-allowed if you already cast a "1 action" spell that turn, and vice
-versa.
+per turn — with one exception: if you cast a spell using a bonus
+action, you can still cast a cantrip with a casting time of 1 action
+that same turn (but not another leveled spell). Outside that exception,
+casting a second "1 action" or "1 bonus action" spell in the same turn
+isn't allowed.
 
 ## Components
 

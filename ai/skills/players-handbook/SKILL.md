@@ -32,12 +32,17 @@ python3 <repo-root>/shared/dnd5eapi_client.py <relevant-endpoint>
 
 Pick `<relevant-endpoint>` based on the question — the 2014 SRD API
 organizes content by resource type, so a specific spell is
-`spells/<spell-slug>` (e.g. `spells/fireball`), a piece of equipment is
-`equipment/<equipment-slug>`, and a rules section is
-`rules/<rules-slug>`. If you're unsure of the exact endpoint slug, try
-your best guess; on a 404 (`"not_found"`), try the resource type with no
-sub-path (e.g. `spells`) to see the list of available entries, or answer
-from your own best judgment instead of guessing repeatedly.
+`spells/<spell-slug>` (e.g. `spells/fireball`) and a piece of equipment
+is `equipment/<equipment-slug>`. Rule content lives under
+`rule-sections/<slug>` (e.g. `rule-sections/mounted-combat`,
+`rule-sections/making-an-attack`), not `rules/<slug>` directly — the
+`rules/*` endpoints only cover six broad categories (`adventuring`,
+`appendix`, `combat`, `equipment`, `spellcasting`,
+`using-ability-scores`) with near-empty descriptions. If you're unsure
+of the exact `rule-sections` slug, first fetch `rules/<broad-category>`
+(e.g. `rules/combat`) and read its `subsections` list for the correct
+`rule-sections/...` URL, then fetch that. If still unsure or you hit a
+404, answer from your own best judgment instead of guessing repeatedly.
 
 Answer the question using the JSON response.
 
@@ -48,6 +53,12 @@ If the client exits non-zero (its stdout is `{"error": {"code": "...",
 relay the error message plainly — and then still answer the question
 from your own knowledge and best judgment. Never refuse to answer a
 rules question just because the API lookup failed.
+
+The client can return any of these error codes: `network_error`
+(couldn't reach dnd5eapi.co), `not_found` (HTTP 404 for the endpoint),
+`invalid_response` (malformed JSON or a corrupt cache file), and
+`repo_root_not_found` (couldn't locate the repo root to resolve the
+cache directory).
 
 This entire workflow has no dependency on an active campaign — it works
 the same with or without one set.
@@ -67,10 +78,13 @@ empty, stop and tell the user to run `scripts/use-campaign <name>` first
 
 Render **both** `references/player-actions.md` and
 `references/spellcasting-basics.md` into one Markdown body, covering
-every section in both files. This content is the same every time —
-don't tailor it to the current campaign or fetch anything from the SRD
-API for this path; the committed cheat-sheet should never depend on
-network availability.
+every section in both files. Demote each file's own `#` H1 header to
+`##` (H2) when compiling them into the body — otherwise the rendered
+page ends up with three H1s (the draft's own `# {title}` from
+`write_draft.py`, plus each reference file's own H1). This content is
+the same every time — don't tailor it to the current campaign or fetch
+anything from the SRD API for this path; the committed cheat-sheet
+should never depend on network availability.
 
 ### Step 3: Write the draft
 
@@ -103,12 +117,18 @@ Where `<json payload>` is:
 ```json
 {
   "kind": "players-handbook",
+  "campaign": "<active-campaign>",
   "slug": "quick-reference",
   "title": "Player Quick Reference",
   "frontmatter": { "...": "as built above" },
   "body": "<markdown body>"
 }
 ```
+
+Use the `<active-campaign>` value already resolved in Step 1 — don't
+rely on `write_draft.py`'s `.active-campaign`/cwd-based auto-resolution,
+since campaign directories are git submodules and a cwd inside one
+could resolve the wrong repo root.
 
 This **always overwrites**
 `campaigns/<campaign>/_drafts/players-handbook/quick-reference.md` —
