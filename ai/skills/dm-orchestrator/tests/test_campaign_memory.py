@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -124,3 +126,43 @@ def test_numeric_looking_string_fields_round_trip_as_strings(tmp_path: Path):
     assert episode["episode"] == "01"
     scene = episode["scenes"][0]
     assert scene["scene"] == "01"
+
+
+SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "campaign_memory.py"
+
+
+def test_cli_read_missing_returns_found_false(tmp_path: Path):
+    (tmp_path / ".git").mkdir()
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "read", "--campaign", "nope"],
+        cwd=tmp_path, capture_output=True, text=True, check=True,
+    )
+    assert json.loads(result.stdout) == {"found": False}
+
+
+def test_cli_write_then_read_round_trips(tmp_path: Path):
+    (tmp_path / ".git").mkdir()
+    subprocess.run(
+        [sys.executable, str(SCRIPT), "write", "--campaign", "my-campaign"],
+        cwd=tmp_path, input=json.dumps(SAMPLE), capture_output=True, text=True, check=True,
+    )
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "read", "--campaign", "my-campaign"],
+        cwd=tmp_path, capture_output=True, text=True, check=True,
+    )
+    assert json.loads(result.stdout) == SAMPLE
+
+
+def test_cli_write_reports_mode_immutable_error(tmp_path: Path):
+    (tmp_path / ".git").mkdir()
+    subprocess.run(
+        [sys.executable, str(SCRIPT), "write", "--campaign", "my-campaign"],
+        cwd=tmp_path, input=json.dumps(SAMPLE), capture_output=True, text=True, check=True,
+    )
+    changed = json.dumps({**SAMPLE, "mode": "player"})
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "write", "--campaign", "my-campaign"],
+        cwd=tmp_path, input=changed, capture_output=True, text=True,
+    )
+    assert result.returncode == 1
+    assert json.loads(result.stdout)["error"]["code"] == "mode_immutable"

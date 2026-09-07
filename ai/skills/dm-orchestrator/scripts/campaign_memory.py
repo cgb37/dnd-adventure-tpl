@@ -251,3 +251,44 @@ def write_campaign_memory(repo_root: Path, campaign: str, data: dict[str, Any]) 
     lines = _render_mapping(data, 0)
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return path
+
+
+def main() -> int:
+    import argparse
+    import sys
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    read_parser = subparsers.add_parser("read")
+    read_parser.add_argument("--campaign", required=True)
+
+    write_parser = subparsers.add_parser("write")
+    write_parser.add_argument("--campaign", required=True)
+
+    args = parser.parse_args()
+    repo_root = find_repo_root(Path.cwd())
+
+    if args.command == "read":
+        data = read_campaign_memory(repo_root, args.campaign)
+        print(json.dumps(data if data is not None else {"found": False}))
+        return 0
+
+    try:
+        payload = json.load(sys.stdin)
+    except json.JSONDecodeError as exc:
+        print(json.dumps({"error": {"code": "invalid_input", "message": str(exc)}}))
+        return 1
+
+    try:
+        path = write_campaign_memory(repo_root, args.campaign, payload)
+    except CampaignMemoryError as exc:
+        print(json.dumps({"error": {"code": exc.code, "message": exc.message}}))
+        return 1
+
+    print(json.dumps({"path": str(path.relative_to(repo_root))}))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
