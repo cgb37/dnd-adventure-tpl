@@ -41,6 +41,16 @@
         { "name": "no_draft_written", "description": "No file is created under any campaigns/*/_drafts/players-handbook/" },
         { "name": "clear_error", "description": "Response tells the user to run scripts/use-campaign, matching the no_active_campaign error message" }
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "What does the Haste spell do exactly, in terms of speed and extra actions?",
+      "expected_output": "An answer attempting to look up the Haste spell via dnd5eapi_client.py's spells/haste endpoint since spell-specific details aren't in the local reference files; if that call fails (network error, timeout, or any Dnd5eApiError), the response states plainly that the rules API couldn't be reached and still answers from best judgment rather than refusing to respond.",
+      "files": [],
+      "assertions": [
+        { "name": "api_fallback_attempted", "description": "dnd5eapi_client.py is called against the spells/haste endpoint since spell-specific details are not in references/spellcasting-basics.md" },
+        { "name": "unreachable_api_does_not_block_answer", "description": "When the API call fails, the response explicitly states the rules API was unreachable and still gives a best-judgment answer about Haste rather than refusing or hard-failing" }
+      ]
     }
   ]
 }
