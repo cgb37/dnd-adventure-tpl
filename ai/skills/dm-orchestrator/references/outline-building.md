@@ -48,9 +48,13 @@ Infer tags from what the scene's one-line premise actually implies:
 
 A scene with no clear generator need (a pure roleplay/dialogue beat, e.g.
 "the party negotiates with the mayor") can have `needs: []` — not every
-scene requires generated content, and `dm-orchestrator`'s fill workflow
-simply has nothing to do for such a scene (it's immediately `filled` since
-an empty `needs` list is vacuously satisfied).
+scene requires generated content.
+
+**Write such a scene with `status: filled` from the start**, not
+`status: planned`. There is nothing for the fill workflow to generate, so
+nothing will ever flip it out of `planned`; leaving it `planned` would park
+"fill in the next part" on a scene that can never complete, and the
+campaign could never advance past it.
 
 ## Level appropriateness
 

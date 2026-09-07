@@ -57,9 +57,27 @@ false}`), stop. Tell the user a campaign already exists (name its premise)
 and ask whether to replace it or use a different campaign. Never overwrite
 silently.
 
+If they confirm a replacement, **the replacement keeps the existing
+campaign's `mode`.** A new outline cannot flip a campaign from `dm` to
+`player` or back — `mode` is fixed for the campaign's lifetime, and Step
+7's write will refuse with `mode_immutable` if the payload disagrees. Carry
+the existing `mode` forward into the new structure and skip Step 3. If the
+user actually wants the other mode, tell them so plainly: they need to
+start a new campaign for the other mode (a different campaign under
+`campaigns/`, selected with `scripts/use-campaign`) — the same thing
+`campaign_memory.py`'s `mode_immutable` message says.
+
+If it returns an `error` with code `invalid_campaign_memory`, stop and
+relay it. The file exists but is unreadable — that is *not* "no campaign
+yet", and replacing it would destroy recoverable work. Never guess-repair
+it; ask the user to fix or remove it.
+
 ### Step 3: Resolve mode
 
-Infer from phrasing: "I'm running this for my group" → `dm`; "generate a
+Skip this step entirely when replacing an existing outline (Step 2) — that
+campaign's `mode` is already settled and carries forward unchanged.
+
+For a brand-new campaign, infer from phrasing: "I'm running this for my group" → `dm`; "generate a
 campaign for me to play" → `player`. Ask directly only if genuinely
 ambiguous: "Are you running this campaign as the DM, or is this for you to
 play through yourself?"
@@ -86,9 +104,20 @@ genuinely absent (e.g. a bare "start a new campaign").
 Read `references/outline-building.md` for sizing, pacing, and `needs`-
 tagging guidance. Produce chapters → episodes → scenes. Every scene gets a
 one-line `premise` and a `needs` list (`location`, `encounter`, `monster`,
-`magic`, any combination, or `[]`) inferred from that premise. Every scene
-starts with `status: planned`. Seed `threads` with any hooks the outline
-introduces. Leave `npcs` and `content_index` empty — nothing has been
+`magic`, any combination, or `[]`) inferred from that premise.
+
+Set each scene's initial `status` from its `needs`:
+
+- `needs` is **non-empty** → `status: planned`. There is content to generate.
+- `needs` is **`[]`** (a pure roleplay/dialogue beat) → `status: filled`,
+  written that way from the start. There is nothing for any Phase 1 skill to
+  generate, so the scene is complete the moment it is written. **Never write
+  an empty-`needs` scene as `planned`** — fill only ever flips a scene to
+  `filled` after generating something for it, so a `planned` scene with
+  nothing to generate would stay `planned` forever and permanently park "the
+  next part" on itself.
+
+Seed `threads` with any hooks the outline introduces. Leave `npcs` and `content_index` empty — nothing has been
 generated yet.
 
 ### Step 7: Write to memory
@@ -100,9 +129,15 @@ Build the full structure (`mode`, `premise`, `scope`, `outline`, `threads`,
 echo '<json payload>' | python3 <skill-path>/scripts/campaign_memory.py write --campaign <active-campaign>
 ```
 
-On a `mode_immutable` error, relay it directly — this shouldn't happen in
-this workflow (Step 2 already checked for an existing outline), so treat it
-as a signal something changed concurrently and re-read before retrying.
+On a `mode_immutable` error, relay it directly and stop. This is a real,
+permanent outcome when replacing an existing outline (Step 2) with a
+payload whose `mode` differs from the campaign's settled one — retrying or
+re-reading will never make it succeed. The only resolution is to keep the
+existing `mode`, or start a new campaign for the other mode. Do not rewrite
+the payload's `mode` to match without telling the user what happened.
+
+On an `invalid_campaign_memory` error, relay it and stop — the existing
+file is unreadable and must be fixed by hand.
 
 ### Step 8: Report to the user (mode-gated)
 
@@ -119,16 +154,30 @@ as a signal something changed concurrently and re-read before retrying.
 Triggered by requests like "generate chapter 2," "fill in episode 1.3," or
 (in `player` mode) "get the next part ready."
 
-### Step 1: Resolve active campaign and read memory
+### Step 1: Resolve active campaign and read memory (redacted)
 
-Same active-campaign resolution as Workflow 1, Step 1. Then:
+Same active-campaign resolution as Workflow 1, Step 1. Then read the
+**redacted** memory — always, in both modes, as the first read:
 
 ```bash
-python3 <skill-path>/scripts/campaign_memory.py read --campaign <active-campaign>
+python3 <skill-path>/scripts/campaign_memory.py read --campaign <active-campaign> --redact
 ```
 
+`--redact` returns only `mode`, the outline's chapter/episode/scene
+numbering with each scene's `needs` and `status`, and `content_index`
+reduced to `(beat, kind)`. That is everything Steps 2 and 3 need, and it
+cannot leak a title, premise, thread, NPC, or draft path into your context
+in `player` mode. Read the campaign's `mode` from this response.
+
+If `mode` is `dm`, re-run the same command **without** `--redact` and use
+that full structure for the rest of this workflow — a DM is meant to see
+their own campaign. In `player` mode, keep working from the redacted
+structure; the full read happens later and narrowly, in Step 4.
+
 If it returns `{"found": false}` or has no `outline`, stop and tell the
-user to generate an outline first.
+user to generate an outline first. If it returns an `error` with code
+`invalid_campaign_memory`, relay it and stop — do not attempt a repair or a
+write.
 
 ### Step 2: Resolve scope
 
@@ -139,19 +188,39 @@ echo '<outline json>' | python3 <skill-path>/scripts/outline_scope.py "<scope ph
 ```
 
 If `matches` is `null`, the scope didn't match anything in the outline.
-This is the one place fill asks a clarifying question in **both** modes —
-naming which chapters/episodes exist doesn't spoil anything. In `dm` mode,
-list the valid chapters/episodes; in `player` mode, say "that part doesn't
-exist yet" without listing titles.
+This is the one place fill asks a clarifying question in **both** modes.
+
+- **`dm`**: list the valid chapters/episodes (numbers and titles) and ask
+  which was meant.
+- **`player`**: say only that that part doesn't exist yet, and ask what
+  they meant. Do **not** list the chapters/episodes that do exist, with or
+  without titles — how far the campaign runs is itself a spoiler.
 
 ### Step 3: Filter already-filled scenes
 
 For each matched scene, check `content_index` for a row matching
 `(beat, kind)` for every entry in that scene's `needs`. If every `needs`
 entry (including an empty list) is already covered, skip the scene. Track
-how many were skipped.
+how many were skipped. Scenes with `needs: []` are written `filled` at
+outline time (Workflow 1, Step 6) and are vacuously covered here, so they
+are always skipped — there is nothing to generate for them.
 
 ### Step 4: Generate remaining scenes
+
+If any scene survived Step 3 and you are in `player` mode, **now** read the
+full (non-redacted) memory — not before:
+
+```bash
+python3 <skill-path>/scripts/campaign_memory.py read --campaign <active-campaign>
+```
+
+Use it only to build generation context for the specific scenes that
+survived Step 3 (you need their real premises, thread summaries, and NPCs
+to invoke the Phase 1 skills at all — that is the point of this step), and
+only to construct the updated payload you write back in 4.3. None of it
+reaches the user: Step 5's `player`-mode report is still counts only. If
+Step 3 skipped every matched scene, there is nothing to generate and no
+reason to do this read at all.
 
 For each remaining scene, for each tag in its `needs` list:
 
@@ -202,21 +271,32 @@ exactly as every Phase 1 skill already behaves.
 
 - No active campaign → stop, tell the user to run `scripts/use-campaign`
   first. Never guess a campaign.
-- Outline already exists (Workflow 1) → stop, confirm before replacing.
+- Outline already exists (Workflow 1) → stop, confirm before replacing. A
+  replacement inherits the existing campaign's `mode`; it can never change
+  it.
 - No outline yet (Workflow 2) → stop, tell the user to generate one first.
 - Scope matches nothing (Workflow 2) → ask a clarifying question — the only
   question fill ever asks in `player` mode.
 - A Phase 1 skill invocation fails for one scene → skip it, continue the
   rest of the batch, report the failure at the end.
 - `campaign_memory.py` reports an error (`mode_immutable`,
-  `invalid_input`) → relay it directly. Never guess a fix or silently
-  retry.
+  `invalid_campaign_memory`, `invalid_input`) → relay it directly. Never
+  guess a fix or silently retry.
+  - `mode_immutable` → the campaign's `mode` is settled for its lifetime.
+    Permanent, not transient: keep the existing mode, or start a new
+    campaign for the other one.
+  - `invalid_campaign_memory` → `campaign.yml` exists but could not be
+    parsed. Stop. This is **not** the same as no campaign yet, so never
+    treat it as a green light to write a fresh outline over the file, and
+    never guess-repair it — ask the user to fix or remove it.
 
 ## Tips for Good Output
 
 - **The spoiler rule is absolute, not a suggestion.** A `player`-mode
   response that leaks even one scene title has failed regardless of how
-  good the generated content is.
+  good the generated content is. `read --redact` exists so that in
+  `player` mode you don't even *hold* the outline's spoilers until the
+  moment you have to generate against them.
 - **Context injection is what makes filled scenes feel connected**, not
   generic. A generic-sounding encounter is a sign you didn't actually pull
   the relevant threads/NPCs from memory before invoking
