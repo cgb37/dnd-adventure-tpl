@@ -1,0 +1,38 @@
+{
+  "skill_name": "location-generator",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "My party is exploring the ruins of an old elven tower in chapter 2. Generate a location for it.",
+      "expected_output": "A written draft at campaigns/<active-campaign>/_drafts/location/<slug>.md with elven-tower-themed content, populated challenges/secrets/plot_hooks/npcs/environmental_features tied to the ruins setting, and all required frontmatter keys.",
+      "files": [],
+      "assertions": [
+        { "name": "draft_written", "description": "A file exists at campaigns/<active-campaign>/_drafts/location/<slug>.md" },
+        { "name": "valid_frontmatter", "description": "Frontmatter includes layout, title, permalink, category, chapter, episode, scene, jumbo, thumb, portrait, tags, search, excerpt_separator, id, slug, name, type, description" },
+        { "name": "fits_theme", "description": "name/type/description/environmental_features are specifically elven-ruins-themed, not generic" },
+        { "name": "no_stray_body", "description": "The draft's Markdown body is empty - all content lives in frontmatter" }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Generate a location for my campaign.",
+      "expected_output": "No active campaign is set, so the skill reports the no_active_campaign error and tells the user to run scripts/use-campaign first, without writing any draft.",
+      "files": [],
+      "assertions": [
+        { "name": "no_draft_written", "description": "No file is created under any campaigns/*/_drafts/location/" },
+        { "name": "clear_error", "description": "Response tells the user to run scripts/use-campaign, matching the no_active_campaign error message" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Generate a hidden temple for the party to discover, no other details given.",
+      "expected_output": "No party level is mentioned, so the skill assumes a level 5 party, says so in its response, and still generates and writes a complete draft without blocking on a clarifying question.",
+      "files": [],
+      "assertions": [
+        { "name": "states_assumption", "description": "Response explicitly states it assumed a level 5 party" },
+        { "name": "no_blocking_question", "description": "The skill does not stop to ask the user for party level before generating" },
+        { "name": "draft_written", "description": "A location draft is still written despite no level being given" }
+      ]
+    }
+  ]
+}
