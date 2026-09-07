@@ -17,6 +17,7 @@ PROMOTION_RULES: Final[dict[str, PromotionRule]] = {
     "encounter": PromotionRule(kind="encounter", target_pages_dir="_pages/encounters"),
     "encounter-table": PromotionRule(kind="encounter-table", target_pages_dir="_pages/encounter-tables"),
     "location": PromotionRule(kind="location", target_pages_dir="_pages/locations"),
+    "magic-item": PromotionRule(kind="magic-item", target_pages_dir="_pages/magic-items"),
     "monster": PromotionRule(kind="monster", target_pages_dir="_pages/monsters"),
     "npc": PromotionRule(kind="npc", target_pages_dir="_pages/npcs"),
     "character": PromotionRule(kind="character", target_pages_dir="_pages/characters"),
