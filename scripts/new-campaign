@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )/.." && pwd)"
+
+if [[ -f "$ROOT_DIR/.env" ]]; then
+  set -a
+  # shellcheck source=/dev/null
+  . "$ROOT_DIR/.env"
+  set +a
+fi
+
+CAMPAIGNS_DIR="${CAMPAIGNS_DIR:-campaigns}"
+
+print_usage() {
+  cat <<'EOF'
+Usage:
+  scripts/new-campaign <name> [--demo] [--activate]
+
+Notes:
+  - Creates campaigns/<name>/ as a plain local directory (no git submodule,
+    no remote repo) with the same skeleton scripts/use-campaign --bootstrap
+    creates: _pages, _posts, and _pages/chapters|monsters|npcs|encounters|
+    locations.
+  - <name> may contain only letters, digits, hyphens, and underscores.
+  - Refuses to run if campaigns/<name>/ already exists.
+  - --demo creates the same minimal demo chapter/post content
+    scripts/use-campaign --demo does.
+  - --activate runs scripts/use-campaign <name> immediately afterward.
+  - Set CAMPAIGNS_DIR=<dir> in .env if you prefer a different location.
+EOF
+}
+
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" || -z "${1:-}" ]]; then
+  print_usage
+  exit "$([[ -z "${1:-}" ]] && echo 2 || echo 0)"
+fi
+
+name="$1"
+shift
+
+demo="false"
+activate="false"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --demo)
+      demo="true"
+      ;;
+    --activate)
+      activate="true"
+      ;;
+    *)
+      echo "Unknown argument: $1" >&2
+      print_usage
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+if [[ ! "$name" =~ ^[A-Za-z0-9_-]+$ ]]; then
+  echo "Invalid campaign name: '$name'" >&2
+  echo "Names may contain only letters, digits, hyphens, and underscores." >&2
+  exit 2
+fi
+
+campaign_root="$ROOT_DIR/$CAMPAIGNS_DIR/$name"
+
+if [[ -e "$campaign_root" ]]; then
+  echo "Campaign already exists: $campaign_root" >&2
+  echo "Pick a different name, or run scripts/use-campaign $name to activate it." >&2
+  exit 2
+fi
+
+mkdir -p \
+  "$campaign_root/_pages" \
+  "$campaign_root/_posts" \
+  "$campaign_root/_pages/chapters" \
+  "$campaign_root/_pages/monsters" \
+  "$campaign_root/_pages/npcs" \
+  "$campaign_root/_pages/encounters" \
+  "$campaign_root/_pages/locations"
+
+if [[ "$demo" == "true" ]]; then
+  demo_chapter="$campaign_root/_pages/chapters/chapter-01/index.html"
+  mkdir -p "$(dirname "$demo_chapter")"
+  cat > "$demo_chapter" <<'EOF'
+---
+layout: chapter
+title: "Chapter 01: Demo Chapter"
+category: chapter
+chapter: 1
+episode:
+scene:
+jumbo:
+thumb:
+portrait:
+search: true
+excerpt_separator: ""
+---
+
+<div class="col-md-6">
+  <h2>Introduction</h2>
+  <p>This is a demo chapter created by scripts/new-campaign --demo. Replace this content with your campaign material.</p>
+</div>
+
+<div class="col-md-6">
+  <h2>Overview</h2>
+  <p>Use this page as a template for your real Chapter 01 landing page.</p>
+</div>
+EOF
+
+  demo_post="$campaign_root/_posts/2025-01-01-welcome-to-the-campaign.md"
+  cat > "$demo_post" <<'EOF'
+---
+layout: default
+title: "Welcome to the Campaign"
+search: true
+---
+
+This is a demo post created by scripts/new-campaign --demo.
+EOF
+fi
+
+echo "Created campaign: $name"
+echo "  $campaign_root"
+
+if [[ "$activate" == "true" ]]; then
+  exec "$ROOT_DIR/scripts/use-campaign" "$name"
+fi
+
+echo
+echo "Next step:"
+echo "  scripts/use-campaign $name"

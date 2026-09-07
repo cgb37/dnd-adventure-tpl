@@ -22,6 +22,7 @@
 | LLM API dev server | `cd services/llm_api && uvicorn llm_api.app:create_app --factory --reload --port 8000` |
 | LLM API unit tests | `cd services/llm_api && pytest` |
 | Docker (full stack) | `npm run start:docker:dub` (docker compose up --build) |
+| Create new campaign | `./scripts/new-campaign <name> [--demo] [--activate]` |
 | Activate campaign | `./scripts/use-campaign <name>` |
 | Promote draft → published | `./scripts/promote-draft` |
 | Smoke-test LLM API | `./scripts/smoke-api` |
@@ -49,7 +50,7 @@ _includes/         → Jekyll includes (chatbot_shell.html, etc.)
 assets/css/        → chatbot.css and other styles
 assets/js/         → chatbot-widget.js (vanilla ES2020, no build step)
 campaigns/         → per-campaign content; _pages/_posts symlinked from active campaign
-scripts/           → use-campaign, promote-draft, smoke-api, release.sh
+scripts/           → new-campaign, use-campaign, promote-draft, smoke-api, release.sh
 tests/ui/          → Playwright UI tests (*.spec.cjs)
 docs/              → documentation
 _data/, _plugins/, _frontmattertpls/, _prompts/ → Jekyll config/data/templates
