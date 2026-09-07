@@ -1,0 +1,39 @@
+{
+  "skill_name": "magic-generator",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "My level 8 party just defeated a lich. Generate a rare magic item as their reward.",
+      "expected_output": "A written draft at campaigns/<active-campaign>/_drafts/magic-item/<slug>.md for a rare item tied to the lich encounter, with a numeric bonus plus one secondary property, an attunement note, and all required frontmatter keys.",
+      "files": [],
+      "assertions": [
+        { "name": "draft_written", "description": "A file exists at campaigns/<active-campaign>/_drafts/magic-item/<slug>.md" },
+        { "name": "valid_frontmatter", "description": "Frontmatter includes layout, title, permalink, category, chapter, episode, scene, jumbo, thumb, portrait, tags, search, excerpt_separator, id, slug" },
+        { "name": "rarity_guidance_used", "description": "magic_item_rarity.py was invoked for rare/level 8 rather than hand-picked, and the item's power level matches rare-tier guidance" },
+        { "name": "fits_theme", "description": "Item name/flavor are specifically tied to the lich encounter, not generic" },
+        { "name": "has_limitation", "description": "Body describes at least one limitation (attunement, charges, or a drawback)" }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Generate a magic item for my campaign.",
+      "expected_output": "No active campaign is set, so the skill reports the no_active_campaign error and tells the user to run scripts/use-campaign first, without writing any draft.",
+      "files": [],
+      "assertions": [
+        { "name": "no_draft_written", "description": "No file is created under any campaigns/*/_drafts/magic-item/" },
+        { "name": "clear_error", "description": "Response tells the user to run scripts/use-campaign, matching the no_active_campaign error message" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Generate a magic ring for the party to find, no level or rarity given.",
+      "expected_output": "No level or rarity is mentioned, so the skill assumes a level 5 party, says so in its response, and still generates and writes a complete draft without blocking on a clarifying question.",
+      "files": [],
+      "assertions": [
+        { "name": "states_assumption", "description": "Response explicitly states it assumed a level 5 party" },
+        { "name": "no_blocking_question", "description": "The skill does not stop to ask the user for level/rarity before generating" },
+        { "name": "draft_written", "description": "A magic item draft is still written despite no level/rarity being given" }
+      ]
+    }
+  ]
+}
