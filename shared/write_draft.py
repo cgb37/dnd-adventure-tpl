@@ -132,24 +132,59 @@ def _yaml_scalar(value: Any) -> str:
     return text
 
 
+def _render_mapping_lines(mapping: dict[str, Any], indent: int) -> list[str]:
+    lines: list[str] = []
+    for key, value in mapping.items():
+        lines.extend(_render_value_lines(key, value, indent))
+    return lines
+
+
+def _render_list_dict_item(item: dict[str, Any], indent: int) -> list[str]:
+    """Render one dict list-item as `- k: v` with continuation keys aligned under it."""
+    inner_lines = _render_mapping_lines(item, indent + 2)
+    if not inner_lines:
+        return [f"{' ' * indent}-"]
+    first, *rest = inner_lines
+    # `first` is prefixed with (indent + 2) spaces; swap that prefix for
+    # `indent` spaces + "- " (same total width, so later keys stay aligned).
+    first_content = first[indent + 2 :]
+    return [f"{' ' * indent}- {first_content}", *rest]
+
+
+def _render_value_lines(key: str, value: Any, indent: int) -> list[str]:
+    prefix = " " * indent
+    if isinstance(value, dict):
+        return [f"{prefix}{key}:", *_render_mapping_lines(value, indent + 2)]
+    if isinstance(value, list):
+        if not value:
+            return [f"{prefix}{key}: []"]
+        if all(isinstance(item, dict) for item in value):
+            lines = [f"{prefix}{key}:"]
+            for item in value:
+                lines.extend(_render_list_dict_item(item, indent + 2))
+            return lines
+        lines = [f"{prefix}{key}:"]
+        for item in value:
+            lines.append(f"{prefix}  - {_yaml_scalar(item)}")
+        return lines
+    if isinstance(value, str) and "\n" in value:
+        lines = [f"{prefix}{key}: |"]
+        for text_line in value.split("\n"):
+            lines.append(f"{' ' * (indent + 2)}{text_line}" if text_line else "")
+        return lines
+    return [f"{prefix}{key}: {_yaml_scalar(value)}"]
+
+
 def render_frontmatter(frontmatter: dict[str, Any]) -> str:
-    """Render a flat dict (str/int/bool/list[str] values) as YAML front-matter.
+    """Render a dict as YAML front-matter.
 
     Deliberately minimal (not a general YAML emitter) - covers exactly the
-    shapes the generator skills need: strings, ints, bools, and lists of
-    strings.
+    shapes the generator skills need: strings, ints, bools, lists of
+    strings, nested dicts (recursively), lists of dicts (recursively,
+    including dicts containing nested lists of dicts), and multi-line
+    strings (rendered as `|` block scalars).
     """
-    lines: list[str] = []
-    for key, value in frontmatter.items():
-        if isinstance(value, list):
-            if not value:
-                lines.append(f"{key}: []")
-            else:
-                lines.append(f"{key}:")
-                for item in value:
-                    lines.append(f"  - {_yaml_scalar(item)}")
-        else:
-            lines.append(f"{key}: {_yaml_scalar(value)}")
+    lines = _render_mapping_lines(frontmatter, 0)
     return "\n".join(lines) + "\n"
 
 
