@@ -78,13 +78,16 @@ encounter generator's schema):
   "episode": "<episode, if known, else \"01\">",
   "scene": "<scene, if known, else \"01\">",
   "jumbo": "",
-  "thumb": "/assets/images/placeholders/encounter-thumb.png",
-  "portrait": "/assets/images/placeholders/encounter-portrait.png",
+  "thumb": "encounter-thumb.png",
+  "portrait": "encounter-portrait.png",
   "tags": ["<relevant tags>"],
   "search": true,
   "excerpt_separator": ""
 }
 ```
+
+`thumb`/`portrait` are bare filenames, not a full path — the layout
+prepends `/assets/images/` itself.
 
 (`id` and `slug` are filled in automatically by `write_draft.py` — don't set
 them yourself.)
