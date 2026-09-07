@@ -1,0 +1,117 @@
+mode: player
+premise: Create a three-chapter Dungeons & Dragons campaign for four 1st-level adventurers—a paladin, fighter, ranger, and wizard—set in a grounded medieval fantasy world inspired by 12th-century Western Europe and the turbulent early rise of the Plantagenets. Feudal loyalties are fragile, rival nobles compete for castles and inheritance, the Church wields enormous influence, villages depend upon local lords for protection, and old conflicts between Norman, Angevin, Saxon, Breton, and other peoples remain close to the surface. The adventure begins as a seemingly local problem that four inexperienced adventurers could reasonably become involved in, but it should have enough depth to develop naturally across three chapters as they encounter competing loyalties, political intrigue, dangerous travel, forgotten places, and consequences larger than they initially understood. Magic exists but is ancient, rare, mysterious, and primarily elemental or tied to the natural world; elves, dwarves, and other fantasy peoples exist alongside humans without making the setting feel cosmopolitan or high-fantasy, and magical weapons or artifacts should feel exceptional and historically significant. Emphasize muddy roads, forests, monasteries, market towns, ruined Roman works, fortified manors, castles, heraldry, feudal obligations, rumors, folklore, exploration, negotiation, and believable medieval combat rather than elaborate magical abilities or constant supernatural spectacle. Draw inspiration from the early Plantagenet period—the legacy of the Anarchy, Henry II's consolidation of royal authority, contested lands, ambitious barons, Angevin influence, and tensions between secular and ecclesiastical power—without simply reenacting historical events. This is the party's first quest together, so give them believable reasons to cooperate while allowing their relationships and reputations to emerge through play. Build factions and NPCs with understandable but conflicting motives, provide multiple ways for the players to approach important problems, and never assume whom they will trust, what side they will support, whether they will succeed, or how the campaign will end. The world should react logically to their decisions and allow the ultimate story to emerge from their choices.
+scope: 3 chapters
+outline:
+  - chapter: "01"
+    title: The Burning of Hollowmere
+    episodes:
+      - episode: "01"
+        title: Ashes and Rumor
+        scenes:
+          - scene: "01"
+            premise: The party arrives in Hollowmere in the smoking aftermath of a fire that gutted the tithe barn and scorched part of the manor house, and the frightened reeve asks for help before the baron's steward arrives.
+            needs:
+              - location
+            status: planned
+          - scene: "02"
+            premise: Sifting the wreckage turns up signs the fire was set deliberately - oil residue and a forced lock on the tithe barn - rather than an accident, and the party debates who benefits from destroyed tithe records.
+            needs: []
+            status: filled
+          - scene: "03"
+            premise: A frightened servant who saw someone near the barn that night is cornered by armed men sent to silence him, and the party has to decide whether to intervene.
+            needs:
+              - encounter
+            status: planned
+      - episode: "02"
+        title: The Reeve's Suspicion
+        scenes:
+          - scene: "01"
+            premise: The reeve reveals that old Lord Hollowmere died without a clear heir, and the fire conveniently destroyed the tithe rolls both rival claimants - a Norman-descended lord backed by the bishop, and a Saxon-rooted claimant backed by the freeholders' custom - would need to press their claim.
+            needs: []
+            status: filled
+          - scene: "02"
+            premise: A trail from the burned barn leads into the nearby woods and an old drover's road, ending at a hidden camp recently abandoned in haste.
+            needs:
+              - location
+            status: planned
+          - scene: "03"
+            premise: The camp's occupants - hired men led by a mercenary captain - return and confront the party over a satchel of stolen tithe records that implicates one of the two claimants.
+            needs:
+              - encounter
+              - monster
+            status: planned
+  - chapter: "02"
+    title: Between Two Lords
+    episodes:
+      - episode: "01"
+        title: The Bishop's Manor
+        scenes:
+          - scene: "01"
+            premise: The party arrives at the fortified manor of the Norman-Angevin claimant, backed by the bishop, and must navigate feudal courtesy and a wary reception to present what they found.
+            needs: []
+            status: filled
+          - scene: "02"
+            premise: A chance to search the manor's chapel records room at night turns up evidence pointing toward the lord's own steward, though the lord's grievance against the rival claimant turns out to be genuine.
+            needs:
+              - location
+            status: planned
+          - scene: "03"
+            premise: The steward's men catch the party searching the records room and force a confrontation before they can leave the manor grounds.
+            needs:
+              - encounter
+            status: planned
+      - episode: "02"
+        title: The Freeholders' Road
+        scenes:
+          - scene: "01"
+            premise: Traveling the muddy road toward the Saxon claimant's hall, the party is beset by bandits exploiting the power vacuum left by the succession dispute.
+            needs:
+              - encounter
+            status: planned
+          - scene: "02"
+            premise: At the freeholder claimant's modest hall, the party learns of an old family claim resting on a forgotten Roman-era boundary marker deep in the woods - a site older than either family's lordship.
+            needs: []
+            status: filled
+          - scene: "03"
+            premise: A hedge-wise elder who keeps the old folklore gives the party a warning about the forgotten site and a small, ancient talisman said to ward against what watches over it.
+            needs:
+              - magic
+            status: planned
+  - chapter: "03"
+    title: The Old Ground
+    episodes:
+      - episode: "01"
+        title: Roads to the Ruin
+        scenes:
+          - scene: "01"
+            premise: The party journeys into a forgotten Roman-era ruin in the deep forest, navigating natural hazards and the uneasy sense that the wood itself is watching them.
+            needs:
+              - location
+            status: planned
+          - scene: "02"
+            premise: Agents of one of the two claimants - or a third party exploiting the chaos entirely - have reached the ruin first and are trying to seize or destroy what lies at its heart, forcing a confrontation.
+            needs:
+              - encounter
+              - monster
+            status: planned
+      - episode: "02"
+        title: The Hearth-Stone's Choice
+        scenes:
+          - scene: "01"
+            premise: At the heart of the ruin, the party must weigh everything they've learned and decide who, if anyone, should claim the ancient hearth-stone relic and the loyalty it is said to bind - a choice the world will hold them to.
+            needs: []
+            status: filled
+          - scene: "02"
+            premise: In the immediate aftermath, the land's fate begins to settle according to the party's choice, and a memento of the hearth-stone - exceptional and historically significant rather than flashy - marks what they accomplished.
+            needs:
+              - magic
+            status: planned
+threads:
+  - id: succession-dispute
+    summary: Old Lord Hollowmere died without a clear heir; a Norman-Angevin claimant backed by the bishop and a Saxon-rooted claimant backed by the freeholders both press competing claims to the manor.
+    status: introduced
+  - id: hearth-stone-relic
+    summary: An ancient, ostensibly elemental relic at a forgotten Roman-era site in the deep woods is said to bind the land's loyalty, predating both claimants' lordship.
+    status: introduced
+npcs: []
+content_index: []
