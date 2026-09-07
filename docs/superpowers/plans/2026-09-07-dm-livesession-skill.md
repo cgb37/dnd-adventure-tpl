@@ -526,7 +526,7 @@ if __name__ == "__main__":
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `cd ai/skills/dm-livesession && python3 -m pytest tests/test_session_state.py -v`
-Expected: all 8 tests PASS.
+Expected: all 9 tests PASS.
 
 - [ ] **Step 5: Commit**
 
@@ -1230,7 +1230,7 @@ Run every affected test suite together to confirm nothing regressed.
 cd ai/skills/dm-livesession && python3 -m pytest tests/ -v
 ```
 
-Expected: all 18 tests pass (8 from `test_session_state.py` + 10 from `test_dice.py`).
+Expected: all 19 tests pass (9 from `test_session_state.py` + 10 from `test_dice.py`).
 
 - [ ] **Step 2: Run dm-orchestrator's test suite (regression check)**
 
