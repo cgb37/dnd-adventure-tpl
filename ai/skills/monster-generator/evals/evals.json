@@ -1,0 +1,38 @@
+{
+  "skill_name": "monster-generator",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Generate a CR 5 undead guardian for the crypt my party is exploring.",
+      "expected_output": "A written draft at campaigns/<active-campaign>/_drafts/monster/<slug>.md with an undead-type stat block whose AC/HP/attack/damage fall within monster_statblock.py's CR 5 ranges, and all required frontmatter keys.",
+      "files": [],
+      "assertions": [
+        { "name": "draft_written", "description": "A file exists at campaigns/<active-campaign>/_drafts/monster/<slug>.md" },
+        { "name": "valid_frontmatter", "description": "Frontmatter includes layout, title, permalink, category, chapter, episode, scene, jumbo, thumb, portrait, tags, search, excerpt_separator, id, slug, name, type, size, ac, hp, abilities, challenge" },
+        { "name": "cr_guidance_used", "description": "monster_statblock.py was invoked for CR 5 rather than hand-computed stats; AC/HP/attack fall within its returned ranges" },
+        { "name": "fits_theme", "description": "type/description/special_abilities are specifically undead/crypt-themed, not generic" }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Generate a monster for my campaign.",
+      "expected_output": "No active campaign is set, so the skill reports the no_active_campaign error and tells the user to run scripts/use-campaign first, without writing any draft.",
+      "files": [],
+      "assertions": [
+        { "name": "no_draft_written", "description": "No file is created under any campaigns/*/_drafts/monster/" },
+        { "name": "clear_error", "description": "Response tells the user to run scripts/use-campaign, matching the no_active_campaign error message" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Generate a swamp beast for the party to fight, no CR given.",
+      "expected_output": "No CR is mentioned, so the skill assumes CR 3, says so in its response, and still generates and writes a complete draft without blocking on a clarifying question.",
+      "files": [],
+      "assertions": [
+        { "name": "states_assumption", "description": "Response explicitly states it assumed CR 3" },
+        { "name": "no_blocking_question", "description": "The skill does not stop to ask the user for a CR before generating" },
+        { "name": "draft_written", "description": "A monster draft is still written despite no CR being given" }
+      ]
+    }
+  ]
+}
