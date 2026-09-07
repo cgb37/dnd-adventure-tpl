@@ -95,6 +95,16 @@ def test_fetch_maps_connection_failure_to_network_error(tmp_path: Path):
     assert exc_info.value.code == "network_error"
 
 
+def test_fetch_maps_timeout_error_to_network_error(tmp_path: Path):
+    cache_dir = tmp_path / "cache"
+
+    with patch("urllib.request.urlopen", side_effect=TimeoutError("timed out")):
+        with pytest.raises(Dnd5eApiError) as exc_info:
+            fetch("rules/grappling", cache_dir=cache_dir)
+
+    assert exc_info.value.code == "network_error"
+
+
 def test_fetch_maps_malformed_json_to_invalid_response(tmp_path: Path):
     cache_dir = tmp_path / "cache"
     mock = MagicMock()
@@ -118,6 +128,28 @@ def test_fetch_maps_corrupt_cache_file_to_invalid_response(tmp_path: Path):
         fetch("rules/grappling", cache_dir=cache_dir)
 
     assert exc_info.value.code == "invalid_response"
+
+
+def test_fetch_maps_invalid_utf8_cache_file_to_invalid_response(tmp_path: Path):
+    cache_dir = tmp_path / "cache"
+    cache_dir.mkdir()
+    (cache_dir / "rules-grappling.json").write_bytes(b"\xff\xfe not utf8")
+
+    with pytest.raises(Dnd5eApiError) as exc_info:
+        fetch("rules/grappling", cache_dir=cache_dir)
+
+    assert exc_info.value.code == "invalid_response"
+
+
+def test_fetch_cache_write_failure_does_not_prevent_returning_data(tmp_path: Path):
+    cache_dir = tmp_path / "cache"
+    payload = {"name": "Grappling"}
+
+    with patch("urllib.request.urlopen", return_value=_fake_response(payload)):
+        with patch("pathlib.Path.mkdir", side_effect=OSError("disk full")):
+            result = fetch("rules/grappling", cache_dir=cache_dir)
+
+    assert result == payload
 
 
 def test_fetch_raises_repo_root_not_found_without_cache_dir_or_git(tmp_path: Path, monkeypatch):

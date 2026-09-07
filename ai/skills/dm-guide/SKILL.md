@@ -13,7 +13,7 @@ cheat-sheet into the active campaign on request.
 ### Step 1: Check local references first
 
 Read `references/core-adjudication.md` (ability checks/DCs, advantage &
-disadvantage, conditions, cover, resting, death saves) and
+disadvantage, the Help Action, conditions, cover, resting, death saves) and
 `references/combat-mechanics.md` (turn order, actions/bonus
 actions/reactions, opportunity attacks, multiattack, ranged-in-melee,
 mounted combat). If the question is covered there, answer directly from
@@ -25,15 +25,19 @@ If the local references don't cover the question, call the shared API
 client:
 
 ```bash
-python3 <repo-root>/shared/dnd5eapi_client.py rules/<relevant-endpoint>
+python3 <repo-root>/shared/dnd5eapi_client.py <endpoint>
 ```
 
-Pick `<relevant-endpoint>` based on the question — the 2014 SRD API's
-rules endpoints are organized by rule section (e.g. `rules/grappling`,
-`rules/mounted-combat`). If you're unsure of the exact endpoint slug, try
-your best guess; on a 404 (`"not_found"`), try `rules` (no sub-path) to
-see the list of available sections, or answer from your own best
-judgment instead of guessing repeatedly.
+Rule content lives under `rule-sections/<slug>` (e.g.
+`rule-sections/mounted-combat`, `rule-sections/making-an-attack`), not
+`rules/<slug>` directly — the `rules/*` endpoints only cover six broad
+categories (`adventuring`, `appendix`, `combat`, `equipment`,
+`spellcasting`, `using-ability-scores`) with near-empty descriptions. If
+you're unsure of the exact `rule-sections` slug, first fetch
+`rules/<broad-category>` (e.g. `rules/combat`) and read its `subsections`
+list for the correct `rule-sections/...` URL, then fetch that. If still
+unsure or you hit a 404, answer from your own best judgment instead of
+guessing repeatedly.
 
 Answer the question using the JSON response.
 
@@ -44,6 +48,12 @@ If the client exits non-zero (its stdout is `{"error": {"code": "...",
 relay the error message plainly — and then still answer the question
 from your own knowledge and best judgment. Never refuse to answer a rules
 question just because the API lookup failed.
+
+The client can return any of these error codes: `network_error` (couldn't
+reach dnd5eapi.co), `not_found` (HTTP 404 for the endpoint),
+`invalid_response` (malformed JSON or a corrupt cache file), and
+`repo_root_not_found` (couldn't locate the repo root to resolve the cache
+directory).
 
 This entire workflow has no dependency on an active campaign — it works
 the same with or without one set.
@@ -63,10 +73,13 @@ empty, stop and tell the user to run `scripts/use-campaign <name>` first
 
 Render **both** `references/core-adjudication.md` and
 `references/combat-mechanics.md` into one Markdown body, covering every
-section in both files. This content is the same every time — don't
-tailor it to the current campaign or fetch anything from the SRD API for
-this path; the committed cheat-sheet should never depend on network
-availability.
+section in both files. Demote each file's own `#` H1 header to `##` (H2)
+when compiling them into the body — otherwise the rendered page ends up
+with three H1s (the draft's own `# {title}` from `write_draft.py`, plus
+each reference file's own H1). This content is the same every time —
+don't tailor it to the current campaign or fetch anything from the SRD
+API for this path; the committed cheat-sheet should never depend on
+network availability.
 
 ### Step 3: Write the draft
 
@@ -99,12 +112,18 @@ Where `<json payload>` is:
 ```json
 {
   "kind": "dm-guide",
+  "campaign": "<active-campaign>",
   "slug": "core-rules",
   "title": "Core Rules Reference",
   "frontmatter": { "...": "as built above" },
   "body": "<markdown body>"
 }
 ```
+
+Use the `<active-campaign>` value already resolved in Step 1 — don't rely
+on `write_draft.py`'s `.active-campaign`/cwd-based auto-resolution, since
+campaign directories are git submodules and a cwd inside one could
+resolve the wrong repo root.
 
 This **always overwrites** `campaigns/<campaign>/_drafts/dm-guide/core-rules.md`
 — there's no promoted-page check, so re-running this on a campaign that

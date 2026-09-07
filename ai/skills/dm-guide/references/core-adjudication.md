@@ -2,8 +2,7 @@
 
 Quick rulings for the "how do I call this" moments that come up constantly
 at the table — not a full rules reprint. If a question isn't covered here,
-fall back to `scripts` — actually, dm-guide has no scripts; fall back to
-`dnd5eapi_client.py` (see SKILL.md).
+fall back to the SRD API client (see SKILL.md).
 
 ## Ability Checks & DCs
 

@@ -4,8 +4,10 @@ Generic, cached client for the public D&D 2014 SRD API
 (https://www.dnd5eapi.co/api/2014/, docs: https://5e-bits.github.io/docs/introduction).
 
 Lives at the repo root's shared/ dir (a sibling of write_draft.py) so any
-skill can reach it via the same sys.path bootstrap (walk up from the
-script's own path to find .git, then add repo_root / "shared" to sys.path).
+skill can reach it via the same sys.path bootstrap (each skill script
+walks up from its own path to find .git, then adds repo_root / "shared"
+to sys.path). This module's own repo-root resolution (find_repo_root)
+instead walks up from Path.cwd() at call time - see _default_cache_dir().
 It is deliberately endpoint-agnostic - dm-guide calls it for rules/*, but
 future skills (monster-generator, magic-generator, players-handbook) can
 call it for monsters/*, spells/*, equipment/*, etc. without any change
@@ -77,7 +79,7 @@ def fetch(endpoint: str, *, cache_dir: Path | None = None) -> dict:
     if path.exists():
         try:
             return json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as exc:
+        except (json.JSONDecodeError, UnicodeDecodeError, OSError) as exc:
             raise Dnd5eApiError(
                 "invalid_response", f"Cached response for {endpoint!r} is corrupt: {exc}"
             )
@@ -94,14 +96,19 @@ def fetch(endpoint: str, *, cache_dir: Path | None = None) -> dict:
         )
     except urllib.error.URLError as exc:
         raise Dnd5eApiError("network_error", f"Could not reach dnd5eapi.co: {exc.reason}")
+    except (OSError, ValueError) as exc:
+        raise Dnd5eApiError("network_error", f"Could not reach dnd5eapi.co: {exc}")
 
     try:
         data = json.loads(raw.decode("utf-8"))
     except (json.JSONDecodeError, UnicodeDecodeError) as exc:
         raise Dnd5eApiError("invalid_response", f"Malformed JSON from {endpoint!r}: {exc}")
 
-    resolved_cache_dir.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data), encoding="utf-8")
+    try:
+        resolved_cache_dir.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(data), encoding="utf-8")
+    except OSError:
+        pass  # caching is an optimization; a write failure shouldn't fail an otherwise-successful fetch
     return data
 
 

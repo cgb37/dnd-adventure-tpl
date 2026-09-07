@@ -13,16 +13,26 @@
     },
     {
       "id": 1,
-      "prompt": "My players want to ride warhorses into battle for the first time. How does mounted combat work if the horses aren't trained for war?",
-      "expected_output": "An answer covering that an independent (untrained) mount acts on its own initiative and can't be directed, sourced from references/combat-mechanics.md's Mounted Combat section, falling back to the SRD API only if the local answer is judged insufficient.",
+      "prompt": "How much falling damage does a character take from a 60-foot fall, and are there any special rules if they land in deep water?",
+      "expected_output": "An answer covering fall damage (1d6 bludgeoning per 10 feet fallen, max 20d6) and that landing in water at least 10 feet deep with a successful DC 15 Dexterity save can halve or negate the damage, sourced from the SRD API since neither core-adjudication.md nor combat-mechanics.md covers falling damage.",
       "files": [],
       "assertions": [
-        { "name": "answered_locally_or_via_fallback", "description": "Response correctly distinguishes trained vs. independent mount behavior" },
-        { "name": "graceful_fallback_if_used", "description": "If dnd5eapi_client.py was called and it failed, the response still answers the question and states the API was unreachable rather than refusing to answer" }
+        { "name": "api_invoked", "description": "dnd5eapi_client.py was actually called rather than answering purely from local references" },
+        { "name": "mechanically_correct", "description": "Response states 1d6 bludgeoning damage per 10 feet fallen (max 20d6) and the DC 15 Dexterity save for landing in water at least 10 feet deep" }
       ]
     },
     {
       "id": 2,
+      "prompt": "How much falling damage does a character take from a 60-foot fall, and are there any special rules if they land in deep water?",
+      "expected_output": "The SRD API call fails (network unreachable), so the skill tells the user the rules API couldn't be reached and still answers the question from its own best judgment about fall damage rather than refusing to answer.",
+      "files": [],
+      "assertions": [
+        { "name": "states_api_unreachable", "description": "Response states the rules API couldn't be reached" },
+        { "name": "still_answers", "description": "Response still provides an answer about falling damage rather than refusing to answer" }
+      ]
+    },
+    {
+      "id": 3,
       "prompt": "Compile the core rules cheat sheet for my campaign.",
       "expected_output": "A draft written to campaigns/<active-campaign>/_drafts/dm-guide/core-rules.md with layout: dmnote frontmatter and a body covering every section from both core-adjudication.md and combat-mechanics.md.",
       "files": [],
@@ -33,7 +43,7 @@
       ]
     },
     {
-      "id": 3,
+      "id": 4,
       "prompt": "Compile the core rules cheat sheet.",
       "expected_output": "No active campaign is set, so the skill reports the no_active_campaign error and tells the user to run scripts/use-campaign first, without writing any draft.",
       "files": [],
