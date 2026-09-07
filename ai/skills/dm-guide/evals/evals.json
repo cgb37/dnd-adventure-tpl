@@ -1,0 +1,46 @@
+{
+  "skill_name": "dm-guide",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "What happens if I paralyze the goblin, then another goblin attacks it in melee?",
+      "expected_output": "An answer explaining that Paralyzed grants advantage to attacks against the creature and that any hit from within 5 feet is a critical hit, sourced from references/core-adjudication.md without calling the SRD API.",
+      "files": [],
+      "assertions": [
+        { "name": "answered_locally", "description": "The condition table in references/core-adjudication.md is used; dnd5eapi_client.py is not invoked" },
+        { "name": "mechanically_correct", "description": "Response states advantage on attacks against the paralyzed creature and automatic critical hit within 5 ft." }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "My players want to ride warhorses into battle for the first time. How does mounted combat work if the horses aren't trained for war?",
+      "expected_output": "An answer covering that an independent (untrained) mount acts on its own initiative and can't be directed, sourced from references/combat-mechanics.md's Mounted Combat section, falling back to the SRD API only if the local answer is judged insufficient.",
+      "files": [],
+      "assertions": [
+        { "name": "answered_locally_or_via_fallback", "description": "Response correctly distinguishes trained vs. independent mount behavior" },
+        { "name": "graceful_fallback_if_used", "description": "If dnd5eapi_client.py was called and it failed, the response still answers the question and states the API was unreachable rather than refusing to answer" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Compile the core rules cheat sheet for my campaign.",
+      "expected_output": "A draft written to campaigns/<active-campaign>/_drafts/dm-guide/core-rules.md with layout: dmnote frontmatter and a body covering every section from both core-adjudication.md and combat-mechanics.md.",
+      "files": [],
+      "assertions": [
+        { "name": "draft_written", "description": "A file exists at campaigns/<active-campaign>/_drafts/dm-guide/core-rules.md" },
+        { "name": "correct_layout", "description": "Frontmatter includes layout: dmnote, category: dm-guide, permalink: /dm-guide/:slug" },
+        { "name": "content_complete", "description": "Body includes content from both reference files' sections, not a partial subset" }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Compile the core rules cheat sheet.",
+      "expected_output": "No active campaign is set, so the skill reports the no_active_campaign error and tells the user to run scripts/use-campaign first, without writing any draft.",
+      "files": [],
+      "assertions": [
+        { "name": "no_draft_written", "description": "No file is created under any campaigns/*/_drafts/dm-guide/" },
+        { "name": "clear_error", "description": "Response tells the user to run scripts/use-campaign, matching the no_active_campaign error message" }
+      ]
+    }
+  ]
+}
