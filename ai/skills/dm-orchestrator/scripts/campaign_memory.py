@@ -15,11 +15,18 @@ content_index sections need that nesting. Only the shapes documented in
 docs/superpowers/specs/2026-09-07-dm-orchestrator-skill-design.md are ever
 produced or parsed - this is not a general-purpose YAML implementation.
 
-CLI usage (write subcommand added in a later change to this file):
-  Read: python3 campaign_memory.py read --campaign my-campaign
+CLI usage:
+  Read:          python3 campaign_memory.py read --campaign my-campaign
+  Read (safe):   python3 campaign_memory.py read --campaign my-campaign --redact
+  Write:         echo '<json>' | python3 campaign_memory.py write --campaign my-campaign
 
 Output (read, found): the full campaign.yml structure as JSON
-Output (read, not found or malformed): {"found": false}
+Output (read, found, --redact): a spoiler-free reduction of that structure -
+  mode, outline numbering + needs/status, and content_index (beat, kind) only
+Output (read, not found): {"found": false}
+Output (read, unparseable): {"error": {"code": "invalid_campaign_memory", ...}},
+  exit code 1 - a corrupt file is never confused with a missing one, and is
+  never guess-repaired.
 """
 from __future__ import annotations
 
@@ -56,6 +63,18 @@ _NON_STRING_LOOKALIKES = {
 }
 
 
+# Leading characters that must never appear unquoted in a rendered scalar, because
+# they would change how this module's own parser reads the line back. The set
+# mirrors shared/write_draft.py's `_YAML_INDICATOR_PREFIXES` (a sibling convention,
+# deliberately duplicated rather than imported) with one addition: a leading '"'.
+# `_parse_scalar` decides a token is quoted by checking startswith('"')/endswith('"'),
+# so prose containing quoted speech - Beware, she said, "run" - must be rendered as a
+# real JSON string or it round-trips into a parse failure.
+# As in write_draft.py, '-' is handled separately: only the bare "-" and the "- "
+# block-sequence-entry prefix are ambiguous, not an ordinary word like "-foo".
+_INDICATOR_PREFIXES = ('"', "*", "&", "!", "|", ">", "%", "@", "`", "[", "{")
+
+
 def _looks_like_non_string(text: str) -> bool:
     if text in _NON_STRING_LOOKALIKES:
         return True
@@ -68,7 +87,10 @@ def _looks_like_non_string(text: str) -> bool:
         float(text)
         return True
     except ValueError:
-        return False
+        pass
+    if text == "-" or text.startswith("- "):
+        return True
+    return text.startswith(_INDICATOR_PREFIXES)
 
 
 def _render_scalar(value: Any) -> str:
@@ -129,8 +151,14 @@ def _split_indent(line: str) -> tuple[int, str]:
 
 
 def _parse_scalar(text: str) -> Any:
-    if text.startswith('"') and text.endswith('"'):
-        return json.loads(text)
+    if len(text) > 1 and text.startswith('"') and text.endswith('"'):
+        # Only *looks* quoted. A hand-edited file can hold prose that opens and
+        # closes with a quote mark without being a valid JSON string; falling back
+        # to the raw token keeps one odd line from making the whole file unreadable.
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            return text
     if text == "true":
         return True
     if text == "false":
@@ -215,17 +243,69 @@ _REQUIRED_KEYS = {"mode", "outline"}
 
 
 def read_campaign_memory(repo_root: Path, campaign: str) -> dict[str, Any] | None:
+    """Read campaign.yml.
+
+    Returns None when there is simply no campaign yet - either the file does not
+    exist, or it exists but lacks the required top-level keys (an outline was
+    never written). Raises CampaignMemoryError('invalid_campaign_memory') when the
+    file exists and reading/parsing it actually blows up: "corrupt" must never be
+    mistaken for "absent", or a fill/outline workflow would happily overwrite a
+    recoverable file and mode immutability would quietly stop being enforced.
+    """
     path = _campaign_memory_path(repo_root, campaign)
     if not path.exists():
         return None
     try:
         lines = [line for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
         data, _ = _parse_mapping(lines, 0, 0)
-    except Exception:
-        return None
+    except Exception as exc:
+        raise CampaignMemoryError(
+            "invalid_campaign_memory",
+            f"Campaign memory at {path} exists but could not be read: "
+            f"{type(exc).__name__}: {exc}. Repair or remove the file by hand - "
+            f"dm-orchestrator will not guess-repair or overwrite it.",
+        ) from exc
     if not _REQUIRED_KEYS.issubset(data.keys()):
         return None
     return data
+
+
+def redact_campaign_memory(data: dict[str, Any]) -> dict[str, Any]:
+    """Reduce campaign memory to the spoiler-free subset a player-mode fill needs.
+
+    Keeps exactly what outline_scope.py's scope resolution and the fill workflow's
+    already-generated skip-check consume: mode, outline numbering with each scene's
+    needs/status, and content_index's (beat, kind) join key. Everything that could
+    reveal what happens in the campaign - titles, premises, threads, npcs, the
+    top-level premise/scope, and draft slugs/paths - is dropped.
+    """
+    return {
+        "mode": data.get("mode"),
+        "outline": [
+            {
+                "chapter": chapter.get("chapter"),
+                "episodes": [
+                    {
+                        "episode": episode.get("episode"),
+                        "scenes": [
+                            {
+                                "scene": scene.get("scene"),
+                                "needs": scene.get("needs", []),
+                                "status": scene.get("status"),
+                            }
+                            for scene in episode.get("scenes", [])
+                        ],
+                    }
+                    for episode in chapter.get("episodes", [])
+                ],
+            }
+            for chapter in data.get("outline", [])
+        ],
+        "content_index": [
+            {"beat": entry.get("beat"), "kind": entry.get("kind")}
+            for entry in data.get("content_index", [])
+        ],
+    }
 
 
 def _dedupe_content_index(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -236,6 +316,9 @@ def _dedupe_content_index(entries: list[dict[str, Any]]) -> list[dict[str, Any]]
 
 
 def write_campaign_memory(repo_root: Path, campaign: str, data: dict[str, Any]) -> Path:
+    # A CampaignMemoryError from this read is deliberately *not* caught: if the
+    # existing file is unreadable we cannot know its mode, so we must refuse the
+    # write rather than treat it as "no existing campaign" and let mode change.
     existing = read_campaign_memory(repo_root, campaign)
     if existing is not None and existing.get("mode") != data.get("mode"):
         raise CampaignMemoryError(
@@ -262,6 +345,12 @@ def main() -> int:
 
     read_parser = subparsers.add_parser("read")
     read_parser.add_argument("--campaign", required=True)
+    read_parser.add_argument(
+        "--redact",
+        action="store_true",
+        help="Return only the spoiler-free subset (mode, outline numbering with "
+             "needs/status, content_index beat/kind). Use in player mode.",
+    )
 
     write_parser = subparsers.add_parser("write")
     write_parser.add_argument("--campaign", required=True)
@@ -270,8 +359,15 @@ def main() -> int:
     repo_root = find_repo_root(Path.cwd())
 
     if args.command == "read":
-        data = read_campaign_memory(repo_root, args.campaign)
-        print(json.dumps(data if data is not None else {"found": False}))
+        try:
+            data = read_campaign_memory(repo_root, args.campaign)
+        except CampaignMemoryError as exc:
+            print(json.dumps({"error": {"code": exc.code, "message": exc.message}}))
+            return 1
+        if data is None:
+            print(json.dumps({"found": False}))
+            return 0
+        print(json.dumps(redact_campaign_memory(data) if args.redact else data))
         return 0
 
     try:
