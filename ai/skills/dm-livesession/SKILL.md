@@ -92,11 +92,13 @@ Only once Step 4 confirms the current beat is ready:
 python3 <repo-root>/ai/skills/dm-orchestrator/scripts/campaign_memory.py read --campaign <active-campaign>
 ```
 
-From the full structure, use only: the current scene's `premise`, its
-`content_index` entries' draft paths (read those files), every thread in
-`threads` at `introduced` or `advancing` status, and every NPC in `npcs`
-whose `last_seen` is at or before this beat's chapter. Do not read this
-into anything you say about beats other than the current one.
+From the full structure, extract only what this beat needs into a fresh
+working note: the current scene's `premise`, its `content_index` entries'
+draft paths (read those files), every thread in `threads` at `introduced`
+or `advancing` status, and every NPC in `npcs` whose `last_seen` is at or
+before this beat's chapter. Then disregard everything else in that read -
+no other scene's title, premise, or `needs` tag from this response may
+reach anything you say, in this turn or any later one.
 
 ### Step 6: Narrate
 
