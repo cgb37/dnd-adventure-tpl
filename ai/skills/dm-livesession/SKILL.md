@@ -61,7 +61,7 @@ campaign. Resolve the outline's first scene as the starting position by
 resolving scope against the redacted outline from Step 2:
 
 ```bash
-echo '<redacted outline json>' | python3 <repo-root>/ai/skills/dm-orchestrator/scripts/outline_scope.py "chapter 1"
+echo '<outline array from the redacted read>' | python3 <repo-root>/ai/skills/dm-orchestrator/scripts/outline_scope.py "chapter 1"
 ```
 
 Take the first scene in the result as `current_position`. Otherwise, use
@@ -110,8 +110,23 @@ says next.
 ### Step 7: React to the player's action
 
 - **On-script** (the action resolves or meaningfully advances the current
-  beat): determine the next planned scene by resolving `"the next part"`
-  against the redacted outline (same CLI as Step 3), then write:
+  beat): determine the next scene in *play order* — this is a different
+  question from "the next scene that still needs generating," which is
+  what `outline_scope.py`'s `"the next part"` mode answers for
+  `dm-orchestrator`'s fill workflow. Instead, resolve the current beat's
+  chapter the same way Step 3 bootstraps the first session:
+
+  ```bash
+  echo '<outline array from the redacted read>' | python3 <repo-root>/ai/skills/dm-orchestrator/scripts/outline_scope.py "chapter <current chapter number>"
+  ```
+
+  Find the current beat within that chapter's ordered scene list and take
+  the scene immediately after it. If the current beat was the last scene
+  in its chapter, resolve the next chapter the same way
+  (`"chapter <current chapter number + 1>"`) and take its first scene. If
+  that also returns `{"matches": null}`, there is no next chapter - the
+  campaign is complete (see Error Handling) - do not write `session.yml`
+  further. Otherwise write:
 
   ```bash
   echo '{"current_position": {"beat": "<next beat>"}, "event_log": [{"beat": "<current beat>", "summary": "<one-sentence recap>"}], "delivered_beats": ["<current beat>"]}' | python3 <skill-path>/scripts/session_state.py write --campaign <active-campaign>
@@ -149,9 +164,15 @@ user to generate a campaign via `dm-orchestrator` first. Confirm `mode` is
 
 ### Step 2: Answer the query directly
 
-- **"What's next"**: resolve `"the next part"` against the outline (same
-  `outline_scope.py` CLI as Workflow 1), report the matched scene(s) by
-  title and premise.
+- **"What's next"**: `dm` mode tracks no position (Workflow 2 is
+  stateless), so this means "what still needs content generated," not
+  "what happens next at the table" (which only the human DM knows).
+  Resolve `"the next part"` against the outline (same `outline_scope.py`
+  CLI as Workflow 1's first-session bootstrap) and report the matched
+  scene(s) - the next one(s) with `status: planned` - by title and
+  premise. If the DM is actually asking what comes next in the story at
+  their table, say you don't track that and ask them to name the
+  chapter/scene they mean instead.
 - **NPC lookup**: find the matching entry in `npcs` and report it.
 - **Content lookup**: find the matching `content_index` entry and read
   that draft file directly.
@@ -184,3 +205,4 @@ writes `campaign.yml`.
 | Off-script player action | Not an error - improvise per Workflow 1 Step 7; no structural write. |
 | DM-mode query with no matching data | Say so plainly - no spoiler concern in this mode. |
 | Invalid dice notation | Relay `dice.py`'s `invalid_dice_notation` error and ask for a valid expression (e.g. "1d20+3"). |
+| Current beat was the campaign's last scene (no next chapter) | The campaign is complete - tell the player/DM so; do not write `session.yml` further. |

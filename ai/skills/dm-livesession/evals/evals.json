@@ -18,7 +18,7 @@
       "expected_output": "session.yml is updated in one call: current_position advances to the next planned scene, event_log gains a one-sentence recap of the resolved beat, and delivered_beats gains that beat. campaign.yml is not written by dm-livesession at all.",
       "files": [],
       "assertions": [
-        {"name": "position_advanced", "description": "session.yml's current_position after the turn is the next planned scene in outline order"},
+        {"name": "position_advanced", "description": "session.yml's current_position after the turn is the scene immediately following the resolved beat in outline order, whether or not that scene was already filled ahead of time"},
         {"name": "event_log_appended", "description": "session.yml's event_log has exactly one new entry for the resolved beat"},
         {"name": "delivered_beats_appended", "description": "session.yml's delivered_beats includes the resolved beat exactly once"},
         {"name": "campaign_yml_untouched", "description": "campaign.yml was not written by dm-livesession during this turn"}
@@ -63,6 +63,16 @@
       "assertions": [
         {"name": "mode_mismatch_refused", "description": "The response states the campaign's actual mode and does not attempt player-mode narration"},
         {"name": "no_session_yml_created", "description": "No session.yml file was created for this dm-mode campaign"}
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "The party resolves the current scene, on a campaign where every scene's content was pre-filled ahead of time by dm-orchestrator.",
+      "expected_output": "current_position still advances to the scene immediately following the resolved beat in outline order (crossing into the next chapter if the resolved beat was the last scene in its chapter), even though every scene in the outline already has status: filled. dm-livesession never asks outline_scope.py for \"the next part\" to do this advance, since that resolver answers a different question (the next scene still needing content) and would return no match at all once everything is filled.",
+      "files": [],
+      "assertions": [
+        {"name": "advance_independent_of_fill_status", "description": "current_position advances to the next scene in outline order regardless of every scene already being status: filled"},
+        {"name": "no_deadlock_on_fully_filled_campaign", "description": "The turn does not fail, stall, or refuse to advance just because no scene has status: planned anymore"}
       ]
     }
   ]

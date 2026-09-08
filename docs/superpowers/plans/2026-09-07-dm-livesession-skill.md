@@ -963,7 +963,7 @@ campaign. Resolve the outline's first scene as the starting position by
 resolving scope against the redacted outline from Step 2:
 
 ```bash
-echo '<redacted outline json>' | python3 <repo-root>/ai/skills/dm-orchestrator/scripts/outline_scope.py "chapter 1"
+echo '<outline array from the redacted read>' | python3 <repo-root>/ai/skills/dm-orchestrator/scripts/outline_scope.py "chapter 1"
 ```
 
 Take the first scene in the result as `current_position`. Otherwise, use
@@ -1010,8 +1010,23 @@ says next.
 ### Step 7: React to the player's action
 
 - **On-script** (the action resolves or meaningfully advances the current
-  beat): determine the next planned scene by resolving `"the next part"`
-  against the redacted outline (same CLI as Step 3), then write:
+  beat): determine the next scene in *play order* — this is a different
+  question from "the next scene that still needs generating," which is
+  what `outline_scope.py`'s `"the next part"` mode answers for
+  `dm-orchestrator`'s fill workflow. Instead, resolve the current beat's
+  chapter the same way Step 3 bootstraps the first session:
+
+  ```bash
+  echo '<outline array from the redacted read>' | python3 <repo-root>/ai/skills/dm-orchestrator/scripts/outline_scope.py "chapter <current chapter number>"
+  ```
+
+  Find the current beat within that chapter's ordered scene list and take
+  the scene immediately after it. If the current beat was the last scene
+  in its chapter, resolve the next chapter the same way
+  (`"chapter <current chapter number + 1>"`) and take its first scene. If
+  that also returns `{"matches": null}`, there is no next chapter - the
+  campaign is complete (see Error Handling) - do not write `session.yml`
+  further. Otherwise write:
 
   ```bash
   echo '{"current_position": {"beat": "<next beat>"}, "event_log": [{"beat": "<current beat>", "summary": "<one-sentence recap>"}], "delivered_beats": ["<current beat>"]}' | python3 <skill-path>/scripts/session_state.py write --campaign <active-campaign>
@@ -1049,9 +1064,15 @@ user to generate a campaign via `dm-orchestrator` first. Confirm `mode` is
 
 ### Step 2: Answer the query directly
 
-- **"What's next"**: resolve `"the next part"` against the outline (same
-  `outline_scope.py` CLI as Workflow 1), report the matched scene(s) by
-  title and premise.
+- **"What's next"**: `dm` mode tracks no position (Workflow 2 is
+  stateless), so this means "what still needs content generated," not
+  "what happens next at the table" (which only the human DM knows).
+  Resolve `"the next part"` against the outline (same `outline_scope.py`
+  CLI as Workflow 1's first-session bootstrap) and report the matched
+  scene(s) - the next one(s) with `status: planned` - by title and
+  premise. If the DM is actually asking what comes next in the story at
+  their table, say you don't track that and ask them to name the
+  chapter/scene they mean instead.
 - **NPC lookup**: find the matching entry in `npcs` and report it.
 - **Content lookup**: find the matching `content_index` entry and read
   that draft file directly.
@@ -1084,6 +1105,7 @@ writes `campaign.yml`.
 | Off-script player action | Not an error - improvise per Workflow 1 Step 7; no structural write. |
 | DM-mode query with no matching data | Say so plainly - no spoiler concern in this mode. |
 | Invalid dice notation | Relay `dice.py`'s `invalid_dice_notation` error and ask for a valid expression (e.g. "1d20+3"). |
+| Current beat was the campaign's last scene (no next chapter) | The campaign is complete - tell the player/DM so; do not write `session.yml` further. |
 ```
 
 - [ ] **Step 2: Commit**
@@ -1140,7 +1162,7 @@ Create `ai/skills/dm-livesession/evals/evals.json`:
       "expected_output": "session.yml is updated in one call: current_position advances to the next planned scene, event_log gains a one-sentence recap of the resolved beat, and delivered_beats gains that beat. campaign.yml is not written by dm-livesession at all.",
       "files": [],
       "assertions": [
-        {"name": "position_advanced", "description": "session.yml's current_position after the turn is the next planned scene in outline order"},
+        {"name": "position_advanced", "description": "session.yml's current_position after the turn is the scene immediately following the resolved beat in outline order, whether or not that scene was already filled ahead of time"},
         {"name": "event_log_appended", "description": "session.yml's event_log has exactly one new entry for the resolved beat"},
         {"name": "delivered_beats_appended", "description": "session.yml's delivered_beats includes the resolved beat exactly once"},
         {"name": "campaign_yml_untouched", "description": "campaign.yml was not written by dm-livesession during this turn"}
@@ -1186,6 +1208,16 @@ Create `ai/skills/dm-livesession/evals/evals.json`:
         {"name": "mode_mismatch_refused", "description": "The response states the campaign's actual mode and does not attempt player-mode narration"},
         {"name": "no_session_yml_created", "description": "No session.yml file was created for this dm-mode campaign"}
       ]
+    },
+    {
+      "id": 6,
+      "prompt": "The party resolves the current scene, on a campaign where every scene's content was pre-filled ahead of time by dm-orchestrator.",
+      "expected_output": "current_position still advances to the scene immediately following the resolved beat in outline order (crossing into the next chapter if the resolved beat was the last scene in its chapter), even though every scene in the outline already has status: filled. dm-livesession never asks outline_scope.py for \"the next part\" to do this advance, since that resolver answers a different question (the next scene still needing content) and would return no match at all once everything is filled.",
+      "files": [],
+      "assertions": [
+        {"name": "advance_independent_of_fill_status", "description": "current_position advances to the next scene in outline order regardless of every scene already being status: filled"},
+        {"name": "no_deadlock_on_fully_filled_campaign", "description": "The turn does not fail, stall, or refuse to advance just because no scene has status: planned anymore"}
+      ]
     }
   ]
 }
@@ -1194,7 +1226,7 @@ Create `ai/skills/dm-livesession/evals/evals.json`:
 - [ ] **Step 2: Validate it parses**
 
 Run: `python3 -c "import json; d = json.load(open('ai/skills/dm-livesession/evals/evals.json')); assert d['skill_name'] == 'dm-livesession'; assert len(d['evals']) >= 3; print('OK', len(d['evals']), 'evals')"`
-Expected: `OK 6 evals`.
+Expected: `OK 7 evals`.
 
 - [ ] **Step 3: Commit**
 
@@ -1270,6 +1302,6 @@ print(f'OK ({len(data[\"evals\"])} evals)')
 "
 ```
 
-Expected: `OK (6 evals)`, no assertion errors.
+Expected: `OK (7 evals)`, no assertion errors.
 
 No commit for this task - it's a verification-only pass over work already committed in Tasks 1-5. If any step fails, fix the regression in the task that introduced it and re-run this task's steps from the top.

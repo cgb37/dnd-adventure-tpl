@@ -42,12 +42,14 @@ ai/skills/dm-livesession/
   SKILL.md
   scripts/
     session_state.py    # read/write campaigns/<campaign>/session.yml (player mode only)
+    dice.py              # general NdM+K notation roller (initiative, damage, checks)
   references/
     live-narration.md   # story hooks, puzzles, unreliable narrators, NPC agendas — judgement guidance
   evals/
     evals.json
   tests/
     test_session_state.py
+    test_dice.py
 ```
 
 Same shape as every existing skill: self-contained under `ai/skills/`, a
@@ -177,9 +179,12 @@ initiative for these three monsters."
    - NPC lookups → the matching `npcs` entry.
    - Content lookups → the relevant generated draft via `content_index`.
    - Ad-hoc dice requests (initiative, damage, a skill check for an NPC)
-     → `shared/dice_roller.py`, the same roller `rpg-character-gen`
-     already uses. This is a calculator call, not persisted state — no
-     combat tracker, no initiative order maintained across turns.
+     → the new `scripts/dice.py`, a general `NdM+K` notation roller.
+     `shared/dice_roller.py` only generates ability scores and cannot
+     parse arbitrary dice notation, so this skill ships its own
+     self-contained roller instead. This is a calculator call, not
+     persisted state — no combat tracker, no initiative order maintained
+     across turns.
 3. **Never write anything.** `session.yml` does not exist for `dm`-mode
    campaigns; this workflow never creates or touches it.
 
