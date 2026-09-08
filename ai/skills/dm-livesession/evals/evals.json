@@ -1,0 +1,69 @@
+{
+  "skill_name": "dm-livesession",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Let's play. (First-ever session on a player-mode campaign whose first scene is not yet generated.)",
+      "expected_output": "session.yml does not exist yet, so the current position defaults to the outline's first scene. That scene's needs are not covered by content_index, so dm-orchestrator's fill workflow is invoked for just that beat before any narration happens. Once filled, the scene is narrated using only that beat's content - no future beat's title, premise, or needs are mentioned anywhere in the response.",
+      "files": [],
+      "assertions": [
+        {"name": "fill_triggered_for_current_beat_only", "description": "dm-orchestrator's fill workflow was invoked for the first scene's beat, not for any other beat"},
+        {"name": "no_direct_generator_calls", "description": "encounter-generator/location-generator/monster-generator/magic-generator were never invoked directly by dm-livesession"},
+        {"name": "no_future_beat_leakage", "description": "The narration response contains no title, premise, or needs tag belonging to any beat other than the current one"}
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "The party resolves the current scene and moves on to what the outline expects next. (On-script resolution.)",
+      "expected_output": "session.yml is updated in one call: current_position advances to the next planned scene, event_log gains a one-sentence recap of the resolved beat, and delivered_beats gains that beat. campaign.yml is not written by dm-livesession at all.",
+      "files": [],
+      "assertions": [
+        {"name": "position_advanced", "description": "session.yml's current_position after the turn is the next planned scene in outline order"},
+        {"name": "event_log_appended", "description": "session.yml's event_log has exactly one new entry for the resolved beat"},
+        {"name": "delivered_beats_appended", "description": "session.yml's delivered_beats includes the resolved beat exactly once"},
+        {"name": "campaign_yml_untouched", "description": "campaign.yml was not written by dm-livesession during this turn"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The player attacks an NPC the outline never expected them to fight. (Off-script action.)",
+      "expected_output": "The consequence is improvised narratively in-character - the NPC reacts, the scene continues - without dm-livesession calling dm-orchestrator to edit the outline and without writing session.yml. current_position stays exactly where it was before the action.",
+      "files": [],
+      "assertions": [
+        {"name": "no_outline_edit", "description": "dm-orchestrator was not asked to insert, remove, or restructure any outline scene"},
+        {"name": "no_session_write", "description": "session.yml's current_position, event_log, and delivered_beats are unchanged from before the action"},
+        {"name": "not_railroaded", "description": "The response does not refuse the action or force the player back onto the planned scene without in-fiction improvisation"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "What's next? (DM co-pilot query on a dm-mode campaign.)",
+      "expected_output": "The next planned scene(s) in outline order are reported by title and premise directly - no spoiler restriction applies in dm mode. session.yml is never read or written.",
+      "files": [],
+      "assertions": [
+        {"name": "titles_and_premises_shown", "description": "The response includes the next planned scene's title and premise"},
+        {"name": "no_session_yml_touch", "description": "session.yml was neither read nor written for this query"}
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Roll initiative for these three goblins. (DM co-pilot dice request.)",
+      "expected_output": "dice.py is invoked once per roll needed (or once with the appropriate notation), returning a rolls/modifier/total breakdown. No initiative order or combat state is persisted anywhere - this is a one-off calculator call.",
+      "files": [],
+      "assertions": [
+        {"name": "dice_py_invoked", "description": "The dm-livesession dice.py script was invoked with valid d20-based notation"},
+        {"name": "no_persisted_combat_state", "description": "No file under the campaign directory was created or modified to track initiative order"}
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Let's play. (Player-session request made against a dm-mode campaign.)",
+      "expected_output": "dm-livesession refuses to run Workflow 1 against this campaign, states plainly that this campaign is in dm mode, and does not narrate anything or read/write session.yml.",
+      "files": [],
+      "assertions": [
+        {"name": "mode_mismatch_refused", "description": "The response states the campaign's actual mode and does not attempt player-mode narration"},
+        {"name": "no_session_yml_created", "description": "No session.yml file was created for this dm-mode campaign"}
+      ]
+    }
+  ]
+}
