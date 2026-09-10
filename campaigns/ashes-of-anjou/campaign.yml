@@ -12,7 +12,7 @@ outline:
             premise: The party arrives in Hollowmere in the smoking aftermath of a fire that gutted the tithe barn and scorched part of the manor house, and the frightened reeve asks for help before the baron's steward arrives.
             needs:
               - location
-            status: planned
+            status: filled
           - scene: "02"
             premise: Sifting the wreckage turns up signs the fire was set deliberately - oil residue and a forced lock on the tithe barn - rather than an accident, and the party debates who benefits from destroyed tithe records.
             needs: []
@@ -21,7 +21,7 @@ outline:
             premise: A frightened servant who saw someone near the barn that night is cornered by armed men sent to silence him, and the party has to decide whether to intervene.
             needs:
               - encounter
-            status: planned
+            status: filled
       - episode: "02"
         title: The Reeve's Suspicion
         scenes:
@@ -113,5 +113,28 @@ threads:
   - id: hearth-stone-relic
     summary: An ancient, ostensibly elemental relic at a forgotten Roman-era site in the deep woods is said to bind the land's loyalty, predating both claimants' lordship.
     status: introduced
-npcs: []
-content_index: []
+  - id: hollowmere-informant
+    summary: Someone inside Hollowmere is feeding real-time information to a hooded, city-dressed stranger who hired mercenaries to silence a witness within hours of the fire - the party doesn't know who yet, but knows they're already being watched.
+    status: introduced
+npcs:
+  - name: Reeve Ordric
+    role: village reeve, frightened for himself and Hollowmere
+    disposition: desperate for the party's help, wary of the baron's steward
+    last_seen: "01"
+  - name: Aelfa
+    role: scullery maid, reluctant witness to someone near the barn's side door the night of the fire
+    disposition: frightened, guarded, wants to be left alone
+    last_seen: "01"
+  - name: The Captured Mercenaries
+    role: two hired men (a wounded Thug and a Bandit) paid to silence Aelfa; now bound prisoners at the manor
+    disposition: cooperating out of fear, genuinely don't know their employer's identity
+    last_seen: "01"
+content_index:
+  - beat: 01.01.01
+    kind: location
+    slug: hollowmere-manor-tithe-barn
+    path: campaigns/ashes-of-anjou/_drafts/location/hollowmere-manor-tithe-barn.md
+  - beat: 01.01.03
+    kind: encounter
+    slug: cornering-aelfa
+    path: campaigns/ashes-of-anjou/_drafts/encounter/cornering-aelfa.md
