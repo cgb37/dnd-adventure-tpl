@@ -57,6 +57,24 @@ false}`), stop. Tell the user a campaign already exists (name its premise)
 and ask whether to replace it or use a different campaign. Never overwrite
 silently.
 
+Before asking, also check whether there's a live session bookmark to warn
+about:
+
+```bash
+python3 <repo-root>/ai/skills/dm-livesession/scripts/session_state.py read --campaign <active-campaign>
+```
+
+This is a read-only check — `session.yml` stays `dm-livesession`'s file
+exclusively; this skill never writes or clears it, even on confirmed
+replacement. If it returns a `current_position` (not `{"found": false}`),
+fold that into the same confirmation prompt: name the bookmarked beat and
+say plainly that replacing the outline will very likely orphan it —
+`session.yml`'s `current_position`/`event_log` reference beats by chapter/
+episode/scene number, and a new outline can renumber or drop those beats
+entirely with no way to detect the mismatch afterward. Let the user decide
+whether that's acceptable; if they want it cleared, that's a separate ask
+to `dm-livesession`, not something this skill does on their behalf.
+
 If they confirm a replacement, **the replacement keeps the existing
 campaign's `mode`.** A new outline cannot flip a campaign from `dm` to
 `player` or back — `mode` is fixed for the campaign's lifetime, and Step
@@ -273,7 +291,9 @@ exactly as every Phase 1 skill already behaves.
   first. Never guess a campaign.
 - Outline already exists (Workflow 1) → stop, confirm before replacing. A
   replacement inherits the existing campaign's `mode`; it can never change
-  it.
+  it. If `session.yml` has a `current_position`, warn as part of the same
+  confirmation that replacing the outline will likely orphan it — this
+  skill never clears `session.yml` itself, warning is as far as it goes.
 - No outline yet (Workflow 2) → stop, tell the user to generate one first.
 - Scope matches nothing (Workflow 2) → ask a clarifying question — the only
   question fill ever asks in `player` mode.

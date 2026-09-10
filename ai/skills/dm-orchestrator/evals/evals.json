@@ -78,6 +78,18 @@
         {"name": "out_of_range_reported", "description": "The response tells the user that part doesn't exist yet"},
         {"name": "valid_scopes_not_listed", "description": "The response does not enumerate the chapters/episodes that do exist, and names no titles — listing them would be a spoiler in player mode"}
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "Actually, scrap that outline and generate a new one - a haunted lighthouse campaign instead, 2 chapters.",
+      "expected_output": "Given an existing campaign whose outline is already non-empty and whose session.yml has a current_position (a prior dm-livesession session played partway through it), dm-orchestrator stops and asks the user to confirm the replacement, and in that same confirmation names session.yml's current_position beat and warns that replacing the outline will likely orphan it, since the new outline's beats won't line up with the old ones. It does not read/write session.yml beyond that one read, and does not clear or modify it regardless of what the user decides.",
+      "files": [],
+      "assertions": [
+        {"name": "confirmation_asked", "description": "dm-orchestrator stops and asks the user to confirm replacing the existing outline rather than overwriting silently"},
+        {"name": "session_orphan_warned", "description": "The same confirmation names session.yml's current_position beat and warns that a new outline will likely orphan it"},
+        {"name": "session_yml_untouched", "description": "session_state.py's write subcommand is never invoked by dm-orchestrator during this turn - the warning is read-only"},
+        {"name": "mode_preserved_if_confirmed", "description": "If the user confirms, the replacement campaign.yml keeps the existing campaign's mode unchanged"}
+      ]
     }
   ]
 }
