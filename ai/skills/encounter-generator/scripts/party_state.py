@@ -16,6 +16,19 @@ library) to keep the skill dependency-free:
     - class: bard
     - class: barbarian
 
+`write` only ever produces the minimal `class`-only composition shown
+above. Reading, however, also accepts campaigns whose composition entries
+were hand-authored with extra fields (`dm-livesession` looks these up to
+know which characters/players exist), e.g.:
+
+  composition:
+    - name: Aiden Oathkeeper
+      slug: aiden-oathkeeper
+      class: paladin/warlock
+
+Any keys present on a composition entry are passed through unchanged;
+`class` is not treated specially during parsing.
+
 CLI usage:
   Read:  python3 party_state.py read --campaign my-campaign
   Write: python3 party_state.py write --campaign my-campaign --level 5 \
@@ -52,22 +65,32 @@ def read_party_state(repo_root: Path, campaign: str) -> dict | None:
     level: int | None = None
     size: int | None = None
     composition: list[dict[str, str]] = []
+    current_entry: dict[str, str] | None = None
     for raw_line in path.read_text(encoding="utf-8").splitlines():
         line = raw_line.strip()
         if not line or line == "composition:":
             continue
         if line.startswith("level:"):
+            current_entry = None
             try:
                 level = int(line.split(":", 1)[1].strip())
             except ValueError:
                 level = None
         elif line.startswith("size:"):
+            current_entry = None
             try:
                 size = int(line.split(":", 1)[1].strip())
             except ValueError:
                 size = None
-        elif line.startswith("- class:"):
-            composition.append({"class": line.split(":", 1)[1].strip()})
+        elif line.startswith("- "):
+            key, _, value = line[2:].partition(":")
+            current_entry = {key.strip(): value.strip()}
+            composition.append(current_entry)
+        elif current_entry is not None and ":" in line:
+            # A continuation field of the composition entry currently being
+            # built (e.g. `slug:`/`class:` following a `- name:` line).
+            key, _, value = line.partition(":")
+            current_entry[key.strip()] = value.strip()
 
     if level is None or size is None:
         return None

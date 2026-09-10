@@ -23,6 +23,32 @@ def test_write_then_read_party_state_round_trips(tmp_path: Path):
     }
 
 
+def test_read_party_state_parses_hand_authored_named_composition(tmp_path: Path):
+    campaign_dir = tmp_path / "campaigns" / "my-campaign"
+    campaign_dir.mkdir(parents=True)
+    (campaign_dir / "party.yml").write_text(
+        "level: 1\n"
+        "size: 2\n"
+        "composition:\n"
+        "  - name: Aiden Oathkeeper\n"
+        "    slug: aiden-oathkeeper\n"
+        "    class: paladin/warlock\n"
+        "  - name: Stallion\n"
+        "    slug: stallion\n"
+        "    class: ranger\n",
+        encoding="utf-8",
+    )
+    state = read_party_state(tmp_path, "my-campaign")
+    assert state == {
+        "level": 1,
+        "size": 2,
+        "composition": [
+            {"name": "Aiden Oathkeeper", "slug": "aiden-oathkeeper", "class": "paladin/warlock"},
+            {"name": "Stallion", "slug": "stallion", "class": "ranger"},
+        ],
+    }
+
+
 def test_read_party_state_returns_none_when_incomplete(tmp_path: Path):
     campaign_dir = tmp_path / "campaigns" / "my-campaign"
     campaign_dir.mkdir(parents=True)

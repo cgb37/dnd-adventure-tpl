@@ -1,6 +1,6 @@
 ---
 name: dm-livesession
-description: Run a live D&D 5e session turn-by-turn on top of an existing dm-orchestrator campaign. In a player-mode campaign, narrate scenes and react to the solo player's actions with a strict spoiler guarantee - nothing beyond the current bookmarked position is ever revealed. In a dm-mode campaign, act as a stateless co-pilot for a human DM running a live session for other players - answer "what's next," NPC lookups, content lookups, and ad-hoc dice rolls (initiative, damage, skill checks). Use this skill whenever someone wants to actually play through a campaign turn-by-turn, or wants live lookups/rolls during a session they're running. Never generates content itself - unprepped player-mode scenes trigger dm-orchestrator's fill workflow first.
+description: Run a live D&D 5e session turn-by-turn on top of an existing dm-orchestrator campaign. In a player-mode campaign, narrate scenes and react to the solo player's actions with a strict spoiler guarantee - nothing beyond the current bookmarked position is ever revealed - grounding checks/saves/attacks in the actual party's character sheets and knowing which real-world player runs which PC(s). In a dm-mode campaign, act as a stateless co-pilot for a human DM running a live session for other players - answer "what's next," NPC and PC lookups, content lookups, and ad-hoc dice rolls (initiative, damage, skill checks) using a named PC's real modifiers. Use this skill whenever someone wants to actually play through a campaign turn-by-turn, or wants live lookups/rolls during a session they're running. Never generates content itself - unprepped player-mode scenes trigger dm-orchestrator's fill workflow first.
 ---
 
 # DM Livesession
@@ -50,7 +50,40 @@ with each scene's `needs`/`status`, and `content_index` reduced to
 `(beat, kind)`. That is everything the rest of this workflow needs
 structurally; it never reveals a title or premise.
 
-### Step 3: Read session.yml
+### Step 3: Resolve party and player context
+
+```bash
+python3 <repo-root>/ai/skills/encounter-generator/scripts/party_state.py read --campaign <active-campaign>
+python3 <skill-path>/scripts/players_state.py read --campaign <active-campaign>
+```
+
+`party_state.py` gives the party's `composition` - each PC's `name`,
+`slug`, and `class` when the campaign's `party.yml` was hand-authored with
+those fields (older campaigns may only have `class`). `players_state.py`
+gives which real-world player runs which character `slug`(s), from
+`players.yml` - a solo player-mode session may run several PCs at once.
+Neither file is spoiler-sensitive (party makeup, not plot) and neither is
+ever written by this skill.
+
+If either returns `{"found": false}`, proceed without it - narrate using
+only what `campaign.yml` and generated content provide, and don't ask the
+player to fill in `party.yml`/`players.yml` (that's campaign setup, not a
+live-session concern).
+
+When a beat's narration or a player's action calls for a specific PC's
+mechanics (an ability check, save, attack, or HP change), read that
+character's sheet directly:
+
+```bash
+cat <repo-root>/campaigns/<active-campaign>/_pages/characters/<slug>.md
+```
+
+Use its frontmatter (`str`/`dex`/`con`/`int`/`wis`/`cha`,
+`proficiency_bonus`, `ac`, `hp`) and the skills/saves tables in the body
+for the actual modifier - never invent one. Don't read every character's
+sheet up front; only the PC(s) actually acting this turn.
+
+### Step 4: Read session.yml
 
 ```bash
 python3 <skill-path>/scripts/session_state.py read --campaign <active-campaign>
@@ -67,7 +100,7 @@ echo '<outline array from the redacted read>' | python3 <repo-root>/ai/skills/dm
 Take the first scene in the result as `current_position`. Otherwise, use
 `session.yml`'s existing `current_position`.
 
-### Step 4: Check the current beat's readiness
+### Step 5: Check the current beat's readiness
 
 Find the current beat's scene in the redacted outline (matching
 `current_position`'s `beat`). For every tag in that scene's `needs`, check
@@ -84,9 +117,9 @@ not advance `current_position` or write `session.yml`. Otherwise, re-run
 Step 2's redacted read to confirm the beat is now covered before
 continuing.
 
-### Step 5: Read the current beat's content, unredacted
+### Step 6: Read the current beat's content, unredacted
 
-Only once Step 4 confirms the current beat is ready:
+Only once Step 5 confirms the current beat is ready:
 
 ```bash
 python3 <repo-root>/ai/skills/dm-orchestrator/scripts/campaign_memory.py read --campaign <active-campaign>
@@ -100,21 +133,24 @@ before this beat's chapter. Then disregard everything else in that read -
 no other scene's title, premise, or `needs` tag from this response may
 reach anything you say, in this turn or any later one.
 
-### Step 6: Narrate
+### Step 7: Narrate
 
-Using the content gathered in Step 5 plus `references/live-narration.md`
+Using the content gathered in Step 6 plus `references/live-narration.md`
 for hooks, puzzle pacing, NPC agenda/unreliable-narrator judgement, and
 the spoiler boundary, narrate the scene and respond to whatever the player
-says next.
+says next. Address and act as the PC(s) whose player is present this
+session (from Step 3's `players_state.py` read) by name, and ground any
+check/save/attack a PC attempts in that character's actual sheet (Step 3)
+rather than an assumed modifier.
 
-### Step 7: React to the player's action
+### Step 8: React to the player's action
 
 - **On-script** (the action resolves or meaningfully advances the current
   beat): determine the next scene in *play order* — this is a different
   question from "the next scene that still needs generating," which is
   what `outline_scope.py`'s `"the next part"` mode answers for
   `dm-orchestrator`'s fill workflow. Instead, resolve the current beat's
-  chapter the same way Step 3 bootstraps the first session:
+  chapter the same way Step 4 bootstraps the first session:
 
   ```bash
   echo '<outline array from the redacted read>' | python3 <repo-root>/ai/skills/dm-orchestrator/scripts/outline_scope.py "chapter <current chapter number>"
@@ -138,7 +174,7 @@ says next.
   `session.yml` - `current_position` stays where it is until play resolves
   back onto a planned beat.
 
-### Step 8: Recap requests
+### Step 9: Recap requests
 
 Answer "what happened last time" / "where are we" purely from
 `session.yml`'s `event_log` and `current_position` - never from the
@@ -162,7 +198,18 @@ If it returns `{"found": false}` or has no `outline`, stop and tell the
 user to generate a campaign via `dm-orchestrator` first. Confirm `mode` is
 `dm` - if it's `player`, stop and say so (see Mode Rules).
 
-### Step 2: Answer the query directly
+### Step 2: Resolve party context (for PC lookups and rolls)
+
+```bash
+python3 <repo-root>/ai/skills/encounter-generator/scripts/party_state.py read --campaign <active-campaign>
+```
+
+Gives each PC's `name`/`slug`/`class` (when `party.yml` was authored with
+those fields) so a PC lookup or an ad-hoc roll "for" a named PC can be
+resolved. If it returns `{"found": false}`, PC lookups and rolls just fall
+back to asking the DM for whatever detail is missing - not an error.
+
+### Step 3: Answer the query directly
 
 - **"What's next"**: `dm` mode tracks no position (Workflow 2 is
   stateless), so this means "what still needs content generated," not
@@ -174,6 +221,11 @@ user to generate a campaign via `dm-orchestrator` first. Confirm `mode` is
   their table, say you don't track that and ask them to name the
   chapter/scene they mean instead.
 - **NPC lookup**: find the matching entry in `npcs` and report it.
+- **PC lookup**: match the name against Step 2's `composition` to resolve
+  a `slug`, then read that character's sheet directly (`cat
+  <repo-root>/campaigns/<active-campaign>/_pages/characters/<slug>.md`)
+  and report from its frontmatter/tables - same idea as an NPC lookup, but
+  for a party member.
 - **Content lookup**: find the matching `content_index` entry and read
   that draft file directly.
 - **Rules/monster lookup for something not already generated**: query
@@ -183,11 +235,14 @@ user to generate a campaign via `dm-orchestrator` first. Confirm `mode` is
   `python3 <skill-path>/scripts/dice.py "<notation>"`, e.g.
   `python3 <skill-path>/scripts/dice.py "1d20+3"`. This is a stateless
   single-roll calculator call - no initiative order or combat state is
-  tracked across turns.
-- **No match** (e.g. an NPC name that doesn't exist): say so plainly.
-  There is no spoiler concern in this mode, so be direct.
+  tracked across turns. When the DM asks for a roll "for" a named PC
+  (e.g. "roll Aiden's persuasion check"), resolve that PC's sheet (as in
+  the PC lookup above) for the real modifier and fold it into the
+  notation yourself - don't ask the DM to supply it.
+- **No match** (e.g. an NPC or PC name that doesn't exist): say so
+  plainly. There is no spoiler concern in this mode, so be direct.
 
-### Step 3: Never write anything
+### Step 4: Never write anything
 
 This workflow never creates, reads, or modifies `session.yml`, and never
 writes `campaign.yml`.
@@ -202,7 +257,7 @@ writes `campaign.yml`.
 | Current beat needs generation and the `dm-orchestrator` fill fails | Stall gracefully in-narrative; do not advance `current_position` or write `session.yml`. |
 | `session.yml` missing on first-ever player session | Not an error - default to the outline's first scene, empty log; created on first write. |
 | `session.yml` fails to parse (`invalid_session_state`) | Relay the error and stop - never guess-repair. |
-| Off-script player action | Not an error - improvise per Workflow 1 Step 7; no structural write. |
+| Off-script player action | Not an error - improvise per Workflow 1 Step 8; no structural write. |
 | DM-mode query with no matching data | Say so plainly - no spoiler concern in this mode. |
 | Invalid dice notation | Relay `dice.py`'s `invalid_dice_notation` error and ask for a valid expression (e.g. "1d20+3"). |
 | Current beat was the campaign's last scene (no next chapter) | The campaign is complete - tell the player/DM so; do not write `session.yml` further. |
