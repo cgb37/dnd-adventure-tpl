@@ -141,7 +141,9 @@ if [[ "$bootstrap" == "true" ]]; then
     "$campaign_root/_pages/monsters" \
     "$campaign_root/_pages/npcs" \
     "$campaign_root/_pages/encounters" \
-    "$campaign_root/_pages/locations"
+    "$campaign_root/_pages/locations" \
+    "$campaign_root/_pages/characters" \
+    "$campaign_root/_pages/players"
 
   if [[ "$demo" == "true" ]]; then
     demo_chapter="$campaign_root/_pages/chapters/chapter-01/index.html"

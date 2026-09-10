@@ -281,11 +281,13 @@ body {
     vertical-align: bottom;
     padding-bottom: .3em;
     padding-right: .1em;
-    padding-left: .1em
+    padding-left: .1em;
+    color: #000
 }
 
 .phb table tbody tr td {
-    padding: .3em .1em
+    padding: .3em .1em;
+    color: #000
 }
 
 .phb table tbody tr:nth-child(odd) {

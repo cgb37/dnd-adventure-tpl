@@ -1,0 +1,8 @@
+players:
+  - name: Chuck
+    slug: chuck
+    characters:
+      - aiden-oathkeeper
+      - dravroth-oathbreaker
+      - guillemette-bevan
+      - stallion

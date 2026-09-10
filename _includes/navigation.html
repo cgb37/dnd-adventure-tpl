@@ -79,6 +79,32 @@
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Characters
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for page in site.pages %}
+                        {% if page.path contains '_pages/characters/' %}
+                        <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Players
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for page in site.pages %}
+                        {% if page.path contains '_pages/players/' %}
+                        <li><a class="dropdown-item" href="{{ page.url }}">{{ page.title }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Rewards
                     </a>
                     <ul class="dropdown-menu">
