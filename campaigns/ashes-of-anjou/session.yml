@@ -1,0 +1,16 @@
+current_position:
+  beat: 01.02.02
+event_log:
+  - beat: 01.01.01
+    summary: The party arrived at Hollowmere manor in the smoking aftermath of the tithe barn fire, met the frightened reeve Ordric, and learned of the scullery maid Aelfa who may have seen someone at the scene.
+  - beat: 01.01.02
+    summary: Under Aiden's questioning, Ordric revealed the fire destroyed the tithe rolls just before the collecting - and a captured mercenary later confirmed the fire was deliberately set, hired well in advance.
+  - beat: 01.01.03
+    summary: Two hired men cornered Aelfa demanding her silence; Guillemette nearly died fighting them off before Aiden and Dravroth arrived, the villagers rallied, and Stallion ran down the fleeing Bandit in the woods while Dravroth and Stallion cornered and captured the Thug.
+  - beat: 01.02.01
+    summary: Ordric explained the succession dispute over Lord Hollowmere's death, and the captured Bandit revealed the mercenaries were hired days ago as a contingency, then given Aelfa's name by a hooded stranger only hours after the fire - proof someone in Hollowmere is feeding information out in real time.
+delivered_beats:
+  - 01.01.01
+  - 01.01.02
+  - 01.01.03
+  - 01.02.01
